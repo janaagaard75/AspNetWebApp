@@ -8,9 +8,9 @@
             Canvas.game = game;
 
             this.stage = new Konva.Stage({
-                container: "canvas",
-                height: Constants.height,
-                width: Constants.width
+                container: Settings.canvasId,
+                height: Settings.height,
+                width: Settings.width
             });
 
             this.drawGame();
@@ -24,8 +24,8 @@
             const background = new Konva.Rect({
                 x: 0,
                 y: 0,
-                width: Constants.width,
-                height: Constants.height,
+                width: Settings.width,
+                height: Settings.height,
                 fill: "#fff"
             });
             boardLayer.add(background);
@@ -41,7 +41,7 @@
             const hexagon = new Konva.RegularPolygon({
                 x: cell.hex.pos.x,
                 y: cell.hex.pos.y,
-                radius: Constants.cellRadius,
+                radius: Settings.cellRadius,
                 sides: 6,
                 stroke: "#ccc",
                 strokeWidth: 1
@@ -100,7 +100,7 @@
         }
 
         private drawUnit(unitsLayer: Konva.Layer, unit: Unit) {
-            const circleRadius = Constants.cellRadius / 1.8;
+            const circleRadius = Settings.cellRadius / 1.8;
             const circle = new Konva.Circle({
                 dragBoundFunc: this.maxDistDragBoundFunc(unit.cell, 1),
                 draggable: true,

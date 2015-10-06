@@ -24,11 +24,11 @@ module Muep {
 
         public static hexToPos(hex: Hex) {
             const center = {
-                x: Constants.width / 2,
-                y: Constants.height / 2
+                x: Settings.width / 2,
+                y: Settings.height / 2
             };
-            const x = center.x + Math.sqrt(3) * Constants.cellRadius * hex.r + Math.sqrt(3) / 2 * Constants.cellRadius * hex.t;
-            const y = center.y + 1.5 * Constants.cellRadius * hex.t;
+            const x = center.x + Math.sqrt(3) * Settings.cellRadius * hex.r + Math.sqrt(3) / 2 * Settings.cellRadius * hex.t;
+            const y = center.y + 1.5 * Settings.cellRadius * hex.t;
             const pos = new Pos(x, y);
             return pos;
         }

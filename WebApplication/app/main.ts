@@ -3,6 +3,7 @@ module Muep {
 
     export class Main {
         constructor() {
+            Settings.initialize();
             Main.game = new Game();
             Main.canvas = new Canvas(Main.game);
         }

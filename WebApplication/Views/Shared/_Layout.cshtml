@@ -7,10 +7,7 @@
     @Styles.Render("~/bundles/css")
 </head>
 <body>
-    <h1>@ViewBag.Title</h1>
-    <div>
-        @RenderBody()
-    </div>
+    @RenderBody()
     @Scripts.Render("~/bundles/scripts")
     @RenderSection("scripts", required: false)
 </body>
