@@ -6,19 +6,21 @@ module Muep {
             this.initalizeGame();
         }
 
+        private gridSize = 3;
+        private playerColors = ["#f00", "#0f0", "#00f"];
+
         public cells: Cell[];
         public players: Player[];
 
         initalizeGame() {
             this.cells = [];
-            const gridSize = 3;
-            for (let r = -gridSize; r <= gridSize; r++) {
-                for (let s = -gridSize; s <= gridSize; s++) {
+            for (let r = -this.gridSize; r <= this.gridSize; r++) {
+                for (let s = -this.gridSize; s <= this.gridSize; s++) {
                     // Satisfy r+s+t=0.
                     const t = -r - s;
                     
                     // t cannot exceed gridSize.
-                    if (t < -gridSize || t > gridSize) {
+                    if (t < -this.gridSize || t > this.gridSize) {
                         continue;
                     }
 

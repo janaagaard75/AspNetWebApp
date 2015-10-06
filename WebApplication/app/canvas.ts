@@ -3,8 +3,10 @@
 
     export class Canvas {
         constructor(
-            private game: Game
+            game: Game
         ) {
+            Canvas.game = game;
+
             this.stage = new Konva.Stage({
                 container: "canvas",
                 height: Constants.height,
@@ -14,6 +16,7 @@
             this.drawGame();
         }
 
+        private static game: Game; // Has be to static to be accessible inside unitDragBound
         private stage: Konva.Stage;
 
         private drawBoard() {
@@ -27,7 +30,7 @@
             });
             boardLayer.add(background);
 
-            this.game.cells.forEach(cell => {
+            Canvas.game.cells.forEach(cell => {
                 this.drawCell(boardLayer, cell);
             });
 
@@ -64,7 +67,7 @@
         private drawCommands() {
             const commandsLayer = new Konva.Layer();
 
-            this.game.commands.forEach(command => {
+            Canvas.game.commands.forEach(command => {
                 this.drawCommand(commandsLayer, command);
             });
 
@@ -111,7 +114,7 @@
                 const from = unit.cell;
                 const event = <MouseEvent>e.evt;
                 const pos = new Pos(event.layerX, event.layerY);
-                const to = this.game.nearestCell(pos);
+                const to = Canvas.game.nearestCell(pos);
 
                 console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
 
@@ -119,7 +122,7 @@
                     return;
                 }
 
-                this.game.moveUnit(unit, to);
+                Canvas.game.moveUnit(unit, to);
             });
 
             unitsLayer.add(circle);
@@ -128,7 +131,7 @@
         private drawUnits() {
             const unitsLayer = new Konva.Layer();
 
-            this.game.units.forEach(unit => {
+            Canvas.game.units.forEach(unit => {
                 this.drawUnit(unitsLayer, unit);
             });
 
@@ -136,7 +139,7 @@
         }
 
         private unitDragBound(pos: IPos): IPos {
-            const nearestCell = this.game.nearestCell(pos);
+            const nearestCell = Canvas.game.nearestCell(pos);
             return nearestCell.hex.pos;
         }
     }
