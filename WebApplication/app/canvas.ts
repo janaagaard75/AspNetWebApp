@@ -102,7 +102,7 @@
         private drawUnit(unitsLayer: Konva.Layer, unit: Unit) {
             const circleRadius = Constants.cellRadius / 1.8;
             const circle = new Konva.Circle({
-                dragBoundFunc: this.unitDragBound,
+                dragBoundFunc: this.maxDistDragBoundFunc(unit.cell, 1),
                 draggable: true,
                 fill: unit.color,
                 radius: circleRadius,
@@ -138,9 +138,13 @@
             this.stage.add(unitsLayer);
         }
 
-        private unitDragBound(pos: IPos): IPos {
-            const nearestCell = Canvas.game.nearestCell(pos);
-            return nearestCell.hex.pos;
+        private maxDistDragBoundFunc(origin: Cell, maximumDistance: number): IDragBoundFunc {
+            const func = (pos: IPos) => {
+                var nearestCell = Canvas.game.nearestAllowedCell(pos, origin, maximumDistance);
+                return nearestCell.hex.pos;
+            }
+
+            return func;
         }
     }
 }

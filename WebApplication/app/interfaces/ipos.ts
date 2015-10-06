@@ -5,4 +5,8 @@ module Muep {
         x: number;
         y: number;
     }
+
+    export interface ITest {
+        (pos: IPos): IPos
+    }
 }

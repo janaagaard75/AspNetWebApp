@@ -70,10 +70,22 @@ module Muep {
             unit.command = null;
         }
 
+        /** Returns the nearest cell not futher away than maximumDistance. */
+        public nearestAllowedCell(pos: IPos, origin: Cell, maximumDistance: number): Cell {
+            const allowedCells = this.cells.filter(cell => cell.distance(origin) <= maximumDistance);
+            const nearestCell = Game.nearestCell(pos, allowedCells);
+            return nearestCell;
+        }
+
         public nearestCell(pos: IPos): Cell {
+            const nearestCell = Game.nearestCell(pos, this.cells);
+            return nearestCell;
+        }
+
+        private static nearestCell(pos: IPos, cells: Cell[]): Cell {
             var minDist: number = null;
             var nearestCell: Cell;
-            this.cells.forEach(cell => {
+            cells.forEach(cell => {
                 var dist = cell.hex.pos.distance(pos);
                 if (dist < minDist || minDist === null) {
                     minDist = dist;
