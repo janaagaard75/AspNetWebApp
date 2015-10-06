@@ -1,0 +1,9 @@
+﻿body {
+  background-color: #eee;
+  font-family: sans-serif;
+}
+
+.canvas {
+  height: 300px;
+  width: 300px;
+}
