@@ -16,7 +16,7 @@
             this.drawGame();
         }
 
-        private static game: Game; // Has be to static to be accessible inside unitDragBound
+        private static game: Game; // Has be to static to be accessible inside unitDragBound.
         private stage: Konva.Stage;
 
         private drawBoard() {
@@ -100,9 +100,18 @@
         }
 
         private drawUnit(unitsLayer: Konva.Layer, unit: Unit) {
+            const getNearestAllowedCell = (pos: IPos) => {
+                var nearestCell = Canvas.game.nearestAllowedCell(pos, unit.cell, 1);
+                return nearestCell;
+            };
+
+            const dragBoundFunction = (pos: IPos) => {
+                return getNearestAllowedCell(pos).hex.pos;
+            }
+
             const circleRadius = Settings.cellRadius / 1.8;
             const circle = new Konva.Circle({
-                dragBoundFunc: this.maxDistDragBoundFunc(unit.cell, 1),
+                dragBoundFunc: dragBoundFunction,
                 draggable: true,
                 fill: unit.color,
                 radius: circleRadius,
@@ -112,17 +121,20 @@
 
             circle.on("dragend unit", e => {
                 const from = unit.cell;
+
                 const event = <MouseEvent>e.evt;
                 const pos = new Pos(event.layerX, event.layerY);
-                const to = Canvas.game.nearestCell(pos);
+                const to = getNearestAllowedCell(pos);
 
-                console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
+                //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
 
                 if (from === to) {
                     return;
                 }
 
                 Canvas.game.moveUnit(unit, to);
+                unit.setMoveCommand(from, to);
+                this.drawGame();
             });
 
             unitsLayer.add(circle);
@@ -136,15 +148,6 @@
             });
 
             this.stage.add(unitsLayer);
-        }
-
-        private maxDistDragBoundFunc(origin: Cell, maximumDistance: number): IDragBoundFunc {
-            const func = (pos: IPos) => {
-                var nearestCell = Canvas.game.nearestAllowedCell(pos, origin, maximumDistance);
-                return nearestCell.hex.pos;
-            }
-
-            return func;
         }
     }
 }

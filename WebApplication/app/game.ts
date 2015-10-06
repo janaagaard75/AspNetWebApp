@@ -42,6 +42,9 @@ module Muep {
             centerCell.addUnit(redUnit);
             redUnit.command = new MoveCommand(redUnit, rightFromCenter, centerCell);
 
+            const greenUnit = new Unit(greenPlayer);
+            this.getCell(new Hex(-3, 0, 3)).addUnit(greenUnit);
+
             const blueUnit = new Unit(bluePlayer);
             const topLeftFromCenter = this.getCell(new Hex(0, 1, -1));
             const otherCell = this.getCell(new Hex(0, 2, -2));
@@ -50,7 +53,7 @@ module Muep {
         }
 
         public get commands(): Command[] {
-            const commands = this.units.map(unit => unit.command);
+            const commands = this.units.map(unit => unit.command).filter(command => command !== null);
             return commands;
         }
 
@@ -64,6 +67,7 @@ module Muep {
             return cell;
         }
 
+        /** Moves a unit to the specified cell. Also sets the command to null. */
         public moveUnit(unit: Unit, newCell: Cell) {
             unit.cell.removeUnit(unit);
             newCell.addUnit(unit);
