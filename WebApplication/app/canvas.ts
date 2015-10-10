@@ -82,10 +82,13 @@
 
         private drawMoveCommand(commandsLayer: Konva.Layer, command: MoveCommand) {
             const arrow = new Konva["Arrow"]({
+                fill: command.unit.commandColor,
                 listening: false,
                 pointerLength: 4,
                 pointerWidth: 5,
                 points: [command.from.hex.pos.x, command.from.hex.pos.y, command.to.hex.pos.x, command.to.hex.pos.y],
+                shadowBlur: 10,
+                shadowColor: "#000",
                 stroke: command.unit.commandColor,
                 strokeWidth: 2,
                 x: 0,
@@ -96,7 +99,7 @@
         }
 
         private drawPlaceCommand(commandsLayer: Konva.Layer, command: PlaceCommand) {
-            throw "drawPlaceCommand() is not yet done.";
+            throw "drawPlaceCommand() is not yet implemented.";
         }
 
         private drawUnit(unitsLayer: Konva.Layer, unit: Unit) {

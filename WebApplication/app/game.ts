@@ -31,25 +31,22 @@ module Muep {
             }
 
             const redPlayer = new Player("#f00");
+            const yellowPlayer = new Player("#ff0")
             const greenPlayer = new Player("#0f0");
+            const cyanPlayer = new Player("#0ff");
             const bluePlayer = new Player("#00f");
+            const magentaPlayer = new Player("#f0f");
 
-            this.players = [redPlayer, greenPlayer, bluePlayer];
+            this.players = [redPlayer, yellowPlayer, greenPlayer, cyanPlayer, bluePlayer];
 
-            const redUnit = new Unit(redPlayer);
-            const centerCell = this.getCell(new Hex(0, 0, 0));
-            const rightFromCenter = this.getCell(new Hex(1, -1, 0));
-            centerCell.addUnit(redUnit);
-            redUnit.command = new MoveCommand(redUnit, rightFromCenter, centerCell);
-
-            const greenUnit = new Unit(greenPlayer);
-            this.getCell(new Hex(-3, 0, 3)).addUnit(greenUnit);
-
-            const blueUnit = new Unit(bluePlayer);
-            const topLeftFromCenter = this.getCell(new Hex(0, 1, -1));
-            const otherCell = this.getCell(new Hex(0, 2, -2));
-            topLeftFromCenter.addUnit(blueUnit);
-            blueUnit.command = new MoveCommand(blueUnit, otherCell, topLeftFromCenter);
+            this.getCell(new Hex(3, 0, -3)).addUnit(new Unit(redPlayer));
+            var yellowUnit = new Unit(yellowPlayer)
+            this.getCell(new Hex(2, -2, 0)).addUnit(yellowUnit);
+            yellowUnit.setMoveCommand(this.getCell(new Hex(3, -3, 0)), this.getCell(new Hex(2, -2, 0)));
+            this.getCell(new Hex(0, -3, 3)).addUnit(new Unit(greenPlayer));
+            this.getCell(new Hex(-3, 0, 3)).addUnit(new Unit(cyanPlayer));
+            this.getCell(new Hex(-3, 3, 0)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(0, 3, -3)).addUnit(new Unit(magentaPlayer));
         }
 
         public get commands(): Command[] {
