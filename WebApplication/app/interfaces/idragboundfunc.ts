@@ -2,6 +2,6 @@
     "use strict";
 
     export interface IDragBoundFunc {
-        (pos: IPos): IPos;
+        (pos: Konva.Vector2d): Konva.Vector2d;
     }
 }

@@ -122,7 +122,7 @@
         }
 
         private drawUnit(unit: Unit) {
-            const getNearestAllowedCell = (pos: IPos) => {
+            const getNearestAllowedCell = (pos: Konva.Vector2d) => {
                 var nearestCell = Canvas.game.nearestAllowedCell(pos, unit.cell, 1);
                 return nearestCell;
             };
@@ -146,10 +146,14 @@
                 this.unitsLayer.draw();
             });
 
+            var previousCell = null;
+            circle.on("dragmove", e => {
+                var pos = this.stage.getPointerPosition();
+            })
+
             circle.on("dragend", e => {
                 e.target.moveTo(this.unitsLayer);
                 this.unitsLayer.draw();
-                this.dragLayer.draw();
 
                 const from = unit.cell;
 
@@ -160,6 +164,7 @@
                 //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
 
                 if (from === to) {
+                    // TODO: Place the unit back to the original position.
                     return;
                 }
 

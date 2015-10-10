@@ -72,18 +72,18 @@ module Muep {
         }
 
         /** Returns the nearest cell not futher away than maximumDistance. */
-        public nearestAllowedCell(pos: IPos, origin: Cell, maximumDistance: number): Cell {
+        public nearestAllowedCell(pos: Konva.Vector2d, origin: Cell, maximumDistance: number): Cell {
             const allowedCells = this.cells.filter(cell => cell.distance(origin) <= maximumDistance);
             const nearestCell = Game.nearestCell(pos, allowedCells);
             return nearestCell;
         }
 
-        public nearestCell(pos: IPos): Cell {
+        public nearestCell(pos: Konva.Vector2d): Cell {
             const nearestCell = Game.nearestCell(pos, this.cells);
             return nearestCell;
         }
 
-        private static nearestCell(pos: IPos, cells: Cell[]): Cell {
+        private static nearestCell(pos: Konva.Vector2d, cells: Cell[]): Cell {
             var minDist: number = null;
             var nearestCell: Cell;
             cells.forEach(cell => {

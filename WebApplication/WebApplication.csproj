@@ -222,7 +222,6 @@
     <TypeScriptCompile Include="app\game.ts" />
     <TypeScriptCompile Include="app\hex.ts" />
     <TypeScriptCompile Include="app\interfaces\idragboundfunc.ts" />
-    <TypeScriptCompile Include="app\interfaces\ipos.ts" />
     <TypeScriptCompile Include="app\main.ts" />
     <TypeScriptCompile Include="app\movecommand.ts" />
     <TypeScriptCompile Include="app\placecommand.ts" />
