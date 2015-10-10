@@ -7,24 +7,22 @@
         ) {
             Canvas.game = game;
 
-            this.stage = new Konva.Stage({
-                container: Settings.canvasId,
-                height: Settings.height,
-                width: Settings.width
-            });
-
             this.drawGame();
         }
 
         private static game: Game; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
+        private backgroundLayer: Konva.Layer;
         private boardLayer: Konva.Layer;
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
         private unitsLayer: Konva.Layer;
 
         private addLayers() {
+            this.backgroundLayer = new Konva.Layer();
+            this.stage.add(this.backgroundLayer);
+
             this.boardLayer = new Konva.Layer();
             this.stage.add(this.boardLayer);
 
@@ -48,7 +46,7 @@
                 height: Settings.height,
                 fill: "#fff"
             });
-            this.boardLayer.add(background);
+            this.backgroundLayer.add(background);
 
             Canvas.game.cells.forEach(cell => {
                 this.drawCell(cell);
@@ -63,6 +61,14 @@
                 sides: 6,
                 stroke: "#ccc",
                 strokeWidth: 1
+            });
+
+            hexagon.on("dragenter", e => {
+                console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`)
+            });
+
+            hexagon.on("dragleave", e => {
+                console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`)
             });
 
             this.boardLayer.add(hexagon);
@@ -89,7 +95,14 @@
             });
         }
 
+        /** Currently redraws the game from scratch each time, re-adding all units and commands. */
         public drawGame() {
+            this.stage = new Konva.Stage({
+                container: Settings.canvasId,
+                height: Settings.height,
+                width: Settings.width
+            });
+
             this.addLayers();
 
             this.drawBoard();
@@ -143,17 +156,57 @@
 
             circle.on("dragstart", e => {
                 e.target.moveTo(this.dragLayer);
-                this.unitsLayer.draw();
             });
 
-            var previousCell = null;
+            var previousIntersectingShape = null;
             circle.on("dragmove", e => {
                 var pos = this.stage.getPointerPosition();
-            })
+                var intersectingShape = this.boardLayer.getIntersection(pos);
+
+                if (intersectingShape !== null) {
+                    if (previousIntersectingShape !== null) {
+                        // Both shapes defined.
+                        if (previousIntersectingShape !== intersectingShape) {
+                            previousIntersectingShape.fire("dragleave", {
+                                type: "dragleave",
+                                target: previousIntersectingShape,
+                                evt: e.evt
+                            }, true);
+
+                            intersectingShape.fire("dragenter", {
+                                type: "dragenter",
+                                target: intersectingShape,
+                                evt: e.evt
+                            }, true);
+
+                            previousIntersectingShape = intersectingShape;
+                        }
+                    }
+                    else {
+                        // intersectingShape not defined, previousInterceptingShape defined.
+                        intersectingShape.fire("dragenter", {
+                            type: "dragenter",
+                            target: intersectingShape,
+                            evt: e.evt
+                        }, true);
+
+                        previousIntersectingShape = intersectingShape;
+                    }
+                }
+                else {
+                    if (previousIntersectingShape !== null) {
+                        // Both shapes not defined.
+                        previousIntersectingShape.fire("dragleave", {
+                            type: "dragleave",
+                            target: previousIntersectingShape,
+                            evt: e.evt
+                        }, true);
+                    }
+                }
+            });
 
             circle.on("dragend", e => {
                 e.target.moveTo(this.unitsLayer);
-                this.unitsLayer.draw();
 
                 const from = unit.cell;
 
@@ -163,13 +216,12 @@
 
                 //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
 
-                if (from === to) {
-                    // TODO: Place the unit back to the original position.
-                    return;
+                if (from !== to) {
+                    // Move the unit and assign a new move command to it.
+                    Canvas.game.moveUnit(unit, to);
+                    unit.setMoveCommand(from, to);
                 }
 
-                Canvas.game.moveUnit(unit, to);
-                unit.setMoveCommand(from, to);
                 this.drawGame();
             });
 
