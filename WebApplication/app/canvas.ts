@@ -160,11 +160,14 @@
                 const pos = this.stage.getPointerPosition();
                 /** Currently hovered hexagon. */
                 var currentHexagon = this.boardLayer.getIntersection(pos);
-                const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
-                const distance = unit.cell.distance(currentCell);
 
-                if (distance === 0 || distance > unit.maximumMoveDistance) {
-                    currentHexagon = null;
+                if (currentHexagon !== null) {
+                    const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+                    const distance = unit.cell.distance(currentCell);
+
+                    if (distance === 0 || distance > unit.maximumMoveDistance) {
+                        currentHexagon = null;
+                    }
                 }
 
                 if (currentHexagon === previousHexagon) {
