@@ -21,6 +21,10 @@ module Muep {
             return this.player.color;
         }
 
+        public get maximumMoveDistance(): number {
+            return 1;
+        }
+
         public setMoveCommand(from: Cell, to: Cell): MoveCommand {
             const moveCommand = new MoveCommand(this, from, to);
             this.command = moveCommand;

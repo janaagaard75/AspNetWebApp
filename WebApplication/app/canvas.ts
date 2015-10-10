@@ -139,11 +139,6 @@
         }
 
         private drawUnit(unit: Unit) {
-            const getNearestAllowedCell = (pos: Konva.Vector2d) => {
-                var nearestCell = Canvas.game.nearestAllowedCell(pos, unit.cell, 1);
-                return nearestCell;
-            };
-
             const circleRadius = Settings.cellRadius / 1.8;
             const circle = new Konva.Circle({
                 draggable: true,
@@ -157,48 +152,52 @@
                 e.target.moveTo(this.dragLayer);
             });
 
-            /** Previously hovered cell.*/
-            var previousCell: Konva.Shape = null;
+            /** Previously hovered hexagon.*/
+            var previousHexagon: Konva.Shape = null;
+            
+            // Dragmove is called on every single pixel moved.
             circle.on("dragmove", e => {
                 const pos = this.stage.getPointerPosition();
-                /** Currently hovered cell. */
-                const currentCell = this.boardLayer.getIntersection(pos);
+                /** Currently hovered hexagon. */
+                var currentHexagon = this.boardLayer.getIntersection(pos);
+                const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
-                if (currentCell !== null) {
-                    if (previousCell !== null) {
-                        if (previousCell !== currentCell) {
-                            // Both cells defined and different => Moving from one cell to another.
-                            previousCell.fire("dragleave");
-                            currentCell.fire("dragenter");
-                            previousCell = currentCell;
-                        }
-                    }
-                    else {
-                        // Only currentCell defined => Moving into a cell.
-                        currentCell.fire("dragenter");
-                        previousCell = currentCell;
+                if (unit.cell.distance(currentCell) > unit.maximumMoveDistance) {
+                    currentHexagon = null;
+                }
+
+                if (currentHexagon === previousHexagon) {
+                    // Current same as previous => Don't change anything.
+                    return;
+                }
+
+                if (currentHexagon === null) {
+                    // Only previous defined => Moving out of a cell.
+                    previousHexagon.fire("dragleave");
+                } else {
+                    if (previousHexagon === null) {
+                        // Only current defined => Moving into a cell.
+                        currentHexagon.fire("dragenter");
+                    } else {
+                        // Both cells defined and different => Moving from one cell to another.
+                        previousHexagon.fire("dragleave");
+                        currentHexagon.fire("dragenter");
                     }
                 }
-                else {
-                    if (previousCell !== null) {
-                        // Only previousCell defined => Moving out of a cell.
-                        previousCell.fire("dragleave");
-                    }
-                }
+
+                previousHexagon = currentHexagon;
             });
 
             circle.on("dragend", e => {
                 e.target.moveTo(this.unitsLayer);
 
                 const from = unit.cell;
-
                 const event = <MouseEvent>e.evt;
                 const pos = new Pos(event.layerX, event.layerY);
-                const to = getNearestAllowedCell(pos);
-
-                //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
+                const to = Canvas.game.nearestCell(pos);
 
                 if (from !== to) {
+                    //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
                     // Move the unit and assign a new move command to it.
                     Canvas.game.moveUnit(unit, to);
                     unit.setMoveCommand(from, to);
