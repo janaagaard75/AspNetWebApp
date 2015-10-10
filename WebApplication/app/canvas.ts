@@ -16,11 +16,31 @@
             this.drawGame();
         }
 
-        private static game: Game; // Has be to static to be accessible inside unitDragBound.
+        private static game: Game; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
+        private boardLayer: Konva.Layer;
+        private commandsLayer: Konva.Layer;
+        private dragLayer: Konva.Layer;
+        private unitsLayer: Konva.Layer;
+
+        private addLayers() {
+            this.boardLayer = new Konva.Layer();
+            this.stage.add(this.boardLayer);
+
+            this.unitsLayer = new Konva.Layer();
+            this.stage.add(this.unitsLayer);
+
+            this.commandsLayer = new Konva.Layer();
+            this.stage.add(this.commandsLayer);
+
+            this.dragLayer = new Konva.Layer({
+                opacity: 0.5
+            });
+            this.stage.add(this.dragLayer);
+        }
+
         private drawBoard() {
-            const boardLayer = new Konva.Layer();
             const background = new Konva.Rect({
                 x: 0,
                 y: 0,
@@ -28,16 +48,14 @@
                 height: Settings.height,
                 fill: "#fff"
             });
-            boardLayer.add(background);
+            this.boardLayer.add(background);
 
             Canvas.game.cells.forEach(cell => {
-                this.drawCell(boardLayer, cell);
+                this.drawCell(cell);
             });
-
-            this.stage.add(boardLayer);
         }
 
-        private drawCell(boardLayer: Konva.Layer, cell: Cell) {
+        private drawCell(cell: Cell) {
             const hexagon = new Konva.RegularPolygon({
                 x: cell.hex.pos.x,
                 y: cell.hex.pos.y,
@@ -46,17 +64,18 @@
                 stroke: "#ccc",
                 strokeWidth: 1
             });
-            boardLayer.add(hexagon);
+
+            this.boardLayer.add(hexagon);
         }
 
-        private drawCommand(commandsLayer: Konva.Layer, command: Command) {
+        private drawCommand(command: Command) {
             switch (command.type) {
                 case CommandType.MoveCommand:
-                    this.drawMoveCommand(commandsLayer, <MoveCommand>command);
+                    this.drawMoveCommand(<MoveCommand>command);
                     break;
 
                 case CommandType.PlaceCommand:
-                    this.drawPlaceCommand(commandsLayer, <PlaceCommand>command);
+                    this.drawPlaceCommand(<PlaceCommand>command);
                     break;
 
                 default:
@@ -65,22 +84,22 @@
         }
 
         private drawCommands() {
-            const commandsLayer = new Konva.Layer();
-
             Canvas.game.commands.forEach(command => {
-                this.drawCommand(commandsLayer, command);
+                this.drawCommand(command);
             });
-
-            this.stage.add(commandsLayer);
         }
 
         public drawGame() {
+            this.addLayers();
+
             this.drawBoard();
             this.drawUnits();
             this.drawCommands();
+
+            this.stage.draw();
         }
 
-        private drawMoveCommand(commandsLayer: Konva.Layer, command: MoveCommand) {
+        private drawMoveCommand(command: MoveCommand) {
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
                 listening: false,
@@ -95,26 +114,26 @@
                 y: 0
             });
 
-            commandsLayer.add(arrow);
+            this.commandsLayer.add(arrow);
         }
 
-        private drawPlaceCommand(commandsLayer: Konva.Layer, command: PlaceCommand) {
+        private drawPlaceCommand(command: PlaceCommand) {
             throw "drawPlaceCommand() is not yet implemented.";
         }
 
-        private drawUnit(unitsLayer: Konva.Layer, dragLayer: Konva.Layer, unit: Unit) {
+        private drawUnit(unit: Unit) {
             const getNearestAllowedCell = (pos: IPos) => {
                 var nearestCell = Canvas.game.nearestAllowedCell(pos, unit.cell, 1);
                 return nearestCell;
             };
 
-            const dragBoundFunction = (pos: IPos) => {
-                return getNearestAllowedCell(pos).hex.pos;
-            }
+            //const dragBoundFunction = (pos: IPos) => {
+            //    return getNearestAllowedCell(pos).hex.pos;
+            //}
 
             const circleRadius = Settings.cellRadius / 1.8;
             const circle = new Konva.Circle({
-                dragBoundFunc: dragBoundFunction,
+                //dragBoundFunc: dragBoundFunction,
                 draggable: true,
                 fill: unit.color,
                 radius: circleRadius,
@@ -123,15 +142,14 @@
             });
 
             circle.on("dragstart", e => {
-                //e.target.moveToTop();
-                e.target.moveTo(dragLayer);
-                unitsLayer.draw();
+                e.target.moveTo(this.dragLayer);
+                this.unitsLayer.draw();
             });
 
             circle.on("dragend", e => {
-                e.target.moveTo(unitsLayer);
-                unitsLayer.draw();
-                dragLayer.draw();
+                e.target.moveTo(this.unitsLayer);
+                this.unitsLayer.draw();
+                this.dragLayer.draw();
 
                 const from = unit.cell;
 
@@ -158,19 +176,13 @@
                 document.body.style.cursor = "default";
             })
 
-            unitsLayer.add(circle);
+            this.unitsLayer.add(circle);
         }
 
         private drawUnits() {
-            const unitsLayer = new Konva.Layer();
-            const dragLayer = new Konva.Layer();
-
             Canvas.game.units.forEach(unit => {
-                this.drawUnit(unitsLayer, dragLayer, unit);
+                this.drawUnit(unit);
             });
-
-            this.stage.add(unitsLayer);
-            this.stage.add(dragLayer);
         }
     }
 }

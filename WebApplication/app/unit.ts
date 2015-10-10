@@ -13,7 +13,7 @@ module Muep {
         public command: Command;
 
         public get color() {
-            const unitColor = tinycolor(this.player.color).lighten(30);
+            const unitColor = tinycolor(this.player.color).lighten(0);
             return unitColor.toString("hex6");
         }
 
