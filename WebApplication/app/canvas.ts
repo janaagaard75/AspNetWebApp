@@ -102,7 +102,7 @@
             throw "drawPlaceCommand() is not yet implemented.";
         }
 
-        private drawUnit(unitsLayer: Konva.Layer, unit: Unit) {
+        private drawUnit(unitsLayer: Konva.Layer, dragLayer: Konva.Layer, unit: Unit) {
             const getNearestAllowedCell = (pos: IPos) => {
                 var nearestCell = Canvas.game.nearestAllowedCell(pos, unit.cell, 1);
                 return nearestCell;
@@ -122,7 +122,17 @@
                 y: unit.cell.hex.pos.y
             });
 
-            circle.on("dragend unit", e => {
+            circle.on("dragstart", e => {
+                //e.target.moveToTop();
+                e.target.moveTo(dragLayer);
+                unitsLayer.draw();
+            });
+
+            circle.on("dragend", e => {
+                e.target.moveTo(unitsLayer);
+                unitsLayer.draw();
+                dragLayer.draw();
+
                 const from = unit.cell;
 
                 const event = <MouseEvent>e.evt;
@@ -140,17 +150,27 @@
                 this.drawGame();
             });
 
+            circle.on("mouseover", () => {
+                document.body.style.cursor = "move";
+            });
+
+            circle.on("mouseout", () => {
+                document.body.style.cursor = "default";
+            })
+
             unitsLayer.add(circle);
         }
 
         private drawUnits() {
             const unitsLayer = new Konva.Layer();
+            const dragLayer = new Konva.Layer();
 
             Canvas.game.units.forEach(unit => {
-                this.drawUnit(unitsLayer, unit);
+                this.drawUnit(unitsLayer, dragLayer, unit);
             });
 
             this.stage.add(unitsLayer);
+            this.stage.add(dragLayer);
         }
     }
 }
