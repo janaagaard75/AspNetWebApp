@@ -64,11 +64,15 @@
             });
 
             hexagon.on("dragenter", e => {
-                console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`)
+                //console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
+                hexagon.fill("#eee");
+                this.boardLayer.draw();
             });
 
             hexagon.on("dragleave", e => {
-                console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`)
+                //console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
+                hexagon.fill(null);
+                this.boardLayer.draw();
             });
 
             this.boardLayer.add(hexagon);
@@ -140,13 +144,8 @@
                 return nearestCell;
             };
 
-            //const dragBoundFunction = (pos: IPos) => {
-            //    return getNearestAllowedCell(pos).hex.pos;
-            //}
-
             const circleRadius = Settings.cellRadius / 1.8;
             const circle = new Konva.Circle({
-                //dragBoundFunc: dragBoundFunction,
                 draggable: true,
                 fill: unit.color,
                 radius: circleRadius,
@@ -158,49 +157,32 @@
                 e.target.moveTo(this.dragLayer);
             });
 
-            var previousIntersectingShape = null;
+            /** Previously hovered cell.*/
+            var previousCell: Konva.Shape = null;
             circle.on("dragmove", e => {
-                var pos = this.stage.getPointerPosition();
-                var intersectingShape = this.boardLayer.getIntersection(pos);
+                const pos = this.stage.getPointerPosition();
+                /** Currently hovered cell. */
+                const currentCell = this.boardLayer.getIntersection(pos);
 
-                if (intersectingShape !== null) {
-                    if (previousIntersectingShape !== null) {
-                        // Both shapes defined.
-                        if (previousIntersectingShape !== intersectingShape) {
-                            previousIntersectingShape.fire("dragleave", {
-                                type: "dragleave",
-                                target: previousIntersectingShape,
-                                evt: e.evt
-                            }, true);
-
-                            intersectingShape.fire("dragenter", {
-                                type: "dragenter",
-                                target: intersectingShape,
-                                evt: e.evt
-                            }, true);
-
-                            previousIntersectingShape = intersectingShape;
+                if (currentCell !== null) {
+                    if (previousCell !== null) {
+                        if (previousCell !== currentCell) {
+                            // Both cells defined and different => Moving from one cell to another.
+                            previousCell.fire("dragleave");
+                            currentCell.fire("dragenter");
+                            previousCell = currentCell;
                         }
                     }
                     else {
-                        // intersectingShape not defined, previousInterceptingShape defined.
-                        intersectingShape.fire("dragenter", {
-                            type: "dragenter",
-                            target: intersectingShape,
-                            evt: e.evt
-                        }, true);
-
-                        previousIntersectingShape = intersectingShape;
+                        // Only currentCell defined => Moving into a cell.
+                        currentCell.fire("dragenter");
+                        previousCell = currentCell;
                     }
                 }
                 else {
-                    if (previousIntersectingShape !== null) {
-                        // Both shapes not defined.
-                        previousIntersectingShape.fire("dragleave", {
-                            type: "dragleave",
-                            target: previousIntersectingShape,
-                            evt: e.evt
-                        }, true);
+                    if (previousCell !== null) {
+                        // Only previousCell defined => Moving out of a cell.
+                        previousCell.fire("dragleave");
                     }
                 }
             });
