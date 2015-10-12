@@ -60,7 +60,7 @@
                 radius: Settings.cellRadius,
                 sides: 6,
                 stroke: "#ccc",
-                strokeWidth: 1
+                strokeWidth: Settings.lineWidth
             });
 
             cell.hexagon = hexagon;
@@ -124,13 +124,13 @@
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
                 listening: false,
-                pointerLength: 4,
-                pointerWidth: 5,
+                pointerLength: Settings.arrowPointerLength,
+                pointerWidth: Settings.arrowPointerWidth,
                 points: [command.from.hex.pos.x, command.from.hex.pos.y, command.to.hex.pos.x, command.to.hex.pos.y],
-                shadowBlur: 10,
+                shadowBlur: Settings.arrowShadowBlurRadius,
                 shadowColor: "#000",
                 stroke: command.unit.commandColor,
-                strokeWidth: 2,
+                strokeWidth: Settings.arrowWidth,
                 x: 0,
                 y: 0
             });
@@ -142,13 +142,16 @@
             throw "drawPlaceCommand() is not yet implemented.";
         }
 
-        private drawUnit(unit: Unit) {
-            const circleRadius = Settings.cellRadius / 1.8;
+        private drawUnit(unit: Unit, unitIndex: number, numberOfUnits: number) {
+            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * Settings.distanceBetweenUnits / 2 + unitIndex * Settings.distanceBetweenUnits;
+
             const circle = new Konva.Circle({
                 draggable: true,
                 fill: unit.color,
-                radius: circleRadius,
-                x: unit.cell.hex.pos.x,
+                radius: Settings.unitRadius,
+                stroke: "#888",
+                strokeWidth: Settings.lineWidth,
+                x: x,
                 y: unit.cell.hex.pos.y
             });
 
@@ -246,8 +249,14 @@
         }
 
         private drawUnits() {
-            Canvas.game.units.forEach(unit => {
-                this.drawUnit(unit);
+            Canvas.game.cells.forEach(cell => {
+                this.drawUnitsInCell(cell);
+            });
+        }
+
+        private drawUnitsInCell(cell: Cell) {
+            cell.units.forEach((unit, index) => {
+                this.drawUnit(unit, index, cell.units.length);
             });
         }
 
