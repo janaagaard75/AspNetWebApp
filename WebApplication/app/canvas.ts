@@ -63,15 +63,19 @@
                 strokeWidth: 1
             });
 
-            hexagon.on("dragenter", e => {
+            cell.hexagon = hexagon;
+
+            hexagon.on(HexagonEvent.dragEnter, e => {
                 //console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
-                hexagon.fill("#eee");
+                cell.hovered = true;
+                this.updateCellColor(cell);
                 this.boardLayer.draw();
             });
 
-            hexagon.on("dragleave", e => {
+            hexagon.on(HexagonEvent.dragLeave, e => {
                 //console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
-                hexagon.fill(null);
+                cell.hovered = false;
+                this.updateCellColor(cell);
                 this.boardLayer.draw();
             });
 
@@ -158,10 +162,11 @@
 
                 const allowedCells = Canvas.game.allowedCellsForMove(unit);
                 allowedCells.forEach(cell => {
-                    // TODO: Implement.
-
-                    cell.hex; // Get the corresponding hexagon.
+                    cell.dropAllowed = true;
+                    this.updateCellColor(cell);
                 });
+
+                this.boardLayer.draw();
             });
             
             // Dragmove is called on every single pixel moved.
@@ -186,15 +191,15 @@
 
                 if (currentHexagon === null) {
                     // Only previous defined: Moving out of a cell.
-                    previousHexagon.fire("dragleave");
+                    previousHexagon.fire(HexagonEvent.dragLeave);
                 } else {
                     if (previousHexagon === null) {
                         // Only current defined: Moving into a cell.
-                        currentHexagon.fire("dragenter");
+                        currentHexagon.fire(HexagonEvent.dragEnter);
                     } else {
                         // Both cells defined and different: Moving from one cell to another.
-                        previousHexagon.fire("dragleave");
-                        currentHexagon.fire("dragenter");
+                        previousHexagon.fire(HexagonEvent.dragLeave);
+                        currentHexagon.fire(HexagonEvent.dragEnter);
                     }
                 }
 
@@ -219,6 +224,13 @@
                     }
                 }
 
+                currentHexagon = null;
+                previousHexagon = null;
+
+                Canvas.game.cells.forEach(cell => {
+                    cell.dropAllowed = false;
+                });
+
                 this.drawGame();
             });
 
@@ -238,5 +250,25 @@
                 this.drawUnit(unit);
             });
         }
-    }
+
+        private updateCellColor(cell: Cell) {
+            var backgroundColor: string;
+            if (cell.hovered) {
+                if (cell.dropAllowed) {
+                    backgroundColor = "#ddd";
+                } else {
+                    // This should not happen.
+                    backgroundColor = "#f99";
+                }
+            } else {
+                if (cell.dropAllowed) {
+                    backgroundColor = "#eee"
+                } else {
+                    backgroundColor = null;
+                }
+            }
+
+            cell.hexagon.fill(backgroundColor);
+        }
+   }
 }

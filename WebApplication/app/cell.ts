@@ -8,6 +8,10 @@ module Muep {
             this.units = [];
         }
 
+        // Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.
+        public dropAllowed = false;
+        public hexagon: Konva.Shape;
+        public hovered = false;
         public units: Unit[];
 
         public addUnit(unit: Unit) {
@@ -25,6 +29,7 @@ module Muep {
                 Math.abs(this.hex.r - other.hex.r),
                 Math.abs(this.hex.s - other.hex.s),
                 Math.abs(this.hex.t - other.hex.t));
+
             return distance;
         }
 

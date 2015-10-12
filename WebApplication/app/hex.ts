@@ -1,6 +1,7 @@
 module Muep {
     "use strict";
 
+    /** Hexagon coordinates with r, s and t. */
     export class Hex {
         constructor(
             public r: number,
