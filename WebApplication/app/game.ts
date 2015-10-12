@@ -12,6 +12,38 @@ module Muep {
         public cells: Cell[];
         public players: Player[];
 
+        public allowedCellsForMove(unit: Unit): Cell[] {
+            if (unit.cell == null) {
+                return [];
+            }
+
+            const allowedCells = this.cells.filter(cell => {
+                const distance = cell.distance(unit.cell);
+                return (distance > 0 && distance <= unit.maximumMoveDistance);
+            });
+
+            return allowedCells;
+        }
+
+        public allowedCellsForPlace(unit: Unit): Cell[] {
+            throw "allowedCellsForPlace is not yet implemented.";
+        }
+
+        public get commands(): Command[] {
+            const commands = this.units.map(unit => unit.command).filter(command => command !== null);
+            return commands;
+        }
+
+        private static flatten<T>(doubleArray: T[][]): T[] {
+            const flattened = Array.prototype.concat.apply([], doubleArray);
+            return flattened;
+        }
+
+        private getCell(hex: Hex): Cell {
+            const cell = this.cells.filter(c => { return c.hex.equals(hex); })[0];
+            return cell;
+        }
+
         initalizeGame() {
             this.cells = [];
             for (let r = -this.gridSize; r <= this.gridSize; r++) {
@@ -49,33 +81,11 @@ module Muep {
             this.getCell(new Hex(0, 3, -3)).addUnit(new Unit(magentaPlayer));
         }
 
-        public get commands(): Command[] {
-            const commands = this.units.map(unit => unit.command).filter(command => command !== null);
-            return commands;
-        }
-
-        private static flatten<T>(doubleArray: T[][]): T[] {
-            const flattened = Array.prototype.concat.apply([], doubleArray);
-            return flattened;
-        }
-
-        private getCell(hex: Hex): Cell {
-            const cell = this.cells.filter(c => { return c.hex.equals(hex); })[0];
-            return cell;
-        }
-
         /** Moves a unit to the specified cell. Also sets the command to null. */
         public moveUnit(unit: Unit, newCell: Cell) {
             unit.cell.removeUnit(unit);
             newCell.addUnit(unit);
             unit.command = null;
-        }
-
-        /** Returns the nearest cell not futher away than maximumDistance. */
-        public nearestAllowedCell(pos: Konva.Vector2d, origin: Cell, maximumDistance: number): Cell {
-            const allowedCells = this.cells.filter(cell => cell.distance(origin) <= maximumDistance);
-            const nearestCell = Game.nearestCell(pos, allowedCells);
-            return nearestCell;
         }
 
         public nearestCell(pos: Konva.Vector2d): Cell {

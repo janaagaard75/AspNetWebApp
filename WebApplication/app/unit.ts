@@ -7,14 +7,16 @@ module Muep {
         ) {
             this.cell = null;
             this.command = null;
+
+            this._color = tinycolor(this.player.color).lighten(0).toString("hex6");
         }
 
+        private _color: string;
         public cell: Cell;
         public command: Command;
 
         public get color() {
-            const unitColor = tinycolor(this.player.color).lighten(0);
-            return unitColor.toString("hex6");
+            return this._color;
         }
 
         public get commandColor() {
