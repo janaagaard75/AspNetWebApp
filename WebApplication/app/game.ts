@@ -72,13 +72,47 @@ module Muep {
             this.players = [redPlayer, yellowPlayer, greenPlayer, cyanPlayer, bluePlayer];
 
             this.getCell(new Hex(3, 0, -3)).addUnit(new Unit(redPlayer));
-            var yellowUnit = new Unit(yellowPlayer)
-            this.getCell(new Hex(2, -2, 0)).addUnit(yellowUnit);
-            yellowUnit.setMoveCommand(this.getCell(new Hex(3, -3, 0)), this.getCell(new Hex(2, -2, 0)));
+            this.getCell(new Hex(3, -3, 0)).addUnit(new Unit(yellowPlayer));
             this.getCell(new Hex(0, -3, 3)).addUnit(new Unit(greenPlayer));
             this.getCell(new Hex(-3, 0, 3)).addUnit(new Unit(cyanPlayer));
             this.getCell(new Hex(-3, 3, 0)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 3, -3)).addUnit(new Unit(magentaPlayer));
+
+            for (let i = 0; i < 6; i++) {
+                var r = 0;
+                var s = 0;
+                var t = 0;
+                switch (i) {
+                    case 0:
+                        r = 1;
+                        s = -1;
+                        break;
+                    case 1:
+                        r = 1;
+                        t = -1;
+                        break;
+                    case 2:
+                        s = 1;
+                        t = -1;
+                        break;
+                    case 3:
+                        r = -1;
+                        s = 1;
+                        break;
+                    case 4:
+                        r = -1;
+                        t = 1;
+                        break;
+                    case 5:
+                        s = -1;
+                        t = 1;
+                        break;
+                }
+
+                const cyanUnit = new Unit(cyanPlayer)
+                this.getCell(new Hex(2, -2, 0)).addUnit(cyanUnit);
+                cyanUnit.setMoveCommand(this.getCell(new Hex(2+r, -2+s, 0+t)), this.getCell(new Hex(2, -2, 0)));
+            }
 
             this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(redPlayer));
             this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(yellowPlayer));
@@ -102,11 +136,11 @@ module Muep {
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
 
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(redPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(greenPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(cyanPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
         }
 
