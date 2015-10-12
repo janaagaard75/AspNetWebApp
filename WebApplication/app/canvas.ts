@@ -121,12 +121,16 @@
         }
 
         private drawMoveCommand(command: MoveCommand) {
+            const midway = Canvas.midPoint(command.from.hex.pos, command.to.hex.pos);
+            const from = Canvas.midPoint(command.from.hex.pos, midway);
+            const to = Canvas.midPoint(command.to.hex.pos, midway);
+
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
                 listening: false,
                 pointerLength: Settings.arrowPointerLength,
                 pointerWidth: Settings.arrowPointerWidth,
-                points: [command.from.hex.pos.x, command.from.hex.pos.y, command.to.hex.pos.x, command.to.hex.pos.y],
+                points: [from.x, from.y, to.x, to.y],
                 shadowBlur: Settings.arrowShadowBlurRadius,
                 shadowColor: "#000",
                 stroke: command.unit.commandColor,
@@ -258,6 +262,16 @@
             cell.units.forEach((unit, index) => {
                 this.drawUnit(unit, index, cell.units.length);
             });
+        }
+
+        /** Returns the points halfway between a and b. */
+        private static midPoint(a: Konva.Vector2d, b: Konva.Vector2d): Konva.Vector2d {
+            const mid = {
+                x: (a.x + b.x) / 2,
+                y: (a.y + b.y) / 2
+            };
+
+            return mid;
         }
 
         private updateCellColor(cell: Cell) {
