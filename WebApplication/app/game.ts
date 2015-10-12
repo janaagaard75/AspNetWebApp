@@ -91,12 +91,23 @@ module Muep {
             this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
             this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
 
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
         }
 
         /** Moves a unit to the specified cell. Also sets the command to null. */
