@@ -171,14 +171,13 @@ var Muep;
                 if (currentHexagon !== null) {
                     const from = unit.cell;
                     const event = e.evt;
-                    const pos = new Muep.Pos(event.layerX, event.layerY);
-                    const to = Canvas.game.nearestCell(pos);
+                    const to = Canvas.game.nearestCell(new Muep.Pos(event.layerX, event.layerY));
                     const distance = from.distance(to);
                     if (from !== to && distance <= unit.maximumMoveDistance) {
                         //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
                         // Move the unit and assign a new move command to it.
                         Canvas.game.moveUnit(unit, to);
-                        unit.setMoveCommand(from, to);
+                        unit.setMoveCommand(from);
                     }
                 }
                 currentHexagon = null;
@@ -263,6 +262,10 @@ var Muep;
         removeUnit(unit) {
             const unitsToRemove = this.units.filter(u => u === unit);
             unitsToRemove.forEach(u => {
+                // TODO: Should check if it's a move command and not just any command.
+                if (u.command !== null) {
+                    throw "Cannot remove unit since it has a command assigned to it.";
+                }
                 u.cell = null;
             });
             this.units = this.units.filter(u => u !== unit);
@@ -408,7 +411,7 @@ var Muep;
                 }
                 const cyanUnit = new Muep.Unit(cyanPlayer);
                 this.getCell(new Muep.Hex(2, -2, 0)).addUnit(cyanUnit);
-                cyanUnit.setMoveCommand(this.getCell(new Muep.Hex(2 + r, -2 + s, 0 + t)), this.getCell(new Muep.Hex(2, -2, 0)));
+                cyanUnit.setMoveCommand(this.getCell(new Muep.Hex(2 + r, -2 + s, 0 + t)));
             }
             for (let i = 0; i < 4; i++) {
                 let from;
@@ -420,7 +423,7 @@ var Muep;
                 }
                 const magentaUnit = new Muep.Unit(magentaPlayer);
                 this.getCell(new Muep.Hex(1, 1, -2)).addUnit(magentaUnit);
-                magentaUnit.setMoveCommand(this.getCell(from), this.getCell(new Muep.Hex(1, 1, -2)));
+                magentaUnit.setMoveCommand(this.getCell(from));
             }
             for (let i = 2; i <= 6; i++) {
                 let to;
@@ -445,15 +448,15 @@ var Muep;
                 for (let j = 0; j < i; j++) {
                     const greenUnit = new Muep.Unit(greenPlayer);
                     this.getCell(to).addUnit(greenUnit);
-                    greenUnit.setMoveCommand(this.getCell(from), this.getCell(to));
+                    greenUnit.setMoveCommand(this.getCell(from));
                 }
             }
         }
         /** Moves a unit to the specified cell. Also sets the command to null. */
-        moveUnit(unit, newCell) {
-            unit.cell.removeUnit(unit);
-            newCell.addUnit(unit);
+        moveUnit(unit, to) {
             unit.command = null;
+            unit.cell.removeUnit(unit);
+            to.addUnit(unit);
         }
         nearestCell(pos) {
             const nearestCell = Game.nearestCell(pos, this.cells);
@@ -551,13 +554,17 @@ var Muep;
 var Muep;
 (function (Muep) {
     "use strict";
-    // TODO: A move command should only have a from cell, since the unit is located in the to cell.
     class MoveCommand extends Muep.Command {
-        constructor(unit, from, to) {
+        constructor(unit, from) {
             super(Muep.CommandType.MoveCommand, unit);
             this.unit = unit;
             this.from = from;
-            this.to = to;
+            if (unit.cell === null) {
+                throw "Can only assign move commands to units that are assigned to a cell.";
+            }
+        }
+        get to() {
+            return this.unit.cell;
         }
     }
     Muep.MoveCommand = MoveCommand;
@@ -646,7 +653,7 @@ var Muep;
             this.player = player;
             this.cell = null;
             this.command = null;
-            this._color = tinycolor(this.player.color).lighten(0).toString("hex6");
+            this._color = tinycolor(this.player.color).lighten(10).toString("hex6");
         }
         get color() {
             return this._color;
@@ -657,8 +664,11 @@ var Muep;
         get maximumMoveDistance() {
             return 1;
         }
-        setMoveCommand(from, to) {
-            const moveCommand = new Muep.MoveCommand(this, from, to);
+        setMoveCommand(to) {
+            if (this.cell === null) {
+                throw "Cannot assign a move command to a unit that isn't positioned on a cell.";
+            }
+            const moveCommand = new Muep.MoveCommand(this, to);
             this.command = moveCommand;
             return moveCommand;
         }

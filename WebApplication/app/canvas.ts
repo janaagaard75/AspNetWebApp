@@ -224,15 +224,14 @@
                 if (currentHexagon !== null) {
                     const from = unit.cell;
                     const event = <MouseEvent>e.evt;
-                    const pos = new Pos(event.layerX, event.layerY);
-                    const to = Canvas.game.nearestCell(pos);
+                    const to = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
                     const distance = from.distance(to);
 
                     if (from !== to && distance <= unit.maximumMoveDistance) {
                         //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
                         // Move the unit and assign a new move command to it.
                         Canvas.game.moveUnit(unit, to);
-                        unit.setMoveCommand(from, to);
+                        unit.setMoveCommand(from);
                     }
                 }
 

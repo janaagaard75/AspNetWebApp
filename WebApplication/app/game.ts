@@ -140,7 +140,7 @@ module Muep {
 
                 const cyanUnit = new Unit(cyanPlayer);
                 this.getCell(new Hex(2, -2, 0)).addUnit(cyanUnit);
-                cyanUnit.setMoveCommand(this.getCell(new Hex(2 + r, -2 + s, 0 + t)), this.getCell(new Hex(2, -2, 0)));
+                cyanUnit.setMoveCommand(this.getCell(new Hex(2 + r, -2 + s, 0 + t)));
             }
 
             for (let i = 0; i < 4; i++) {
@@ -153,7 +153,7 @@ module Muep {
 
                 const magentaUnit = new Unit(magentaPlayer);
                 this.getCell(new Hex(1, 1, -2)).addUnit(magentaUnit);
-                magentaUnit.setMoveCommand(this.getCell(from), this.getCell(new Hex(1, 1, -2)));
+                magentaUnit.setMoveCommand(this.getCell(from));
             }
 
             for (let i = 2; i <= 6; i++) {
@@ -180,16 +180,16 @@ module Muep {
                 for (let j = 0; j < i; j++) {
                     const greenUnit = new Unit(greenPlayer);
                     this.getCell(to).addUnit(greenUnit);
-                    greenUnit.setMoveCommand(this.getCell(from), this.getCell(to));
+                    greenUnit.setMoveCommand(this.getCell(from));
                 }
             }
         }
 
         /** Moves a unit to the specified cell. Also sets the command to null. */
-        public moveUnit(unit: Unit, newCell: Cell) {
-            unit.cell.removeUnit(unit);
-            newCell.addUnit(unit);
+        public moveUnit(unit: Unit, to: Cell) {
             unit.command = null;
+            unit.cell.removeUnit(unit);
+            to.addUnit(unit);
         }
 
         public nearestCell(pos: Konva.Vector2d): Cell {

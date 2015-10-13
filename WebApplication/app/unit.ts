@@ -8,7 +8,7 @@ module Muep {
             this.cell = null;
             this.command = null;
 
-            this._color = tinycolor(this.player.color).lighten(0).toString("hex6");
+            this._color = tinycolor(this.player.color).lighten(10).toString("hex6");
         }
 
         private _color: string;
@@ -27,8 +27,12 @@ module Muep {
             return 1;
         }
 
-        public setMoveCommand(from: Cell, to: Cell): MoveCommand {
-            const moveCommand = new MoveCommand(this, from, to);
+        public setMoveCommand(to: Cell): MoveCommand {
+            if (this.cell === null) {
+                throw "Cannot assign a move command to a unit that isn't positioned on a cell.";
+            }
+
+            const moveCommand = new MoveCommand(this, to);
             this.command = moveCommand;
             return moveCommand;
         }
