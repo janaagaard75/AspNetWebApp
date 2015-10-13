@@ -1,6 +1,4 @@
-﻿/// <reference path="../../_references.ts"/>
-
-module Muep {
+﻿module Muep {
     "use strict";
 
     export interface IGroupByFunc<T> {

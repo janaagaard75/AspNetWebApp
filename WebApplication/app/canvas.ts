@@ -65,14 +65,14 @@
 
             cell.hexagon = hexagon;
 
-            hexagon.on(HexagonEvent.dragEnter, e => {
+            hexagon.on(HexagonEvent.dragEnter, () => {
                 //console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = true;
                 this.updateCellColor(cell);
                 this.boardLayer.draw();
             });
 
-            hexagon.on(HexagonEvent.dragLeave, e => {
+            hexagon.on(HexagonEvent.dragLeave, () => {
                 //console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = false;
                 this.updateCellColor(cell);
@@ -94,7 +94,7 @@
                         this.drawMoveCommand(command, index, commands.length);
                     });
                 });
-            })
+            });
         }
 
         /** Currently redraws the game from scratch each time, re-adding all units and commands. */
@@ -182,7 +182,7 @@
             });
             
             // Dragmove is called on every single pixel moved.
-            circle.on("dragmove", e => {
+            circle.on("dragmove", () => {
                 const pos = this.stage.getPointerPosition();
 
                 currentHexagon = this.boardLayer.getIntersection(pos);
@@ -252,7 +252,7 @@
 
             circle.on("mouseout", () => {
                 document.body.style.cursor = "default";
-            })
+            });
 
             this.unitsLayer.add(circle);
         }
@@ -280,7 +280,7 @@
                 }
             } else {
                 if (cell.dropAllowed) {
-                    backgroundColor = "#eee"
+                    backgroundColor = "#eee";
                 } else {
                     backgroundColor = null;
                 }

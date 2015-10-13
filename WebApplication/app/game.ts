@@ -63,7 +63,7 @@ module Muep {
             }
 
             const redPlayer = new Player("#f00");
-            const yellowPlayer = new Player("#ff0")
+            const yellowPlayer = new Player("#ff0");
             const greenPlayer = new Player("#0f0");
             const cyanPlayer = new Player("#0ff");
             const bluePlayer = new Player("#00f");

@@ -43,13 +43,13 @@ var Muep;
                 strokeWidth: Muep.Settings.lineWidth
             });
             cell.hexagon = hexagon;
-            hexagon.on(Muep.HexagonEvent.dragEnter, e => {
+            hexagon.on(Muep.HexagonEvent.dragEnter, () => {
                 //console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = true;
                 this.updateCellColor(cell);
                 this.boardLayer.draw();
             });
-            hexagon.on(Muep.HexagonEvent.dragLeave, e => {
+            hexagon.on(Muep.HexagonEvent.dragLeave, () => {
                 //console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = false;
                 this.updateCellColor(cell);
@@ -134,7 +134,7 @@ var Muep;
                 this.boardLayer.draw();
             });
             // Dragmove is called on every single pixel moved.
-            circle.on("dragmove", e => {
+            circle.on("dragmove", () => {
                 const pos = this.stage.getPointerPosition();
                 currentHexagon = this.boardLayer.getIntersection(pos);
                 if (currentHexagon !== null) {
@@ -520,14 +520,10 @@ var Muep;
     HexagonEvent.dragLeave = "dragleave";
     Muep.HexagonEvent = HexagonEvent;
 })(Muep || (Muep = {}));
-/// <reference path="scripts/typings/konva/konva.d.ts" />
-/// <reference path="scripts/typings/tinycolor/tinycolor.d.ts" />
-/// <reference path="../../_references.ts"/>
 var Muep;
 (function (Muep) {
     "use strict";
 })(Muep || (Muep = {}));
-/// <reference path="../../_references.ts"/>
 var Muep;
 (function (Muep) {
     "use strict";
@@ -669,7 +665,6 @@ var Muep;
     }
     Muep.Unit = Unit;
 })(Muep || (Muep = {}));
-/// <reference path="../_references.ts"/>
 var Muep;
 (function (Muep) {
     "use strict";
