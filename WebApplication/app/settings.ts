@@ -26,7 +26,7 @@ module Muep {
             this.lineWidth = 1 + this.height / 1000;
 
             this.arrowWidth = 2 * this.lineWidth;
-            this.unitRadius = this.cellRadius / 2.3;
+            this.unitRadius = this.cellRadius / 2.2;
         }
     }
 }

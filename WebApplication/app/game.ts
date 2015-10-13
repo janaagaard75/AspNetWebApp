@@ -78,6 +78,35 @@ module Muep {
             this.getCell(new Hex(-3, 3, 0)).addUnit(new Unit(bluePlayer));
             this.getCell(new Hex(0, 3, -3)).addUnit(new Unit(magentaPlayer));
 
+            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(redPlayer));
+            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(greenPlayer));
+
+            this.getCell(new Hex(0, -1, 1)).addUnit(new Unit(greenPlayer));
+            this.getCell(new Hex(0, -1, 1)).addUnit(new Unit(greenPlayer));
+
+            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
+            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
+            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
+
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
+
+            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
+
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(redPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(yellowPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(greenPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(cyanPlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(bluePlayer));
+            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+
             for (let i = 0; i < 6; i++) {
                 var r = 0;
                 var s = 0;
@@ -111,7 +140,7 @@ module Muep {
 
                 const cyanUnit = new Unit(cyanPlayer);
                 this.getCell(new Hex(2, -2, 0)).addUnit(cyanUnit);
-                cyanUnit.setMoveCommand(this.getCell(new Hex(2+r, -2+s, 0+t)), this.getCell(new Hex(2, -2, 0)));
+                cyanUnit.setMoveCommand(this.getCell(new Hex(2 + r, -2 + s, 0 + t)), this.getCell(new Hex(2, -2, 0)));
             }
 
             for (let i = 0; i < 4; i++) {
@@ -127,34 +156,11 @@ module Muep {
                 magentaUnit.setMoveCommand(this.getCell(from), this.getCell(new Hex(1, 1, -2)));
             }
 
-            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(redPlayer));
-            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(yellowPlayer));
-            this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(greenPlayer));
-
-            this.getCell(new Hex(0, -1, 1)).addUnit(new Unit(greenPlayer));
-            this.getCell(new Hex(0, -1, 1)).addUnit(new Unit(greenPlayer));
-
-            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
-            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
-            this.getCell(new Hex(-1, 0, 1)).addUnit(new Unit(cyanPlayer));
-
-            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
-            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
-            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
-            this.getCell(new Hex(-1, 1, 0)).addUnit(new Unit(yellowPlayer));
-
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(0, 1, -1)).addUnit(new Unit(bluePlayer));
-
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(redPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(yellowPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(greenPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(cyanPlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(bluePlayer));
-            this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
+            for (let i = 0; i < 6; i++) {
+                const greenUnit = new Unit(greenPlayer);
+                this.getCell(new Hex(-1, -2, 3)).addUnit(greenUnit);
+                greenUnit.setMoveCommand(this.getCell(new Hex(0, -3, 3)), this.getCell(new Hex(-1, -2, 3)));
+            }
         }
 
         /** Moves a unit to the specified cell. Also sets the command to null. */
