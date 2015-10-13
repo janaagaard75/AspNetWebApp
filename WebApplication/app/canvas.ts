@@ -151,7 +151,8 @@
         }
 
         private drawUnit(unit: Unit, unitIndex: number, numberOfUnits: number) {
-            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * Settings.distanceBetweenUnits / 2 + unitIndex * Settings.distanceBetweenUnits;
+            const distanceBetweenUnits = Settings.cellRadius / numberOfUnits;
+            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
 
             const circle = new Konva.Circle({
                 draggable: true,

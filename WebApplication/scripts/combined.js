@@ -109,7 +109,8 @@ var Muep;
             throw "drawPlaceCommand() is not yet implemented.";
         }
         drawUnit(unit, unitIndex, numberOfUnits) {
-            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * Muep.Settings.distanceBetweenUnits / 2 + unitIndex * Muep.Settings.distanceBetweenUnits;
+            const distanceBetweenUnits = Muep.Settings.cellRadius / numberOfUnits;
+            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const circle = new Konva.Circle({
                 draggable: true,
                 fill: unit.color,
@@ -630,7 +631,6 @@ var Muep;
             this.height = canvasElement.clientHeight;
             this.width = canvasElement.clientWidth;
             this.cellRadius = this.height / 12.5;
-            this.distanceBetweenUnits = this.height / 60;
             this.lineWidth = 1 + this.height / 1000;
             this.arrowWidth = 2 * this.lineWidth;
             this.unitRadius = this.cellRadius / 2.2;
