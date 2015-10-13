@@ -123,10 +123,10 @@
                 to.x - from.x,
                 to.y - from.y
             );
-            const offsetVector = Utilities.rotate90Degrees(d).getMultiplied(Settings.moveCommandsOffsetFactor);
+            const offset = Utilities.rotate90Degrees(d).multiply(1 / numberOfCommands);
             const origin = new Pos(
-                (numberOfCommands - 1) * offsetVector.x / 2 - index * offsetVector.x,
-                (numberOfCommands - 1) * offsetVector.y / 2 - index * offsetVector.y
+                (numberOfCommands - 1) * offset.x / 2 - index * offset.x,
+                (numberOfCommands - 1) * offset.y / 2 - index * offset.y
             );
 
             const arrow = new Konva["Arrow"]({

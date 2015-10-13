@@ -108,9 +108,9 @@ module Muep {
             this.getCell(new Hex(1, 0, -1)).addUnit(new Unit(magentaPlayer));
 
             for (let i = 0; i < 6; i++) {
-                var r = 0;
-                var s = 0;
-                var t = 0;
+                let r = 0;
+                let s = 0;
+                let t = 0;
                 switch (i) {
                     case 0:
                         r = 1;
@@ -144,7 +144,7 @@ module Muep {
             }
 
             for (let i = 0; i < 4; i++) {
-                var from: Hex;
+                let from: Hex;
                 if (i < 2) {
                     from = new Hex(0, 2, -2);
                 } else {
@@ -156,10 +156,32 @@ module Muep {
                 magentaUnit.setMoveCommand(this.getCell(from), this.getCell(new Hex(1, 1, -2)));
             }
 
-            for (let i = 0; i < 6; i++) {
-                const greenUnit = new Unit(greenPlayer);
-                this.getCell(new Hex(-1, -2, 3)).addUnit(greenUnit);
-                greenUnit.setMoveCommand(this.getCell(new Hex(0, -3, 3)), this.getCell(new Hex(-1, -2, 3)));
+            for (let i = 2; i <= 6; i++) {
+                let to: Hex;
+                switch (i) {
+                    case 2:
+                        to = new Hex(-2, 0, 2);
+                        break;
+                    case 3:
+                        to = new Hex(-2, -1, 3);
+                        break;
+                    case 4:
+                        to = new Hex(-1, -1, 2);
+                        break;
+                    case 5:
+                        to = new Hex(-1, -2, 3);
+                        break;
+                    case 6:
+                        to = new Hex(0, -2, 2);
+                        break;
+                }
+                let from = new Hex(to.r + 1, to.s - 1, to.t);
+
+                for (let j = 0; j < i; j++) {
+                    const greenUnit = new Unit(greenPlayer);
+                    this.getCell(to).addUnit(greenUnit);
+                    greenUnit.setMoveCommand(this.getCell(from), this.getCell(to));
+                }
             }
         }
 

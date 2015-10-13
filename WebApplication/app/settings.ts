@@ -11,7 +11,6 @@ module Muep {
         public static distanceBetweenUnits: number;
         public static height: number;
         public static lineWidth: number;
-        public static moveCommandsOffsetFactor = 1/4;
         public static unitRadius: number;
         public static width: number;
 

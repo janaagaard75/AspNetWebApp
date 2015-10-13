@@ -12,8 +12,9 @@ namespace WebApplication
             bundles.Add(new ScriptBundle("~/bundles/scripts")
                 .Include(
                     "~/scripts/konva.js",
-                    "~/scripts/tinycolor.js")
-                .IncludeDirectory("~/app", "*.js", searchSubdirectories: true));
+                    "~/scripts/tinycolor.js",
+                    "~/scripts/combined.js"));
+                //.IncludeDirectory("~/app", "*.js", searchSubdirectories: true));
         }
     }
 }

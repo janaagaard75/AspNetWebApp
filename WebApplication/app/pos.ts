@@ -8,12 +8,13 @@ module Muep {
         ) { }
     
         /** Returns the squared distance between two positions. */
-        public distance(other: Konva.Vector2d) {
-            const dist = Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2);
-            return dist;
+        public distance(other: Konva.Vector2d): number {
+            const squaredDistance = Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2);
+            return squaredDistance;
         }
 
-        public getMultiplied(factor: number): Pos {
+        /** Returns a new vector where the x and y values are multipled by a factor. */
+        public multiply(factor: number): Pos {
             const multiplied = new Pos(
                 this.x * factor,
                 this.y * factor

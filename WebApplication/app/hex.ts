@@ -10,7 +10,7 @@ module Muep {
         ) {
             const sum = r + s + t;
             if (sum !== 0) {
-                throw `r + s + t must be equal to 0. It's ${sum}.`;
+                throw `r + s + t must be equal to 0. The sum of (${r}, ${s}, ${t}) is ${sum}.`;
             }
 
             this.pos = Hex.hexToPos(this);
