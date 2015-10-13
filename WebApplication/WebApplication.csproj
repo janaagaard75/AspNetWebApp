@@ -219,6 +219,7 @@
     <TypeScriptCompile Include="app\comandtype.ts" />
     <TypeScriptCompile Include="app\command.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
+    <TypeScriptCompile Include="app\interfaces\igroupbyfunc.ts" />
     <TypeScriptCompile Include="app\settings.ts" />
     <TypeScriptCompile Include="app\game.ts" />
     <TypeScriptCompile Include="app\hex.ts" />
@@ -229,6 +230,7 @@
     <TypeScriptCompile Include="app\player.ts" />
     <TypeScriptCompile Include="app\pos.ts" />
     <TypeScriptCompile Include="app\unit.ts" />
+    <TypeScriptCompile Include="app\utilities.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <None Include="_references.ts" />
     <TypeScriptCompile Include="scripts\typings\tinycolor\tinycolor.d.ts" />

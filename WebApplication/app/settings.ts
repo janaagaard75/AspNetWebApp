@@ -8,6 +8,7 @@ module Muep {
         public static arrowWidth: number;
         public static canvasId = "canvas";
         public static cellRadius: number;
+        public static distanceBetweenMoveCommands: number;
         public static distanceBetweenUnits: number;
         public static lineWidth: number;
         public static height: number;
@@ -21,6 +22,7 @@ module Muep {
             this.width = canvasElement.clientWidth;
 
             this.cellRadius = this.height / 12.5;
+            this.distanceBetweenMoveCommands = this.height / 60;
             this.distanceBetweenUnits = this.height / 60;
             this.lineWidth = 1 + this.height / 1000;
 

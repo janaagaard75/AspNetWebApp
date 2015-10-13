@@ -82,25 +82,19 @@
             this.boardLayer.add(hexagon);
         }
 
-        private drawCommand(command: Command) {
-            switch (command.type) {
-                case CommandType.MoveCommand:
-                    this.drawMoveCommand(<MoveCommand>command);
-                    break;
-
-                case CommandType.PlaceCommand:
-                    this.drawPlaceCommand(<PlaceCommand>command);
-                    break;
-
-                default:
-                    throw `The command type ${command.type} is not supported.`;
-            }
-        }
-
         private drawCommands() {
-            Canvas.game.commands.forEach(command => {
-                this.drawCommand(command);
-            });
+            var groupByFrom: IGroupByFunc<MoveCommand> = command => {
+                return command.from.hex;
+            }
+
+            Canvas.game.cells.forEach(cell => {
+                var groups = Utilities.groupBy(cell.moveCommands, groupByFrom);
+                groups.forEach(commands => {
+                    commands.forEach((command, index) => {
+                        this.drawMoveCommand(command, index, commands.length);
+                    });
+                });
+            })
         }
 
         /** Currently redraws the game from scratch each time, re-adding all units and commands. */
@@ -120,10 +114,12 @@
             this.stage.draw();
         }
 
-        private drawMoveCommand(command: MoveCommand) {
-            const midway = Canvas.midPoint(command.from.hex.pos, command.to.hex.pos);
-            const from = Canvas.midPoint(command.from.hex.pos, midway);
-            const to = Canvas.midPoint(command.to.hex.pos, midway);
+        private drawMoveCommand(command: MoveCommand, index: number, numberOfCommands: number) {
+            const midway = Utilities.midPoint(command.from.hex.pos, command.to.hex.pos);
+            const from = Utilities.midPoint(command.from.hex.pos, midway);
+            const to = Utilities.midPoint(command.to.hex.pos, midway);
+
+            const x = numberOfCommands * Settings.distanceBetweenMoveCommands / 2 - index * Settings.distanceBetweenMoveCommands;
 
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
@@ -135,7 +131,7 @@
                 shadowColor: "#000",
                 stroke: command.unit.commandColor,
                 strokeWidth: Settings.arrowWidth,
-                x: 0,
+                x: x,
                 y: 0
             });
 
@@ -262,16 +258,6 @@
             cell.units.forEach((unit, index) => {
                 this.drawUnit(unit, index, cell.units.length);
             });
-        }
-
-        /** Returns the points halfway between a and b. */
-        private static midPoint(a: Konva.Vector2d, b: Konva.Vector2d): Konva.Vector2d {
-            const mid = {
-                x: (a.x + b.x) / 2,
-                y: (a.y + b.y) / 2
-            };
-
-            return mid;
         }
 
         private updateCellColor(cell: Cell) {

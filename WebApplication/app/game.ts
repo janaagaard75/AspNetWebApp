@@ -109,9 +109,22 @@ module Muep {
                         break;
                 }
 
-                const cyanUnit = new Unit(cyanPlayer)
+                const cyanUnit = new Unit(cyanPlayer);
                 this.getCell(new Hex(2, -2, 0)).addUnit(cyanUnit);
                 cyanUnit.setMoveCommand(this.getCell(new Hex(2+r, -2+s, 0+t)), this.getCell(new Hex(2, -2, 0)));
+            }
+
+            for (let i = 0; i < 4; i++) {
+                var from: Hex;
+                if (i < 2) {
+                    from = new Hex(0, 2, -2);
+                } else {
+                    from = new Hex(1, 2, -3);
+                }
+
+                const magentaUnit = new Unit(magentaPlayer);
+                this.getCell(new Hex(1, 1, -2)).addUnit(magentaUnit);
+                magentaUnit.setMoveCommand(this.getCell(from), this.getCell(new Hex(1, 1, -2)));
             }
 
             this.getCell(new Hex(0, 0, 0)).addUnit(new Unit(redPlayer));

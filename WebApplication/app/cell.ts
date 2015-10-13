@@ -33,6 +33,15 @@ module Muep {
             return distance;
         }
 
+        public get moveCommands(): MoveCommand[] {
+            const moveCommands = this.units
+                .map(unit => unit.command)
+                .filter(command => command !== null && command.type === CommandType.MoveCommand)
+                .map(moveCommand => <MoveCommand>moveCommand);
+
+            return moveCommands;
+        }
+
         public removeUnit(unit: Unit) {
             const unitsToRemove = this.units.filter(u => u === unit);
             unitsToRemove.forEach(u => {
