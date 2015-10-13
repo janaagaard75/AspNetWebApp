@@ -119,7 +119,15 @@
             const from = Utilities.midPoint(command.from.hex.pos, midway);
             const to = Utilities.midPoint(command.to.hex.pos, midway);
 
-            const x = numberOfCommands * Settings.distanceBetweenMoveCommands / 2 - index * Settings.distanceBetweenMoveCommands;
+            const d = new Pos(
+                to.x - from.x,
+                to.y - from.y
+            );
+            const offsetVector = Utilities.rotate90Degrees(d).getMultiplied(Settings.moveCommandsOffsetFactor);
+            const origin = new Pos(
+                (numberOfCommands - 1) * offsetVector.x / 2 - index * offsetVector.x,
+                (numberOfCommands - 1) * offsetVector.y / 2 - index * offsetVector.y
+            );
 
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
@@ -131,8 +139,8 @@
                 shadowColor: "#000",
                 stroke: command.unit.commandColor,
                 strokeWidth: Settings.arrowWidth,
-                x: x,
-                y: 0
+                x: origin.x,
+                y: origin.y
             });
 
             this.commandsLayer.add(arrow);

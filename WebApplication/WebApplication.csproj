@@ -231,6 +231,7 @@
     <TypeScriptCompile Include="app\pos.ts" />
     <TypeScriptCompile Include="app\unit.ts" />
     <TypeScriptCompile Include="app\utilities.ts" />
+    <TypeScriptCompile Include="app\vector.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <None Include="_references.ts" />
     <TypeScriptCompile Include="scripts\typings\tinycolor\tinycolor.d.ts" />

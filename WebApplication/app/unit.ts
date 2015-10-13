@@ -13,7 +13,7 @@ module Muep {
 
         private _color: string;
         public cell: Cell;
-        public command: Command;
+        public command: Command; // TODO: A unit may have both a place command and a move command.
 
         public get color() {
             return this._color;

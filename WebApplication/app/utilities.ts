@@ -24,13 +24,20 @@ module Muep {
         }
 
         /** Returns the points halfway between a and b. */
-        public static midPoint(a: Konva.Vector2d, b: Konva.Vector2d): Konva.Vector2d {
-            const mid = {
-                x: (a.x + b.x) / 2,
-                y: (a.y + b.y) / 2
-            };
-
+        public static midPoint(a: Konva.Vector2d, b: Konva.Vector2d): Pos {
+            const mid = new Pos(
+                (a.x + b.x) / 2,
+                (a.y + b.y) / 2
+            );
             return mid;
+        }
+
+        public static rotate90Degrees(vector: Konva.Vector2d): Pos {
+            const rotated = new Pos(
+                -vector.y,
+                vector.x
+            );
+            return rotated;
         }
     }
 }

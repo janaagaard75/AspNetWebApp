@@ -13,6 +13,15 @@ module Muep {
             return dist;
         }
 
+        public getMultiplied(factor: number): Pos {
+            const multiplied = new Pos(
+                this.x * factor,
+                this.y * factor
+            );
+
+            return multiplied;
+        }
+
         public nearestHex(hexes: Hex[]): Hex {
             var minDist: number = null;
             var nearestHex: Hex;
