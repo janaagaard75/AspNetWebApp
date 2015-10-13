@@ -90,8 +90,10 @@
             Canvas.game.cells.forEach(cell => {
                 var groups = Utilities.groupBy(cell.moveCommands, groupByFrom);
                 groups.forEach(commands => {
+                    const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
+                    const totalCommands = commands.length + oppositeCommands.length;
                     commands.forEach((command, index) => {
-                        this.drawMoveCommand(command, index, commands.length);
+                        this.drawMoveCommand(command, index, totalCommands);
                     });
                 });
             });

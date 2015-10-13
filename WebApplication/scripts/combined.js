@@ -64,8 +64,10 @@ var Muep;
             Canvas.game.cells.forEach(cell => {
                 var groups = Muep.Utilities.groupBy(cell.moveCommands, groupByFrom);
                 groups.forEach(commands => {
+                    const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
+                    const totalCommands = commands.length + oppositeCommands.length;
                     commands.forEach((command, index) => {
-                        this.drawMoveCommand(command, index, commands.length);
+                        this.drawMoveCommand(command, index, totalCommands);
                     });
                 });
             });
@@ -328,6 +330,10 @@ var Muep;
             const cell = this.cells.filter(c => { return c.hex.equals(hex); })[0];
             return cell;
         }
+        getMoveCommands(from, to) {
+            const moveCommands = this.moveCommands.filter(moveCommand => moveCommand.from === from && moveCommand.to === to);
+            return moveCommands;
+        }
         initalizeGame() {
             this.cells = [];
             for (let r = -this.gridSize; r <= this.gridSize; r++) {
@@ -451,6 +457,12 @@ var Muep;
                     greenUnit.setMoveCommand(this.getCell(from));
                 }
             }
+        }
+        get moveCommands() {
+            const moveCommands = this.commands
+                .filter(command => command.type === Muep.CommandType.MoveCommand)
+                .map(moveCommand => moveCommand);
+            return moveCommands;
         }
         /** Moves a unit to the specified cell. Also sets the command to null. */
         moveUnit(unit, to) {

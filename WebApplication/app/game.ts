@@ -44,7 +44,12 @@ module Muep {
             return cell;
         }
 
-        initalizeGame() {
+        public getMoveCommands(from: Cell, to: Cell): MoveCommand[] {
+            const moveCommands = this.moveCommands.filter(moveCommand => moveCommand.from === from && moveCommand.to === to);
+            return moveCommands;
+        }
+
+        private initalizeGame() {
             this.cells = [];
             for (let r = -this.gridSize; r <= this.gridSize; r++) {
                 for (let s = -this.gridSize; s <= this.gridSize; s++) {
@@ -183,6 +188,14 @@ module Muep {
                     greenUnit.setMoveCommand(this.getCell(from));
                 }
             }
+        }
+
+        public get moveCommands(): MoveCommand[] {
+            const moveCommands = this.commands
+                .filter(command => command.type === CommandType.MoveCommand)
+                .map(moveCommand => <MoveCommand>moveCommand);
+
+            return moveCommands;
         }
 
         /** Moves a unit to the specified cell. Also sets the command to null. */
