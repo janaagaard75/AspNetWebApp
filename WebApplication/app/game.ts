@@ -9,9 +9,6 @@ module Muep {
             }
         }
 
-        private gridSize = 3;
-        private playerColors = ["#f00", "#0f0", "#00f"];
-
         public cells: Cell[];
         public players: Player[];
 
@@ -44,13 +41,13 @@ module Muep {
 
         private initalizeGame() {
             this.cells = [];
-            for (let r = -this.gridSize; r <= this.gridSize; r++) {
-                for (let s = -this.gridSize; s <= this.gridSize; s++) {
+            for (let r = -Settings.gridSize; r <= Settings.gridSize; r++) {
+                for (let s = -Settings.gridSize; s <= Settings.gridSize; s++) {
                     // Satisfy r+s+t=0.
                     const t = -r - s;
                     
                     // t cannot exceed gridSize.
-                    if (t < -this.gridSize || t > this.gridSize) {
+                    if (t < -Settings.gridSize || t > Settings.gridSize) {
                         continue;
                     }
 
@@ -60,14 +57,13 @@ module Muep {
                 }
             }
 
-            const redPlayer = new Player("#f00");
-            const yellowPlayer = new Player("#ff0");
-            const greenPlayer = new Player("#0f0");
-            const cyanPlayer = new Player("#0ff");
-            const bluePlayer = new Player("#00f");
-            const magentaPlayer = new Player("#f0f");
-
-            this.players = [redPlayer, yellowPlayer, greenPlayer, cyanPlayer, bluePlayer, magentaPlayer];
+            this.players = [];
+            const numberOfPlayers = 6;
+            const playerColors = ["#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f"];
+            for (let i = 0; i < numberOfPlayers; i++) {
+                const player = new Player(playerColors[i]);
+                this.players.push(player);
+            }
         }
 
         public get moveCommands(): MoveCommand[] {

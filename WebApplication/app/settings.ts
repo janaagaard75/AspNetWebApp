@@ -8,6 +8,7 @@ module Muep {
         public static arrowWidth: number;
         public static canvasId = "canvas";
         public static cellRadius: number;
+        public static gridSize = 3; // Set to minimum 3 if in demo mode. The command arrows aren't suited for values above 6.
         public static height: number;
         public static lineWidth: number;
         public static unitRadius: number;
@@ -19,8 +20,10 @@ module Muep {
             this.height = canvasElement.clientHeight;
             this.width = canvasElement.clientWidth;
 
-            this.cellRadius = this.height / 12.5;
-            this.lineWidth = 1 + this.height / 1000;
+            const boardSize = Math.min(this.height, this.width);
+
+            this.cellRadius = boardSize / (2 * this.gridSize + 1) * 0.55;
+            this.lineWidth = 1 + boardSize / 1000;
 
             this.arrowWidth = 2 * this.lineWidth;
             this.unitRadius = this.cellRadius / 2.2;
