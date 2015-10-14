@@ -173,6 +173,8 @@
 
             circle.on("dragstart", e => {
                 e.target.moveTo(this.dragLayer);
+                document.body.classList.remove("grab-cursor");
+                document.body.classList.add("grabbing-cursor");
 
                 const allowedCells = Canvas.game.allowedCellsForMove(unit);
                 allowedCells.forEach(cell => {
@@ -222,6 +224,7 @@
 
             circle.on("dragend", e => {
                 e.target.moveTo(this.unitsLayer);
+                document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
                     const from = unit.cell;
@@ -248,11 +251,11 @@
             });
 
             circle.on("mouseover", () => {
-                document.body.style.cursor = "move";
+                document.body.classList.add("grab-cursor");
             });
 
             circle.on("mouseout", () => {
-                document.body.style.cursor = "default";
+                document.body.classList.remove("grab-cursor");
             });
 
             this.unitsLayer.add(circle);

@@ -7,3 +7,19 @@
     height: 320px;
     width: 320px;
 }
+
+.grab-cursor {
+    cursor: move;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    /* ReSharper disable once InvalidValue */
+    cursor: grab;
+}
+
+.grabbing-cursor {
+    cursor: move;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+    /* ReSharper disable once InvalidValue */
+    cursor: grabbing;
+}
