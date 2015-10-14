@@ -6,14 +6,17 @@ module Muep {
             public player: Player
         ) {
             this.cell = null;
-            this.command = null;
+            this.moveCommand = null;
+            this.placeCommand = null;
 
             this._color = tinycolor(this.player.color).lighten(10).toString("hex6");
         }
 
         private _color: string;
+        public moveCommand: MoveCommand;
+        public placeCommand: PlaceCommand;
+
         public cell: Cell;
-        public command: Command; // TODO: A unit may have both a place command and a move command.
 
         public get color() {
             return this._color;
@@ -28,13 +31,21 @@ module Muep {
         }
 
         public setMoveCommand(to: Cell): MoveCommand {
-            if (this.cell === null) {
-                throw "Cannot assign a move command to a unit that isn't positioned on a cell.";
+            if (this.cell === null && this.placeCommand === null) {
+                throw "Cannot assign a move command to a unit that isn't positioned on a cell or doesn't have a place command.";
             }
 
-            const moveCommand = new MoveCommand(this, to);
-            this.command = moveCommand;
-            return moveCommand;
+            this.moveCommand = new MoveCommand(this, to);
+            return this.moveCommand;
+        }
+
+        public setPlaceCommand(on: Cell): PlaceCommand {
+            if (this.cell !== null) {
+                throw "Cannot assign a place command ot a unit that already is placed on a cell.";
+            }
+
+            this.placeCommand = new PlaceCommand(this, on);
+            return this.placeCommand;
         }
     }
 }

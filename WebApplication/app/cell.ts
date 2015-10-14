@@ -35,9 +35,8 @@ module Muep {
 
         public get moveCommands(): MoveCommand[] {
             const moveCommands = this.units
-                .map(unit => unit.command)
-                .filter(command => command !== null && command.type === CommandType.MoveCommand)
-                .map(moveCommand => <MoveCommand>moveCommand);
+                .map(unit => unit.moveCommand)
+                .filter(moveCommand => moveCommand !== null);
 
             return moveCommands;
         }
@@ -45,9 +44,10 @@ module Muep {
         public removeUnit(unit: Unit) {
             const unitsToRemove = this.units.filter(u => u === unit);
             unitsToRemove.forEach(u => {
-                // TODO: Should check if it's a move command and not just any command.
-                if (u.command !== null) {
-                    throw "Cannot remove unit since it has a command assigned to it.";
+                if (u.moveCommand !== null) {
+                    throw "Cannot remove unit since it has a move command assigned to it.";
+                } else if (u.placeCommand !== null) {
+                    throw "Cannot remove unit since it has a place command assigned to it.";
                 }
 
                 u.cell = null;

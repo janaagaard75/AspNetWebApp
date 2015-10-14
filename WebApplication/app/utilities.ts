@@ -1,11 +1,27 @@
 ﻿module Muep {
     "use strict";
 
-    interface IGroups<T> {
-        [index: string]: T[]
-    }
-
     export class Utilities {
+        public static flatten<T>(doubleArray: T[][]): T[] {
+            const flattened = Array.prototype.concat.apply([], doubleArray);
+            return flattened;
+        }
+
+        public static getUrlParameters(): IUrlParameters {
+            var pl = /\+/g;  // Regex for replacing addition symbol with a space
+            const search = /([^&=]+)=?([^&]*)/g;
+            const decode = s => decodeURIComponent(s.replace(pl, " "));
+            const query = window.location.search.substring(1);
+            const parameters: IUrlParameters = {};
+
+            let match: RegExpExecArray;
+            while ((match = search.exec(query))) {
+                parameters[decode(match[1])] = decode(match[2]);
+            }
+
+            return parameters;
+        }
+
         public static groupBy<T>(array: T[], groupByFunc: IGroupByFunc<T>): T[][] {
             var associativeArray: IGroups<T> = {};
             array.forEach(item => {

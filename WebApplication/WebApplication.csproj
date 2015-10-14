@@ -219,8 +219,11 @@
     <TypeScriptCompile Include="app\cell.ts" />
     <TypeScriptCompile Include="app\comandtype.ts" />
     <TypeScriptCompile Include="app\command.ts" />
+    <TypeScriptCompile Include="app\demosetup.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
     <TypeScriptCompile Include="app\interfaces\igroupbyfunc.ts" />
+    <TypeScriptCompile Include="app\interfaces\igroups.ts" />
+    <TypeScriptCompile Include="app\interfaces\iurlparameters.ts" />
     <TypeScriptCompile Include="app\settings.ts" />
     <TypeScriptCompile Include="app\game.ts" />
     <TypeScriptCompile Include="app\hex.ts" />
@@ -246,7 +249,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <TypeScriptTarget>ES6</TypeScriptTarget>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

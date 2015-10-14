@@ -5,12 +5,18 @@ module Muep {
         constructor() {
             this.setCanvasSize();
             Settings.initialize();
-            Main.game = new Game();
+            Main.game = new Game(this.demoMode());
             Main.canvas = new Canvas(Main.game);
         }
 
         private static canvas: Canvas;
         private static game: Game;
+
+        private demoMode(): boolean {
+            const paramters = Utilities.getUrlParameters();
+            const inDemoMode = paramters["demo"] === "true";
+            return inDemoMode;
+        }
 
         private setCanvasSize() {
             const minSize = Math.min(window.innerWidth, window.innerHeight);

@@ -6,7 +6,7 @@ namespace WebApplication.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "MUEP ASP.NET";
+            ViewBag.Title = "Cocaine Barons";
             return View();
         }
     }

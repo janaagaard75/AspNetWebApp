@@ -5,8 +5,6 @@ module Muep {
         constructor(
             public type: CommandType,
             public unit: Unit
-        ) {
-            unit.command = this;
-        }
+        ) { }
     }
 }
