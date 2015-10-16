@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "WebApplication\WebApplication.csproj", "{FD3F3645-9625-48DA-9348-642BB7937594}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication.Tests", "WebApplication.Tests\WebApplication.Tests.csproj", "{51A129A3-E70B-4364-B8A4-986BEA359833}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E3CA08A-4CD2-48C3-BA3A-C266F55343BD}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -24,10 +22,6 @@ Global
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51A129A3-E70B-4364-B8A4-986BEA359833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51A129A3-E70B-4364-B8A4-986BEA359833}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51A129A3-E70B-4364-B8A4-986BEA359833}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51A129A3-E70B-4364-B8A4-986BEA359833}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
