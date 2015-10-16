@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System;
+using Microsoft.AspNet.SignalR;
 
 namespace WebApplication.Hubs
 {
     public class GameHub : Hub
     {
-        public void Hello()
-        {
-            Clients.All.hello();
-        }
-
         public void GetPlayerColor()
         {
-            Clients.Caller.setPlayerColor("#f00");
+            int random = new Random().Next(6);
+            Clients.Caller.setPlayerColor(random.ToString());
         }
     }
 }
