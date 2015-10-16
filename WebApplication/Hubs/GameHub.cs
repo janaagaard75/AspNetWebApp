@@ -24,6 +24,7 @@ namespace CocaineCartels.WebApplication.Hubs
 
             Player player = Game.AddOrGetPlayer(ipAddress, userAgent);
             Clients.Caller.setPlayerColor(player.Color);
+            Clients.All.playerJoined(player.Color);
         }
     }
 }
