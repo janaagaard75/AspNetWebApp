@@ -5,16 +5,21 @@ module Muep {
         constructor() {
             this.setCanvasSize();
             Settings.initialize();
-            Main.game = new Game(this.demoMode());
+            Main.game = new Game(this.isInDemoMode());
             Main.canvas = new Canvas(Main.game);
         }
 
         private static canvas: Canvas;
         private static game: Game;
 
-        private demoMode(): boolean {
+        private getMode(): string {
             const paramters = Utilities.getUrlParameters();
-            const inDemoMode = paramters["demo"] === "true";
+            const mode = paramters["mode"];
+            return mode;
+        }
+
+        private isInDemoMode(): boolean {
+            const inDemoMode = this.getMode() === "demo";
             return inDemoMode;
         }
 

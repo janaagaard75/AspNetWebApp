@@ -191,7 +191,6 @@
 
                 currentHexagon = this.boardLayer.getIntersection(pos);
                 if (currentHexagon !== null) {
-                    // TODO: Either move the nearest-logic in here or make a direct link between each cell and each heaxgon.
                     const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
                     const distance = unit.cell.distance(currentCell);
 

@@ -268,11 +268,13 @@
     <TypeScriptCompile Include="app\pos.ts" />
     <TypeScriptCompile Include="app\unit.ts" />
     <TypeScriptCompile Include="app\utilities.ts" />
+    <TypeScriptCompile Include="scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <Content Include="scripts\combined.js.map" />
     <Content Include="scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Home\Chat.cshtml" />
     <None Include="_references.ts" />
+    <TypeScriptCompile Include="scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="scripts\typings\tinycolor\tinycolor.d.ts" />
   </ItemGroup>
   <ItemGroup>
