@@ -191,6 +191,7 @@
     </Compile>
     <Compile Include="Hubs\ChatHub.cs" />
     <Compile Include="App_Start\SignalRConfig.cs" />
+    <Compile Include="Hubs\GameHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +255,9 @@
     <TypeScriptCompile Include="app\command.ts" />
     <TypeScriptCompile Include="app\demosetup.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
+    <TypeScriptCompile Include="app\interfaces\igameclient.ts" />
+    <TypeScriptCompile Include="app\interfaces\igamehub.ts" />
+    <TypeScriptCompile Include="app\interfaces\igameserver.ts" />
     <TypeScriptCompile Include="app\interfaces\igroupbyfunc.ts" />
     <TypeScriptCompile Include="app\interfaces\igroups.ts" />
     <TypeScriptCompile Include="app\interfaces\iurlparameters.ts" />
