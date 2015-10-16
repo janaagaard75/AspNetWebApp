@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace WebApplication
+namespace CocaineCartels.WebApplication
 {
     public static class BundleConfig
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
 
-namespace WebApplication.Controllers
+namespace CocaineCartels.WebApplication.Controllers
 {
     public class ValuesController : ApiController
     {

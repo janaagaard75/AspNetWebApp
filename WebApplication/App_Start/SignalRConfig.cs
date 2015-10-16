@@ -1,9 +1,9 @@
-﻿using Microsoft.Owin;
+﻿using CocaineCartels.WebApplication;
+using Microsoft.Owin;
 using Owin;
-using WebApplication;
 
 [assembly: OwinStartup(typeof(SignalRConfig))]
-namespace WebApplication
+namespace CocaineCartels.WebApplication
 {
     public static class SignalRConfig
     {

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{5CB93BE5-3469-4311-982F-BBA3C363A780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD3F3645-9625-48DA-9348-642BB7937594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CB93BE5-3469-4311-982F-BBA3C363A780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CB93BE5-3469-4311-982F-BBA3C363A780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CB93BE5-3469-4311-982F-BBA3C363A780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CB93BE5-3469-4311-982F-BBA3C363A780}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

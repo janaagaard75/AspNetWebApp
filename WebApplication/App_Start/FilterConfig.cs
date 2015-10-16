@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace WebApplication
+namespace CocaineCartels.WebApplication
 {
     public static class FilterConfig
     {

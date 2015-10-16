@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 
-namespace WebApplication.Hubs
+namespace CocaineCartels.WebApplication.Hubs
 {
     public class ChatHub : Hub
     {

@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace WebApplication
+namespace CocaineCartels.WebApplication
 {
     public static class RouteConfig
     {

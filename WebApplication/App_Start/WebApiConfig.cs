@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace WebApplication
+namespace CocaineCartels.WebApplication
 {
     public static class WebApiConfig
     {
