@@ -6,7 +6,11 @@ namespace WebApplication.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Cocaine Barons";
+            return View();
+        }
+
+        public ActionResult Chat()
+        {
             return View();
         }
     }
