@@ -10,9 +10,11 @@
             PlayerColor = player.Color;
         }
 
-        public readonly MoveCommand MoveCommand;
-        public readonly PlaceCommand PlaceCommand;
-        internal readonly Player Player;
+        public MoveCommand MoveCommand;
+        public PlaceCommand PlaceCommand;
         public readonly string PlayerColor;
+
+        internal Cell Cell;
+        internal readonly Player Player;
     }
 }

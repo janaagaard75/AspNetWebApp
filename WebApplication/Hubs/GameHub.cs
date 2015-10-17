@@ -10,10 +10,10 @@ namespace CocaineCartels.WebApplication.Hubs
     {
         public GameHub()
         {
-            Game = Game.Instance;
+            GameInstance = Game.Instance;
         }
 
-        private static Game Game;
+        private static Game GameInstance; // TODO: Does this need to static?
 
         public void GetPlayerColor()
         {
@@ -22,9 +22,14 @@ namespace CocaineCartels.WebApplication.Hubs
             IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
             string userAgent = HttpContext.Current.Request.UserAgent;
 
-            Player player = Game.AddOrGetPlayer(ipAddress, userAgent);
-            Clients.Caller.setPlayerColor(player.Color);
+            Player player = GameInstance.AddOrGetPlayer(ipAddress, userAgent);
+            Clients.Caller.setPlayerColor(player.Color); // TODO: Should return the color instead.
             Clients.All.playerJoined(player.Color);
+        }
+
+        public Game GetGame()
+        {
+            return GameInstance;
         }
     }
 }
