@@ -7,6 +7,8 @@ namespace CocaineCartels.BusinessLogic
 {
     public sealed class Game
     {
+        // TODO: Make the instance private?
+
         [JsonIgnore]
         public static Game Instance { get; } = new Game();
 
@@ -24,18 +26,6 @@ namespace CocaineCartels.BusinessLogic
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
-        public Player AddOrGetPlayer(IPAddress ipAddress, string userAgent)
-        {
-            Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);
-
-            if (matchingPlayer == null)
-            {
-                return AddPlayer(ipAddress, userAgent);
-            }
-
-            return matchingPlayer;
-        }
-
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
             if (NumberOfPlayers == MaximumNumberOfPlayers)
@@ -47,6 +37,18 @@ namespace CocaineCartels.BusinessLogic
             Players.Add(newPlayer);
 
             return newPlayer;
+        }
+
+        public Player GetCurrentPlayer(IPAddress ipAddress, string userAgent)
+        {
+            Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);
+
+            if (matchingPlayer == null)
+            {
+                return AddPlayer(ipAddress, userAgent);
+            }
+
+            return matchingPlayer;
         }
     }
 }

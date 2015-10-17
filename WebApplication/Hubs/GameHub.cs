@@ -22,7 +22,7 @@ namespace CocaineCartels.WebApplication.Hubs
             IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
             string userAgent = HttpContext.Current.Request.UserAgent;
 
-            Player player = GameInstance.AddOrGetPlayer(ipAddress, userAgent);
+            Player player = GameInstance.GetCurrentPlayer(ipAddress, userAgent);
             Clients.Caller.setPlayerColor(player.Color); // TODO: Should return the color instead.
             Clients.All.playerJoined(player.Color);
         }
