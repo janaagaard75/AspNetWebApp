@@ -8,12 +8,26 @@ module Muep {
             Main.game = new Game(this.isInDemoMode());
             Main.canvas = new Canvas(Main.game);
 
-            this.updatePlayerColor();
+            //this.updatePlayerColor(); // TODO: Remove if going completely away from SignalR.
+            this.getGameInstance();
         }
 
         private static canvas: Canvas;
         private static game: Game;
         private static playerColor: string;
+
+        private getGameInstance() {     
+            $.ajax({
+                type: "GET",
+                url: "/api/game",
+                dataType: "json"
+            }).then(gameData => {
+                console.info(gameData);
+                //var prettyfied = JSON.stringify(gameData, null, 2);
+            }).fail(error => {
+                console.error("Could not retrieve game data: ", error);
+            });
+        }
 
         private getMode(): string {
             const paramters = Utilities.getUrlParameters();
