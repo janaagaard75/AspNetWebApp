@@ -161,7 +161,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\ChatHub.cs" />
     <Compile Include="App_Start\SignalRConfig.cs" />
     <Compile Include="Hubs\GameHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -230,7 +229,6 @@
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <Content Include="scripts\combined.js.map" />
     <Content Include="scripts\jquery-2.1.4.min.map" />
-    <Content Include="Views\Home\Chat.cshtml" />
     <None Include="_references.ts" />
     <TypeScriptCompile Include="scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="scripts\typings\tinycolor\tinycolor.d.ts" />

@@ -18,11 +18,11 @@ namespace CocaineCartels.BusinessLogic
 
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
 
+        public readonly Board Board;
+        public readonly List<Player> Players;
+
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
-
-        public Board Board { get; private set; }
-        public readonly List<Player> Players;
 
         public Player AddOrGetPlayer(IPAddress ipAddress, string userAgent)
         {
