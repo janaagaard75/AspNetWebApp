@@ -4,11 +4,15 @@
     {
         public Unit(Player player)
         {
+            MoveCommand = null;
+            PlaceCommand = null;
+            Player = player;
             PlayerColor = player.Color;
         }
 
-        public string PlayerColor { get; private set; }
-        public MoveCommand MoveCommand;
-        public PlaceCommand PlaceCommand;
+        public readonly MoveCommand MoveCommand;
+        public readonly PlaceCommand PlaceCommand;
+        internal readonly Player Player;
+        public readonly string PlayerColor;
     }
 }

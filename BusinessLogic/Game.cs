@@ -13,19 +13,19 @@ namespace CocaineCartels.BusinessLogic
 
         private Game()
         {
-            Board = new Board(GridSize);
+            Board = new Board(Settings.GridSize);
             Players = new List<Player>();
         }
 
         public static Game Instance => SingletonInstance;
 
-        private int GridSize = 3;
-        public Board Board { get; private set; }
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
-        public readonly List<Player> Players;
 
         private int MaximumNumberOfPlayers => PlayerColors.Length;
-        public int NumberOfPlayers => Players.Count;
+        private int NumberOfPlayers => Players.Count;
+
+        public Board Board { get; private set; }
+        public readonly List<Player> Players;
 
         public Player AddOrGetPlayer(IPAddress ipAddress, string userAgent)
         {

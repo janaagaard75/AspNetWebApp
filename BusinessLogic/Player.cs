@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Newtonsoft.Json;
 
 namespace CocaineCartels.BusinessLogic
 {
@@ -11,8 +12,13 @@ namespace CocaineCartels.BusinessLogic
             UserAgent = userAgent;
         }
 
-        public string Color { get; private set; }
-        public IPAddress IpAddress { get; private set; }
-        public string UserAgent { get; private set; }
+        /// <summary>The color also identifies a player, so use this property the player ID.</summary>
+        public readonly string Color;
+
+        [JsonIgnore]
+        public readonly IPAddress IpAddress;
+
+        [JsonIgnore]
+        public readonly string UserAgent;
     }
 }

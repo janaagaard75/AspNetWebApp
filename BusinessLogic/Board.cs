@@ -28,7 +28,7 @@ namespace CocaineCartels.BusinessLogic
             GridSize = gridSize;
         }
 
-        public IEnumerable<Cell> Cells { get; private set; }
-        public int GridSize { get; private set; }
+        public readonly IEnumerable<Cell> Cells;
+        public readonly int GridSize;
     }
 }

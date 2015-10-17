@@ -1,13 +1,17 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    public class MoveCommand
+    public class MoveCommand : Command
     {
-        // TODO: Can't use a cell reference here, since it has to be serializeable.
-        public MoveCommand(Cell to)
+        public MoveCommand(Unit unit, Cell to)
+            : base(unit)
         {
             To = to;
         }
 
-        public Cell To { get; private set; }
+        internal readonly Cell To;
+
+        public int R => To.R;
+        public int S => To.S;
+        public int T => To.T;
     }
 }

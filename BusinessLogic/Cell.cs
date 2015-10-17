@@ -20,9 +20,9 @@ namespace CocaineCartels.BusinessLogic
             Units = new List<Unit>();
         }
 
-        public int R { get; private set; }
-        public int S { get; private set; }
-        public int T { get; private set; }
-        public IEnumerable<Unit> Units;
+        public readonly int R;
+        public readonly int S;
+        public readonly int T;
+        public readonly IEnumerable<Unit> Units;
     }
 }

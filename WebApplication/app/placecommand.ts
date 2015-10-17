@@ -4,7 +4,7 @@ module Muep {
     export class PlaceCommand extends Command {
         constructor(
             public unit: Unit,
-            public cell: Cell
+            public on: Cell
         ) {
             super(CommandType.PlaceCommand, unit);
         }
