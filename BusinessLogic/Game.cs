@@ -1,23 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace CocaineCartels.BusinessLogic
 {
     public sealed class Game
     {
-        private static readonly Game SingletonInstance = new Game();
-
-        static Game()
-        { }
+        [JsonIgnore]
+        public static Game Instance { get; } = new Game();
 
         private Game()
         {
             Board = new Board(Settings.GridSize);
             Players = new List<Player>();
         }
-
-        public static Game Instance => SingletonInstance;
 
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
 
