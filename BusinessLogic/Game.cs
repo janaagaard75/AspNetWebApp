@@ -7,8 +7,6 @@ namespace CocaineCartels.BusinessLogic
 {
     public sealed class Game
     {
-        // TODO: Make the instance private?
-
         [JsonIgnore]
         public static Game Instance { get; } = new Game();
 
@@ -39,6 +37,7 @@ namespace CocaineCartels.BusinessLogic
             return newPlayer;
         }
 
+        /// <summary>Returns the current player. This will also add the player to the game if this is a new player.</summary>
         public Player GetCurrentPlayer(IPAddress ipAddress, string userAgent)
         {
             Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);

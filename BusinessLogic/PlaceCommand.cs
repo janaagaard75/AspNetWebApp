@@ -8,6 +8,10 @@
             On = on;
         }
 
-        public readonly Cell On;
+        internal readonly Cell On;
+
+        public int OnR => On.R;
+        public int OnS => On.S;
+        public int OnT => On.T;
     }
 }

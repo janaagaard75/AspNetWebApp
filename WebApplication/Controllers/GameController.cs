@@ -1,4 +1,7 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Net;
+using System.Web;
+using System.Web.Http;
 using CocaineCartels.BusinessLogic;
 
 namespace CocaineCartels.WebApplication.Controllers
@@ -10,12 +13,27 @@ namespace CocaineCartels.WebApplication.Controllers
             GameInstance = Game.Instance;
         }
 
+        private static Game GameInstance; // TODO: Does this need to static?
+
+        [HttpGet, Route("api/currentplayer")]
+        public Player GetCurrentPlayer()
+        {
+            if (HttpContext.Current.Request.UserHostAddress == null)
+            {
+                throw new ApplicationException("UserHostAddress is null.");
+            }
+
+            IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
+            string userAgent = HttpContext.Current.Request.UserAgent;
+
+            Player currentPlayer = GameInstance.GetCurrentPlayer(ipAddress, userAgent);
+            return currentPlayer;
+        }
+
         [HttpGet, Route("api/game")]
         public Game GetGame()
         {
             return GameInstance;
         }
-
-        private static Game GameInstance; // TODO: Does this need to static?
     }
 }

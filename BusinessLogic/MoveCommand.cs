@@ -10,8 +10,8 @@
 
         internal readonly Cell To;
 
-        public int R => To.R;
-        public int S => To.S;
-        public int T => To.T;
+        public int ToR => To.R;
+        public int ToS => To.S;
+        public int ToT => To.T;
     }
 }

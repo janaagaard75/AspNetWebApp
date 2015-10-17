@@ -9,25 +9,16 @@ module Muep {
             Main.canvas = new Canvas(Main.game);
 
             //this.updatePlayerColor(); // TODO: Remove if going completely away from SignalR.
-            this.getGameInstance();
+            // TODO: Figure out a better way to chain these calls, perhaps adding current player to the returned data from gameInstance.
+            GameService.getCurrentPlayer().then(() => {
+                GameService.getGameInstance();
+            });
         }
 
         private static canvas: Canvas;
         private static game: Game;
         private static playerColor: string;
 
-        private getGameInstance() {     
-            $.ajax({
-                type: "GET",
-                url: "/api/game",
-                dataType: "json"
-            }).then(gameData => {
-                console.info(gameData);
-                //var prettyfied = JSON.stringify(gameData, null, 2);
-            }).fail(error => {
-                console.error("Could not retrieve game data: ", error);
-            });
-        }
 
         private getMode(): string {
             const paramters = Utilities.getUrlParameters();
