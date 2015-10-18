@@ -1,10 +1,12 @@
 ﻿module Muep {
     "use strict";
 
-    const connected = 0;
-    const conncting = 1;
-    const disconnected = 2;
-    const reconnecting = 3;
+    class ConnectionState {
+        public static connected = 0;
+        public static connecting = 1;
+        public static disconnected = 2;
+        public static reconnecting = 3;
+    }
 
     export class GameHub {
         constructor() {
@@ -18,17 +20,42 @@
 
         private proxy: IGameHub;
 
-        private estalishConnection() {
-            
+        private getConnectedServer(): JQueryPromise<IGameServer> {
+            switch (this.proxy.connection.state) {
+                case ConnectionState.connected:
+                    const deferred = $.Deferred<IGameServer>();
+                    deferred.resolve(this.proxy.server);
+                    return deferred.promise();
+
+                case ConnectionState.connecting:
+                    throw "Don't know how to handle the 'connecting' state.";
+
+                case ConnectionState.disconnected:
+                    return this.proxy.connection.start(() => {
+                        console.info("Establishing SignalR connection.");
+                    }).then(() => {
+                        console.info("SignalR connection established.");
+                        return this.proxy.server;
+                    });
+
+                case ConnectionState.reconnecting:
+                    throw "Don't know how to handle the 'reconnecting' state.";
+            }
         }
 
-        public getGameState(): IGame {
-            if (this.proxy.connection.state !== connected) {
-                throw "SignalR connection has not been established.";
-            }
+        public getGameState(): JQueryPromise<IGame> {
+            return this.getConnectedServer().then(server => {
+                return server.getGame();
+            });
+        }
 
-            const instance = this.proxy.server.getGame();
-            return instance;
+        public getPlayerColor2(): JQueryPromise<string> {
+            return this.getConnectedServer().then(server => {
+                return server.getPlayerColor();
+            }).then(color => {
+                console.info(`Player color is ${color}.`);
+                return color;
+            });
         }
 
         public getPlayerColor(): JQueryPromise<string> {

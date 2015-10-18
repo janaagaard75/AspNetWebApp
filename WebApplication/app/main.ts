@@ -49,7 +49,7 @@ module Muep {
         //}
 
         private updatePlayerColor() {
-            this.gameHub.getPlayerColor().then(color => {
+            this.gameHub.getPlayerColor2().then(color => {
                 console.info(`Player color: ${color}.`);
                 this.playerColor = color;
             });

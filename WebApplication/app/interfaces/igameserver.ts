@@ -1,9 +1,9 @@
 ﻿module Muep {
     "use strict";
 
-    /** Messages that the clients can call on the server. */
+    /** Methods that the clients can call on the server. */
     export interface IGameServer {
-        getGame(): IGame;
+        getGame: () => JQueryPromise<IGame>;
         getPlayerColor: () => JQueryPromise<string>;
     }
 }
