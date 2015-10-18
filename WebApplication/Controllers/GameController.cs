@@ -13,20 +13,20 @@ namespace CocaineCartels.WebApplication.Controllers
             GameInstance = Game.Instance;
         }
 
-        private static Game GameInstance; // TODO: Does this need to static?
+        private static Game GameInstance; // TODO: Does this need to be static?
 
         [HttpGet, Route("api/currentplayer")]
         public Player GetCurrentPlayer()
         {
             if (HttpContext.Current.Request.UserHostAddress == null)
             {
-                throw new ApplicationException("UserHostAddress is null.");
+                throw new ApplicationException("HttpContext.Current.Request.UserHostAddress is null.");
             }
 
             IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
             string userAgent = HttpContext.Current.Request.UserAgent;
 
-            Player currentPlayer = GameInstance.GetCurrentPlayer(ipAddress, userAgent);
+            Player currentPlayer = GameInstance.GetPlayer(ipAddress, userAgent);
             return currentPlayer;
         }
 

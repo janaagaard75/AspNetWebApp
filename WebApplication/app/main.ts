@@ -5,47 +5,31 @@ module Muep {
         constructor() {
             this.setCanvasSize();
             Settings.initialize();
-            Main.game = new Game(this.isInDemoMode());
-            Main.canvas = new Canvas(Main.game);
+            this.game = new Game(this.isInDemoMode());
+            this.canvas = new Canvas(this.game);
+            this.gameHub = new GameHub();
 
-            //this.updatePlayerColor(); // TODO: Remove if going completely away from SignalR.
-            // TODO: Figure out a better way to chain these calls, perhaps adding current player to the returned data from gameInstance.
-            GameService.getCurrentPlayer().then(() => {
-                GameService.getGameInstance();
-            });
+            // TODO: Choose between Web API methods or SignalR.
+
+            this.updatePlayerColor(); 
+            //this.updateGameState();
+            
+            //GameService.getCurrentPlayer().then(() => {
+            //    // Calling getGameInstance after getCurrentPlayer has returned to make sure that this player has been added.
+            //    GameService.getGameInstance();
+            //});
         }
 
-        private static canvas: Canvas;
-        private static game: Game;
-        private static playerColor: string;
-
-
-        private getMode(): string {
-            const paramters = Utilities.getUrlParameters();
-            const mode = paramters["mode"];
-            return mode;
-        }
-
-        private updatePlayerColor(): void {
-            const gameHub = <IGameHub>$.connection.hub.proxies.gamehub;
-
-            gameHub.client.setPlayerColor = color => {
-                Main.playerColor = color;
-                console.info(`Player color: ${color}.`);
-            };
-
-            gameHub.connection.start()
-                .done(() => {
-                    console.info("Started");
-                    gameHub.server.getPlayerColor();
-                })
-                .fail(() => {
-                    console.error("Connection failed.");
-                });
-        }
+        // TODO: Why are all the properties static? Will there ever be more than one instance of the Main class?
+        private canvas: Canvas;
+        private game: Game;
+        private gameHub: GameHub;
+        private playerColor: string;
 
         private isInDemoMode(): boolean {
-            const inDemoMode = this.getMode() === "demo";
+            const paramters = Utilities.getUrlParameters();
+            const mode = paramters["mode"];
+            const inDemoMode = mode === "demo";
             return inDemoMode;
         }
 
@@ -55,6 +39,20 @@ module Muep {
             const canvasElement = document.getElementById(Settings.canvasId);
             canvasElement.style.width = canvasSize;
             canvasElement.style.height = canvasSize;
+        }
+
+        //private updateGameState() {
+        //    console.info("Getting game instance. via SignalR.");
+        //    const gameInstance = this.gameHub.server.getGame();
+        //    console.info("Game instance received via SignalR.");
+        //    console.info(gameInstance);
+        //}
+
+        private updatePlayerColor() {
+            this.gameHub.getPlayerColor().then(color => {
+                console.info(`Player color: ${color}.`);
+                this.playerColor = color;
+            });
         }
     }
 }

@@ -255,6 +255,7 @@
     <TypeScriptCompile Include="app\comandtype.ts" />
     <TypeScriptCompile Include="app\command.ts" />
     <TypeScriptCompile Include="app\demosetup.ts" />
+    <TypeScriptCompile Include="app\gamehub.ts" />
     <TypeScriptCompile Include="app\gameservice.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
     <TypeScriptCompile Include="app\interfaces\iboard.ts" />
@@ -281,6 +282,7 @@
     <TypeScriptCompile Include="app\pos.ts" />
     <TypeScriptCompile Include="app\unit.ts" />
     <TypeScriptCompile Include="app\utilities.ts" />
+    <TypeScriptCompile Include="scripts\typings\es6-promise\es6-promise.d.ts" />
     <TypeScriptCompile Include="scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <Content Include="scripts\combined.js.map" />

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Net;
 using System.Web;
 using CocaineCartels.BusinessLogic;
@@ -13,18 +13,22 @@ namespace CocaineCartels.WebApplication.Hubs
             GameInstance = Game.Instance;
         }
 
-        private static Game GameInstance; // TODO: Does this need to static?
+        private static Game GameInstance; // TODO: Does this need to be static?
 
-        public void GetPlayerColor()
+        public string GetPlayerColor()
         {
-            Debug.Assert(HttpContext.Current.Request.UserHostAddress != null, "HttpContext.Current.Request.UserHostAddress != null");
+            if (HttpContext.Current.Request.UserHostAddress == null)
+            {
+                throw new ApplicationException("HttpContext.Current.Request.UserHostAddress is null.");
+            }
 
             IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
             string userAgent = HttpContext.Current.Request.UserAgent;
 
-            Player player = GameInstance.GetCurrentPlayer(ipAddress, userAgent);
-            Clients.Caller.setPlayerColor(player.Color); // TODO: Should return the color instead.
+            Player player = GameInstance.GetPlayer(ipAddress, userAgent);
             Clients.All.playerJoined(player.Color);
+
+            return player.Color;
         }
 
         public Game GetGame()
