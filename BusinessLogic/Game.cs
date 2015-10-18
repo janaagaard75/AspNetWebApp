@@ -54,6 +54,7 @@ namespace CocaineCartels.BusinessLogic
     }
 }
 
+// TODO: Try to implement this lazy instation. It should be more thread-safe.
 // http://www.asp.net/signalr/overview/getting-started/tutorial-server-broadcast-with-signalr
 //private readonly static Lazy<StockTicker> _instance = new Lazy<StockTicker>(() => new StockTicker(GlobalHost.ConnectionManager.GetHubContext<StockTickerHub>().Clients));
 

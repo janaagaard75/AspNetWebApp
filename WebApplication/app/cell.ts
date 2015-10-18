@@ -3,13 +3,15 @@ module Muep {
 
     export class Cell {
         constructor(
-            public hex: Hex
+            cellData: ICell
         ) {
+            this.hex = new Hex(cellData.r, cellData.s, cellData.t);
             this.units = [];
         }
 
         // Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.
         public dropAllowed = false;
+        public hex: Hex;
         public hexagon: Konva.Shape;
         public hovered = false;
         public units: Unit[];

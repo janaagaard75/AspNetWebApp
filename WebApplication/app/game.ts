@@ -2,14 +2,25 @@ module Muep {
     "use strict";
 
     export class Game {
-        constructor(demoMode: boolean) {
-            this.initalizeGame();
-            if (demoMode) {
-                DemoSetup.addUnitsAndCommands(this);
-            }
+        constructor(gameData: IGame) {
+            this.cells = [];
+            gameData.board.cells.forEach(cellData => {
+                const cell = new Cell(cellData);
+                this.cells.push(cell);
+            });
+
+            this.gridSize = gameData.board.gridSize;
+
+            this.players = [];
+            gameData.players.forEach(playerData => {
+                const player = new Player(playerData);
+                this.players.push(player);
+            });
         }
 
+        // TODO: Either introduce a board class in TypeScript or remove the class from C#.
         public cells: Cell[];
+        public gridSize: number;
         public players: Player[];
 
         public allowedCellsForMove(unit: Unit): Cell[] {
@@ -37,33 +48,6 @@ module Muep {
         public getMoveCommands(from: Cell, to: Cell): MoveCommand[] {
             const moveCommands = this.moveCommands.filter(moveCommand => moveCommand.from === from && moveCommand.to === to);
             return moveCommands;
-        }
-
-        private initalizeGame() {
-            this.cells = [];
-            for (let r = -Settings.gridSize; r <= Settings.gridSize; r++) {
-                for (let s = -Settings.gridSize; s <= Settings.gridSize; s++) {
-                    // Satisfy r+s+t=0.
-                    const t = -r - s;
-                    
-                    // t cannot exceed gridSize.
-                    if (t < -Settings.gridSize || t > Settings.gridSize) {
-                        continue;
-                    }
-
-                    const hex = new Hex(r, s, t);
-                    const cell = new Cell(hex);
-                    this.cells.push(cell);
-                }
-            }
-
-            this.players = [];
-            const numberOfPlayers = 6;
-            const playerColors = ["#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f"];
-            for (let i = 0; i < numberOfPlayers; i++) {
-                const player = new Player(playerColors[i]);
-                this.players.push(player);
-            }
         }
 
         public get moveCommands(): MoveCommand[] {

@@ -4,26 +4,24 @@ module Muep {
     export class Main {
         constructor() {
             this.setCanvasSize();
-            Settings.initialize();
-            this.game = new Game(this.isInDemoMode());
-            this.canvas = new Canvas(this.game);
-            this.gameHub = new GameHub();
+           if (this.isInDemoMode()) {
+                //this.game = new Game();
+                //DemoSetup.addUnitsAndCommands(this.game);
+                return;
+            }
 
-            // TODO: Choose between Web API methods or SignalR.
-
-            this.updatePlayerColor(); 
-            //this.updateGameState();
-            
-            //GameService.getCurrentPlayer().then(() => {
-            //    // Calling getGameInstance after getCurrentPlayer has returned to make sure that this player has been added.
-            //    GameService.getGameInstance();
-            //});
+            // Welcome to callback hell.
+            this.updatePlayerColor()
+                .then(() => {
+                    this.updateGameState()
+                        .then(() => {
+                            this.canvas = new Canvas(this.game);
+                        });
+                });
         }
 
-        // TODO: Why are all the properties static? Will there ever be more than one instance of the Main class?
         private canvas: Canvas;
         private game: Game;
-        private gameHub: GameHub;
         private playerColor: string;
 
         private isInDemoMode(): boolean {
@@ -36,22 +34,21 @@ module Muep {
         private setCanvasSize() {
             const minSize = Math.min(window.innerWidth, window.innerHeight);
             const canvasSize = `${minSize}px`;
-            const canvasElement = document.getElementById(Settings.canvasId);
+            const canvasElement = document.getElementById(CanvasSettings.canvasId);
             canvasElement.style.width = canvasSize;
             canvasElement.style.height = canvasSize;
         }
 
-        //private updateGameState() {
-        //    console.info("Getting game instance. via SignalR.");
-        //    const gameInstance = this.gameHub.server.getGame();
-        //    console.info("Game instance received via SignalR.");
-        //    console.info(gameInstance);
-        //}
+        private updateGameState(): JQueryPromise<void> {
+            return GameService.getGameState().then(game => {
+                // TODO: If the game state is ovewritten, then the canvas also has to be built again because these two are closely linked.
+                this.game = game;
+            });
+        }
 
-        private updatePlayerColor() {
-            this.gameHub.getPlayerColor2().then(color => {
-                console.info(`Player color: ${color}.`);
-                this.playerColor = color;
+        private updatePlayerColor(): JQueryPromise<void> {
+            return GameService.getCurrentPlayer().then(player => {
+                this.playerColor = player.color;
             });
         }
     }

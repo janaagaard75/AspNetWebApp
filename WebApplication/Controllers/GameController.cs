@@ -30,8 +30,8 @@ namespace CocaineCartels.WebApplication.Controllers
             return currentPlayer;
         }
 
-        [HttpGet, Route("api/game")]
-        public Game GetGame()
+        [HttpGet, Route("api/gamestate")]
+        public Game GetGameState()
         {
             return GameInstance;
         }

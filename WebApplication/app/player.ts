@@ -3,11 +3,13 @@ module Muep {
 
     export class Player {
         constructor(
-            public color: string
+            playerData: IPlayer
         ) {
+            this.color = playerData.color;
             this.units = [];
         }
 
+        public color: string;
         public units: Unit[];
     }
 }

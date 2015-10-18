@@ -10,13 +10,19 @@ module Muep {
         ) {
             const sum = r + s + t;
             if (sum !== 0) {
-                throw `r + s + t must be equal to 0. The sum of (${r}, ${s}, ${t}) is ${sum}.`;
+                throw `The sum of r, s and t must be equal to 0. ${r} + ${s} + ${t} is ${sum}.`;
             }
-
-            this.pos = Hex.hexToPos(this);
         }
 
-        public pos: Pos;
+        private _pos: Pos = null;
+
+        public get pos(): Pos {
+            if (this._pos === null) {
+                this._pos = Hex.hexToPos(this);
+            }
+
+            return this._pos;
+        }
 
         public equals(other: Hex): boolean {
             const equals = (this.r === other.r && this.s === other.s && this.t === other.t);
@@ -24,12 +30,16 @@ module Muep {
         }
 
         public static hexToPos(hex: Hex) {
+            if (CanvasSettings.width == null || CanvasSettings.height == null || CanvasSettings.cellRadius == null) {
+                throw "CanvasSettings haven't been initialized.";
+            }
+
             const center = {
-                x: Settings.width / 2,
-                y: Settings.height / 2
+                x: CanvasSettings.width / 2,
+                y: CanvasSettings.height / 2
             };
-            const x = center.x + Math.sqrt(3) * Settings.cellRadius * hex.r + Math.sqrt(3) / 2 * Settings.cellRadius * hex.t;
-            const y = center.y + 1.5 * Settings.cellRadius * hex.t;
+            const x = center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.t;
+            const y = center.y + 1.5 * CanvasSettings.cellRadius * hex.t;
             const pos = new Pos(x, y);
             return pos;
         }

@@ -6,7 +6,7 @@
             game: Game
         ) {
             Canvas.game = game;
-
+            CanvasSettings.initialize(game.gridSize);
             this.drawGame();
         }
 
@@ -42,8 +42,8 @@
             const background = new Konva.Rect({
                 x: 0,
                 y: 0,
-                width: Settings.width,
-                height: Settings.height,
+                width: CanvasSettings.width,
+                height: CanvasSettings.height,
                 fill: "#fff"
             });
             this.backgroundLayer.add(background);
@@ -57,10 +57,10 @@
             const hexagon = new Konva.RegularPolygon({
                 x: cell.hex.pos.x,
                 y: cell.hex.pos.y,
-                radius: Settings.cellRadius,
+                radius: CanvasSettings.cellRadius,
                 sides: 6,
                 stroke: "#ccc",
-                strokeWidth: Settings.lineWidth
+                strokeWidth: CanvasSettings.lineWidth
             });
 
             cell.hexagon = hexagon;
@@ -102,9 +102,9 @@
         /** Currently redraws the game from scratch each time, re-adding all units and commands. */
         public drawGame() {
             this.stage = new Konva.Stage({
-                container: Settings.canvasId,
-                height: Settings.height,
-                width: Settings.width
+                container: CanvasSettings.canvasId,
+                height: CanvasSettings.height,
+                width: CanvasSettings.width
             });
 
             this.addLayers();
@@ -134,13 +134,13 @@
             const arrow = new Konva["Arrow"]({
                 fill: command.unit.commandColor,
                 listening: false,
-                pointerLength: Settings.arrowPointerLength,
-                pointerWidth: Settings.arrowPointerWidth,
+                pointerLength: CanvasSettings.arrowPointerLength,
+                pointerWidth: CanvasSettings.arrowPointerWidth,
                 points: [from.x, from.y, to.x, to.y],
-                shadowBlur: Settings.arrowShadowBlurRadius,
+                shadowBlur: CanvasSettings.arrowShadowBlurRadius,
                 shadowColor: "#000",
                 stroke: command.unit.commandColor,
-                strokeWidth: Settings.arrowWidth,
+                strokeWidth: CanvasSettings.arrowWidth,
                 x: origin.x,
                 y: origin.y
             });
@@ -153,15 +153,15 @@
         }
 
         private drawUnit(unit: Unit, unitIndex: number, numberOfUnits: number) {
-            const distanceBetweenUnits = Settings.cellRadius / numberOfUnits;
+            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
 
             const circle = new Konva.Circle({
                 draggable: true,
                 fill: unit.color,
-                radius: Settings.unitRadius,
+                radius: CanvasSettings.unitRadius,
                 stroke: "#888",
-                strokeWidth: Settings.lineWidth,
+                strokeWidth: CanvasSettings.lineWidth,
                 x: x,
                 y: unit.cell.hex.pos.y
             });
