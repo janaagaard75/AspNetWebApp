@@ -13,7 +13,7 @@ namespace CocaineCartels.WebApplication.Controllers
             GameInstance = Game.Instance;
         }
 
-        private static Game GameInstance; // TODO: Does this need to be static?
+        private readonly Game GameInstance;
 
         [HttpGet, Route("api/currentplayer")]
         public Player GetCurrentPlayer()
