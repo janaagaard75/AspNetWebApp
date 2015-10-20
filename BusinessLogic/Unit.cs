@@ -7,14 +7,12 @@
             MoveCommand = null;
             PlaceCommand = null;
             Player = player;
-            PlayerColor = player.Color;
         }
 
-        public MoveCommand MoveCommand;
-        public PlaceCommand PlaceCommand;
-        public readonly string PlayerColor;
+        public readonly MoveCommand MoveCommand;
+        public readonly PlaceCommand PlaceCommand;
+        public readonly Player Player;
 
         internal Cell Cell;
-        internal readonly Player Player;
     }
 }

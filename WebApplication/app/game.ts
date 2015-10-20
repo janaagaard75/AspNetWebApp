@@ -3,13 +3,13 @@ module Muep {
 
     export class Game {
         constructor(gameData: IGame) {
-            this.board = new Board(gameData.board);
-
             this.players = [];
             gameData.players.forEach(playerData => {
                 const player = new Player(playerData);
                 this.players.push(player);
             });
+
+            this.board = new Board(gameData.board, this);
         }
 
         public board: Board;
@@ -40,6 +40,16 @@ module Muep {
         public getMoveCommands(from: Cell, to: Cell): MoveCommand[] {
             const moveCommands = this.moveCommands.filter(moveCommand => moveCommand.from === from && moveCommand.to === to);
             return moveCommands;
+        }
+
+        public getPlayer(playerData: IPlayer): Player {
+            const players = this.players.filter(p => p.color === playerData.color);
+
+            if (players.length === 0) {
+                throw `Player with color ${playerData.color} not found.`;
+            }
+
+            return players[0];
         }
 
         public get moveCommands(): MoveCommand[] {

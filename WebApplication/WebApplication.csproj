@@ -238,6 +238,7 @@
     <TypeScriptCompile Include="app\interfaces\igame.ts" />
     <TypeScriptCompile Include="app\interfaces\igroupbyfunc.ts" />
     <TypeScriptCompile Include="app\interfaces\igroups.ts" />
+    <TypeScriptCompile Include="app\interfaces\ihex.ts" />
     <TypeScriptCompile Include="app\interfaces\imovecommand.ts" />
     <TypeScriptCompile Include="app\interfaces\iplacecommand.ts" />
     <TypeScriptCompile Include="app\interfaces\iplayer.ts" />

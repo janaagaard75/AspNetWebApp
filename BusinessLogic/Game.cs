@@ -13,8 +13,8 @@ namespace CocaineCartels.BusinessLogic
             Players = new List<Player>();
         }
 
-        private readonly static Lazy<Game> GameInstance = new Lazy<Game>(() => new Game());
-        public static Game Instance => GameInstance.Value;
+        private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
+        public static Game Instance => _GameInstance.Value;
 
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
 
@@ -24,7 +24,6 @@ namespace CocaineCartels.BusinessLogic
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
-        /// <exception cref="NumberOfPlayersExceeded"></exception>
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
             if (NumberOfPlayers == MaximumNumberOfPlayers)
@@ -35,11 +34,52 @@ namespace CocaineCartels.BusinessLogic
             Player newPlayer = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(newPlayer);
 
+            AddPlayerToBoard(newPlayer, NumberOfPlayers);
+
             return newPlayer;
         }
 
+        private void AddPlayerToBoard(Player player, int playerNumber)
+        {
+            Hex hex = null;
+            switch (playerNumber)
+            {
+                case 0:
+                    hex = new Hex(Board.GridSize, 0, -Board.GridSize);
+                    break;
+
+                case 1:
+                    hex = new Hex(Board.GridSize, -Board.GridSize, 0);
+                    break;
+
+                case 2:
+                    hex = new Hex(0, -Board.GridSize, Board.GridSize);
+                    break;
+
+                case 3:
+                    hex = new Hex(-Board.GridSize, 0, Board.GridSize);
+                    break;
+
+                case 4:
+                    hex = new Hex(-Board.GridSize, Board.GridSize, 0);
+                    break;
+
+                case 5:
+                    hex = new Hex(0, Board.GridSize, -Board.GridSize);
+                    break;
+            }
+
+            if (hex == null)
+            {
+                return;
+            }
+
+            Cell cell = Board.GetCell(hex);
+            Unit unit = new Unit(player);
+            cell.AddUnit(unit);
+        }
+
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
-        /// <exception cref="NumberOfPlayersExceeded">Thrown if the player is not found and the maximum number of players has already been reached.</exception>
         public Player GetPlayer(IPAddress ipAddress, string userAgent)
         {
             Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);

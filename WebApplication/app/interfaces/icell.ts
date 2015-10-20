@@ -2,9 +2,7 @@
     "use strict";
 
     export interface ICell {
-        r: number;
-        s: number;
-        t: number;
+        hex: IHex;
         units: IUnit[];
     }
 }

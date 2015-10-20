@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
@@ -30,5 +31,11 @@ namespace CocaineCartels.BusinessLogic
 
         public readonly IEnumerable<Cell> Cells;
         public readonly int GridSize;
+
+        internal Cell GetCell(Hex hex)
+        {
+            Cell cell = Cells.First(c => c.Hex.Equals(hex));
+            return cell;
+        }
     }
 }

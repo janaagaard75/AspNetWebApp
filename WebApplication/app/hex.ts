@@ -38,8 +38,8 @@ module Muep {
                 x: CanvasSettings.width / 2,
                 y: CanvasSettings.height / 2
             };
-            const x = center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.t;
-            const y = center.y + 1.5 * CanvasSettings.cellRadius * hex.t;
+            const x = center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.t + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.r;
+            const y = center.y - 1.5 * CanvasSettings.cellRadius * hex.r;
             const pos = new Pos(x, y);
             return pos;
         }

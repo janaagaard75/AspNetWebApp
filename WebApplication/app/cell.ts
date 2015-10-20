@@ -3,10 +3,16 @@ module Muep {
 
     export class Cell {
         constructor(
-            cellData: ICell
+            cellData: ICell,
+            gameInstance: Game
         ) {
-            this.hex = new Hex(cellData.r, cellData.s, cellData.t);
+            this.hex = new Hex(cellData.hex.r, cellData.hex.s, cellData.hex.t);
+
             this.units = [];
+            cellData.units.forEach(unitData => {
+                const unit = new Unit(unitData, gameInstance);
+                this.addUnit(unit);
+            });
         }
 
         // Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.

@@ -7,22 +7,25 @@ namespace CocaineCartels.BusinessLogic
     {
         public Cell(int r, int s, int t)
         {
-            int sum = r + s + t;
-            if (sum != 0)
-            {
-                throw new ApplicationException($"The sum of r, s and t must be 0. It's {sum}.");
-            }
-
-            R = r;
-            S = s;
-            T = t;
-
-            Units = new List<Unit>();
+            Hex = new Hex(r, s, t);
+            UnitsList = new List<Unit>();
         }
 
-        public readonly int R;
-        public readonly int S;
-        public readonly int T;
-        public readonly IEnumerable<Unit> Units;
+        private readonly List<Unit> UnitsList;
+
+        public readonly Hex Hex;
+
+        public IEnumerable<Unit> Units => UnitsList;
+
+        internal void AddUnit(Unit unit)
+        {
+            if (unit.Cell != null)
+            {
+                throw new ApplicationException("Can't add unit to cell because it'a already placed on another cell.");
+            }
+
+            unit.Cell = this;
+            UnitsList.Add(unit);
+        }
     }
 }

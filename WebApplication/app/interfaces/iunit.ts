@@ -4,6 +4,6 @@
     export interface IUnit {
         moveCommand: IMoveCommand;
         placeCommand: IPlaceCommand;
-        playerColor: string;
+        player: IPlayer;
     }
 }

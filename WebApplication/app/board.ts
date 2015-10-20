@@ -2,10 +2,13 @@
     "use strict";
 
     export class Board {
-        constructor(boardData: IBoard) {
+        constructor(
+            boardData: IBoard,
+            gameInstance: Game
+        ) {
             this.cells = [];
             boardData.cells.forEach(cellData => {
-                const cell = new Cell(cellData);
+                const cell = new Cell(cellData, gameInstance);
                 this.cells.push(cell);
             });
 

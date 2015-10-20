@@ -3,18 +3,25 @@ module Muep {
 
     export class Unit {
         constructor(
-            public player: Player
+            unitData: IUnit,
+            gameInstance: Game
         ) {
             this.cell = null;
+
+            // TODO: Transfer the values from the data received.
             this.moveCommand = null;
             this.placeCommand = null;
 
-            this._color = tinycolor(this.player.color).lighten(10).toString("hex6");
+            this.player = gameInstance.getPlayer(unitData.player);
+
+            // TODO: Should get the data from the player.
+            this._color = tinycolor(unitData.player.color).lighten(10).toString("hex6");
         }
 
         private _color: string;
         public moveCommand: MoveCommand;
         public placeCommand: PlaceCommand;
+        public player: Player;
 
         public cell: Cell;
 
