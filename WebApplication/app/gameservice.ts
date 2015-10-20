@@ -2,35 +2,21 @@
     "use strict";
 
     export class GameService {
-        public static getCurrentPlayer(): JQueryPromise<Player> {
-            return $.ajax({
-                    url: "api/currentplayer",
-                    dataType: "json"
-                })
-                .then(playerData => {
-                    const player = new Player(playerData);
-                    return player;
-                })
-                .fail(error => {
-                    console.error("getCurrentPlayer error:", error);
-                });
+        public static getCurrentPlayer(): Promise<Player> {
+            return HttpClient.get<IPlayer>("/api/currentplayer").then(playerData => {
+                const player = new Player(playerData);
+                console.log(player);
+                return player;
+            });
         }
 
-        
-        public static getGameState(): JQueryPromise<Game> {
-            return $.ajax({
-                    url: "/api/gamestate",
-                    dataType: "json"
-                })
-                .then(gameData => {
-                    console.info(gameData);
-                    const game = new Game(gameData);
-                    return game; // TODO: Why doesn't TypeScript complain if the type of game isn't Game? Is this because of jQuery promises? See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Example_using_new_XMLHttpRequest()
-                })
-                .fail(error => {
-                    console.error("getGameState error: ", error);
-                    return null;
-                });
+
+        public static getGameState(): Promise<Game> {
+            return HttpClient.get<IGame>("/api/gamestate").then(gameData => {
+                const gameState = new Game(gameData);
+                console.log(gameState);
+                return gameState;
+            });
         }
     }
 }

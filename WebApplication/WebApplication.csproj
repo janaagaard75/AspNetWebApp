@@ -258,6 +258,7 @@
     <TypeScriptCompile Include="app\gamehub.ts" />
     <TypeScriptCompile Include="app\gameservice.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
+    <TypeScriptCompile Include="app\httpclient.ts" />
     <TypeScriptCompile Include="app\interfaces\iboard.ts" />
     <TypeScriptCompile Include="app\interfaces\icell.ts" />
     <TypeScriptCompile Include="app\interfaces\igame.ts" />

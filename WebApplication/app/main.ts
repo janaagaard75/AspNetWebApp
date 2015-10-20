@@ -11,13 +11,11 @@ module Muep {
             }
 
             // Welcome to callback hell.
-            this.updatePlayerColor()
-                .then(() => {
-                    this.updateGameState()
-                        .then(() => {
-                            this.canvas = new Canvas(this.game);
-                        });
+            this.updatePlayerColor().then(() => {
+                this.updateGameState().then(() => {
+                    this.canvas = new Canvas(this.game);
                 });
+            });
         }
 
         private canvas: Canvas;
@@ -39,14 +37,13 @@ module Muep {
             canvasElement.style.height = canvasSize;
         }
 
-        private updateGameState(): JQueryPromise<void> {
+        private updateGameState(): Promise<void> {
             return GameService.getGameState().then(game => {
-                // TODO: If the game state is ovewritten, then the canvas also has to be built again because these two are closely linked.
                 this.game = game;
             });
         }
 
-        private updatePlayerColor(): JQueryPromise<void> {
+        private updatePlayerColor(): Promise<void> {
             return GameService.getCurrentPlayer().then(player => {
                 this.playerColor = player.color;
             });
