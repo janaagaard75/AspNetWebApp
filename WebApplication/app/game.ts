@@ -32,7 +32,7 @@ module Muep {
             throw "allowedCellsForPlace is not yet implemented.";
         }
 
-        public getCell(hex: Hex): Cell {
+        public getCell(hex: IHex): Cell {
             const cell = this.board.cells.filter(c => { return c.hex.equals(hex); })[0];
             return cell;
         }

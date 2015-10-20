@@ -34,49 +34,58 @@ namespace CocaineCartels.BusinessLogic
             Player newPlayer = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(newPlayer);
 
-            AddPlayerToBoard(newPlayer, NumberOfPlayers);
+            AddAUnitToTheBoard(newPlayer, NumberOfPlayers);
 
             return newPlayer;
         }
 
-        private void AddPlayerToBoard(Player player, int playerNumber)
+        private void AddAUnitToTheBoard(Player player, int playerNumber)
         {
-            Hex hex = null;
+            Hex unitHex = null;
+            Hex moveToHex = null;
             switch (playerNumber)
             {
                 case 0:
-                    hex = new Hex(Board.GridSize, 0, -Board.GridSize);
+                    unitHex = new Hex(Board.GridSize, 0, -Board.GridSize);
+                    moveToHex = new Hex(Board.GridSize - 1, 0, -(Board.GridSize - 1));
                     break;
 
                 case 1:
-                    hex = new Hex(Board.GridSize, -Board.GridSize, 0);
+                    unitHex = new Hex(Board.GridSize, -Board.GridSize, 0);
+                    moveToHex = new Hex(Board.GridSize - 1, -(Board.GridSize - 1), 0);
                     break;
 
                 case 2:
-                    hex = new Hex(0, -Board.GridSize, Board.GridSize);
+                    unitHex = new Hex(0, -Board.GridSize, Board.GridSize);
+                    moveToHex = new Hex(0, -(Board.GridSize - 1), Board.GridSize - 1);
                     break;
 
                 case 3:
-                    hex = new Hex(-Board.GridSize, 0, Board.GridSize);
+                    unitHex = new Hex(-Board.GridSize, 0, Board.GridSize);
+                    moveToHex = new Hex(-(Board.GridSize - 1), 0, Board.GridSize - 1);
                     break;
 
                 case 4:
-                    hex = new Hex(-Board.GridSize, Board.GridSize, 0);
+                    unitHex = new Hex(-Board.GridSize, Board.GridSize, 0);
+                    moveToHex = new Hex(Board.GridSize - 1, -(Board.GridSize - 1), 0);
                     break;
 
                 case 5:
-                    hex = new Hex(0, Board.GridSize, -Board.GridSize);
+                    unitHex = new Hex(0, Board.GridSize, -Board.GridSize);
+                    moveToHex = new Hex(0, Board.GridSize - 1, -(Board.GridSize - 1));
                     break;
             }
 
-            if (hex == null)
+            if (unitHex == null)
             {
                 return;
             }
 
-            Cell cell = Board.GetCell(hex);
+            Cell unitCell = Board.GetCell(unitHex);
             Unit unit = new Unit(player);
-            cell.AddUnit(unit);
+            unitCell.AddUnit(unit);
+            Cell moveToCell = Board.GetCell(moveToHex);
+            unit.SetMoveCommand(moveToCell);
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>

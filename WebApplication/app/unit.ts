@@ -8,9 +8,15 @@ module Muep {
         ) {
             this.cell = null;
 
-            // TODO: Transfer the values from the data received.
-            this.moveCommand = null;
+            // TODO: Transfer the data from unitData.
             this.placeCommand = null;
+
+            if (unitData.moveCommand !== null) {
+                const moveToCell = gameInstance.getCell(unitData.moveCommand.toHex);
+                this.setMoveCommand(moveToCell);
+            }
+
+            this.moveCommand = null;
 
             this.player = gameInstance.getPlayer(unitData.player);
 

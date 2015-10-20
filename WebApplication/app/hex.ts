@@ -2,7 +2,7 @@ module Muep {
     "use strict";
 
     /** Hexagon coordinates with r, s and t. */
-    export class Hex {
+    export class Hex implements IHex {
         constructor(
             public r: number,
             public s: number,
@@ -24,7 +24,7 @@ module Muep {
             return this._pos;
         }
 
-        public equals(other: Hex): boolean {
+        public equals(other: IHex): boolean {
             const equals = (this.r === other.r && this.s === other.s && this.t === other.t);
             return equals;
         }
