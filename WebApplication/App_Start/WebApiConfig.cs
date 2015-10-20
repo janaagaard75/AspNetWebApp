@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net.Http.Formatting;
+﻿using System.Net.Http.Formatting;
 using System.Web.Http;
 using Newtonsoft.Json.Serialization;
 
@@ -20,8 +19,10 @@ namespace CocaineCartels.WebApplication
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            JsonMediaTypeFormatter jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            // Camel casing JSON and forcing JSON.
+            var jsonFormatter = new JsonMediaTypeFormatter();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Services.Replace(typeof (IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
         }
     }
 }
