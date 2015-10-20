@@ -15,8 +15,8 @@ namespace CocaineCartels.WebApplication.Controllers
 
         private readonly Game GameInstance;
 
-        [HttpGet, Route("api/currentplayer")]
-        public Player GetCurrentPlayer()
+        [HttpGet, Route("api/currentplayercolor")]
+        public string GetCurrentPlayerColor()
         {
             if (HttpContext.Current.Request.UserHostAddress == null)
             {
@@ -27,7 +27,7 @@ namespace CocaineCartels.WebApplication.Controllers
             string userAgent = HttpContext.Current.Request.UserAgent;
 
             Player currentPlayer = GameInstance.GetPlayer(ipAddress, userAgent);
-            return currentPlayer;
+            return currentPlayer.Color;
         }
 
         [HttpGet, Route("api/gamestate")]

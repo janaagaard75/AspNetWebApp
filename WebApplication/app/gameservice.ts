@@ -2,18 +2,17 @@
     "use strict";
 
     export class GameService {
-        public static getCurrentPlayer(): Promise<Player> {
-            return HttpClient.get<IPlayer>("/api/currentplayer").then(playerData => {
-                const player = new Player(playerData);
-                console.log(player);
-                return player;
+        public static getCurrentPlayer(): Promise<string> {
+            return HttpClient.get<string>("/api/currentplayercolor").then(color => {
+                console.info(`Current player: ${color}.`);
+                return color;
             });
         }
 
         public static getGameState(): Promise<Game> {
             return HttpClient.get<IGame>("/api/gamestate").then(gameData => {
                 const gameState = new Game(gameData);
-                console.log(gameState);
+                console.info(gameState);
                 return gameState;
             });
         }

@@ -43,8 +43,8 @@ module Muep {
         }
 
         private updatePlayerColor(): Promise<void> {
-            return GameService.getCurrentPlayer().then(player => {
-                this.playerColor = player.color;
+            return GameService.getCurrentPlayer().then(color => {
+                this.playerColor = color;
             });
         }
     }
