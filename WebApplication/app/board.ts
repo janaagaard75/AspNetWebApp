@@ -3,6 +3,7 @@
 
     export class Board {
         constructor(boardData: IBoard) {
+            this.cells = [];
             boardData.cells.forEach(cellData => {
                 const cell = new Cell(cellData);
                 this.cells.push(cell);

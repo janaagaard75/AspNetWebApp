@@ -50,31 +50,11 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -189,8 +169,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\SignalRConfig.cs" />
-    <Compile Include="Hubs\GameHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -218,11 +196,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <None Include="scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="scripts\jquery-2.1.4.js" />
-    <Content Include="scripts\jquery-2.1.4.min.js" />
-    <Content Include="scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="scripts\konva.js" />
     <Content Include="scripts\konva.min.js" />
     <Content Include="scripts\tinycolor.min.js" />
@@ -256,16 +229,12 @@
     <TypeScriptCompile Include="app\comandtype.ts" />
     <TypeScriptCompile Include="app\command.ts" />
     <TypeScriptCompile Include="app\demosetup.ts" />
-    <TypeScriptCompile Include="app\gamehub.ts" />
     <TypeScriptCompile Include="app\gameservice.ts" />
     <TypeScriptCompile Include="app\hexagonevent.ts" />
     <TypeScriptCompile Include="app\httpclient.ts" />
     <TypeScriptCompile Include="app\interfaces\iboard.ts" />
     <TypeScriptCompile Include="app\interfaces\icell.ts" />
     <TypeScriptCompile Include="app\interfaces\igame.ts" />
-    <TypeScriptCompile Include="app\interfaces\igameclient.ts" />
-    <TypeScriptCompile Include="app\interfaces\igamehub.ts" />
-    <TypeScriptCompile Include="app\interfaces\igameserver.ts" />
     <TypeScriptCompile Include="app\interfaces\igroupbyfunc.ts" />
     <TypeScriptCompile Include="app\interfaces\igroups.ts" />
     <TypeScriptCompile Include="app\interfaces\imovecommand.ts" />
@@ -285,12 +254,9 @@
     <TypeScriptCompile Include="app\unit.ts" />
     <TypeScriptCompile Include="app\utilities.ts" />
     <TypeScriptCompile Include="scripts\typings\es6-promise\es6-promise.d.ts" />
-    <TypeScriptCompile Include="scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />
     <Content Include="scripts\combined.js.map" />
-    <Content Include="scripts\jquery-2.1.4.min.map" />
     <None Include="_references.ts" />
-    <TypeScriptCompile Include="scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="scripts\typings\tinycolor\tinycolor.d.ts" />
   </ItemGroup>
   <ItemGroup>
