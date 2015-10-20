@@ -3,13 +3,7 @@ module Muep {
 
     export class Game {
         constructor(gameData: IGame) {
-            this.cells = [];
-            gameData.board.cells.forEach(cellData => {
-                const cell = new Cell(cellData);
-                this.cells.push(cell);
-            });
-
-            this.gridSize = gameData.board.gridSize;
+            this.board = new Board(gameData.board);
 
             this.players = [];
             gameData.players.forEach(playerData => {
@@ -18,9 +12,7 @@ module Muep {
             });
         }
 
-        // TODO: Either introduce a board class in TypeScript or remove the class from C#.
-        public cells: Cell[];
-        public gridSize: number;
+        public board: Board;
         public players: Player[];
 
         public allowedCellsForMove(unit: Unit): Cell[] {
@@ -28,7 +20,7 @@ module Muep {
                 return [];
             }
 
-            const allowedCells = this.cells.filter(cell => {
+            const allowedCells = this.board.cells.filter(cell => {
                 const distance = cell.distance(unit.cell);
                 return (distance > 0 && distance <= unit.maximumMoveDistance);
             });
@@ -41,7 +33,7 @@ module Muep {
         }
 
         public getCell(hex: Hex): Cell {
-            const cell = this.cells.filter(c => { return c.hex.equals(hex); })[0];
+            const cell = this.board.cells.filter(c => { return c.hex.equals(hex); })[0];
             return cell;
         }
 
@@ -72,7 +64,7 @@ module Muep {
         public nearestCell(pos: Konva.Vector2d): Cell {
             var minDist: number = null;
             var nearestCell: Cell;
-            this.cells.forEach(cell => {
+            this.board.cells.forEach(cell => {
                 var dist = cell.hex.pos.distance(pos);
                 if (dist < minDist || minDist === null) {
                     minDist = dist;
@@ -84,7 +76,7 @@ module Muep {
         }
 
         public get units(): Unit[] {
-            const unitsDoubleArray = this.cells.map(cell => cell.units);
+            const unitsDoubleArray = this.board.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);
             return units;
         }

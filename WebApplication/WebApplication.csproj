@@ -250,6 +250,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="app\board.ts" />
     <TypeScriptCompile Include="app\canvas.ts" />
     <TypeScriptCompile Include="app\cell.ts" />
     <TypeScriptCompile Include="app\comandtype.ts" />
