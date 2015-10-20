@@ -261,7 +261,7 @@
     <TypeScriptCompile Include="app\httpclient.ts" />
     <TypeScriptCompile Include="app\interfaces\iboard.ts" />
     <TypeScriptCompile Include="app\interfaces\icell.ts" />
-    <TypeScriptCompile Include="app\interfaces\igame.ts" />
+    <TypeScriptCompile Include="app\interfaces\igame2.ts" />
     <TypeScriptCompile Include="app\interfaces\igameclient.ts" />
     <TypeScriptCompile Include="app\interfaces\igamehub.ts" />
     <TypeScriptCompile Include="app\interfaces\igameserver.ts" />
@@ -269,7 +269,7 @@
     <TypeScriptCompile Include="app\interfaces\igroups.ts" />
     <TypeScriptCompile Include="app\interfaces\imovecommand.ts" />
     <TypeScriptCompile Include="app\interfaces\iplacecommand.ts" />
-    <TypeScriptCompile Include="app\interfaces\iplayer.ts" />
+    <TypeScriptCompile Include="app\interfaces\iplayer2.ts" />
     <TypeScriptCompile Include="app\interfaces\iunit.ts" />
     <TypeScriptCompile Include="app\interfaces\iurlparameters.ts" />
     <TypeScriptCompile Include="app\canvassettings.ts" />
