@@ -10,7 +10,6 @@ module Muep {
                 return;
             }
 
-            // Welcome to callback hell.
             this.updatePlayerColor().then(() => {
                 this.updateGameState().then(() => {
                     this.canvas = new Canvas(this.game);
