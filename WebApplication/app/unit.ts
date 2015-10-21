@@ -39,12 +39,11 @@ module Muep {
 
         public get moveCommand(): MoveCommand {
             if (this._moveCommand === undefined) {
-                if (this.unitData.moveCommand !== null) {
-                    const from = Main.game.getCell(this.unitData.moveCommand.fromHex);
-                    const moveCommand = new MoveCommand(this, from);
-                    this._moveCommand = moveCommand;
-                } else {
+                if (this.unitData.moveCommand === null) {
                     this._moveCommand = null;
+                } else {
+                    const from = Main.game.getCell(this.unitData.moveCommand.fromHex);
+                    this.setMoveCommand(from);
                 }
             }
 
@@ -52,8 +51,8 @@ module Muep {
         }
 
         public set moveCommand(newMoveCommand: MoveCommand) {
-            if (newMoveCommand == null) {
-                this._moveCommand = newMoveCommand;
+            if (newMoveCommand === null) {
+                this._moveCommand = null;
                 return;
             }
 
@@ -73,21 +72,15 @@ module Muep {
         }
 
         public setMoveCommand(from: Cell) {
-            if (this.cell === null && this.placeCommand === null) {
-                throw "Cannot assign a move command to a unit that isn't positioned on a cell or doesn't have a place command.";
-            }
-
             this.moveCommand = new MoveCommand(this, from);
-            return this.moveCommand;
         }
 
-        public setPlaceCommand(on: Cell): PlaceCommand {
+        public setPlaceCommand(on: Cell) {
             if (this.cell !== null) {
                 throw "Cannot assign a place command ot a unit that already is placed on a cell.";
             }
 
             this.placeCommand = new PlaceCommand(this, on);
-            return this.placeCommand;
         }
     }
 }
