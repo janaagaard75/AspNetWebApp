@@ -70,7 +70,7 @@ module Muep {
                 u.cell = null;
             });
 
-            this.units = this.units.filter(u => u !== unit);
+            this._units = this.units.filter(u => u !== unit);
         }
     }
 }
