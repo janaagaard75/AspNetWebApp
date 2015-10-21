@@ -2,6 +2,6 @@
     "use strict";
 
     export interface IMoveCommand {
-        toHex: IHex;
+        fromHex: IHex;
     }
 }

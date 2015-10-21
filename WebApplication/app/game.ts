@@ -9,6 +9,7 @@ module Muep {
                 this.players.push(player);
             });
 
+            // TODO: Try with lazy initialization instead of two initialization.
             this.board = new Board(gameData.board);
             this.board.initializeUnits(this);
         }

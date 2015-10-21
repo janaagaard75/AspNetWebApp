@@ -43,7 +43,7 @@ module Muep {
             this.units = [];
             this.unitsData.forEach(unitData => {
                 // TODO: Fix this: When the unit is initialized the move commands are also. But that throws an exception because it's only after the unit has been initialized that it's added to the cell. One solution would be to include the cell in the constructor, but we also need units that aren't placed on any cells yet, so that might not be a good idea.
-                const unit = new Unit(unitData, gameInstance);
+                const unit = new Unit(unitData, this);
                 this.addUnit(unit);
             });
         }

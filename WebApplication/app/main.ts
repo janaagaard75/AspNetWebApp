@@ -12,14 +12,15 @@ module Muep {
 
             this.updatePlayerColor().then(() => {
                 this.updateGameState().then(() => {
-                    this.canvas = new Canvas(this.game);
+                    this.canvas = new Canvas(Main.game);
                 });
             });
         }
 
         private canvas: Canvas;
-        private game: Game;
         private playerColor: string;
+
+        public static game: Game;
 
         private isInDemoMode(): boolean {
             const paramters = Utilities.getUrlParameters();
@@ -38,7 +39,7 @@ module Muep {
 
         private updateGameState(): Promise<void> {
             return GameService.getGameState().then(game => {
-                this.game = game;
+                Main.game = game;
             });
         }
 

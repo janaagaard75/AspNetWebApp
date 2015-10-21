@@ -2,14 +2,14 @@
 {
     public class MoveCommand : Command
     {
-        public MoveCommand(Unit unit, Cell to)
+        public MoveCommand(Unit unit, Cell from)
             : base(unit)
         {
-            To = to;
+            From = from;
         }
 
-        internal readonly Cell To;
+        internal readonly Cell From;
 
-        public Hex ToHex => To.Hex;
+        public Hex FromHex => From.Hex;
     }
 }
