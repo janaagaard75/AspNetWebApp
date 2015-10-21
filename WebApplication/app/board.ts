@@ -16,12 +16,6 @@
             this.gridSize = boardData.gridSize;
         }
 
-        public initializeUnits(gameInstance: Game) {
-            this.cells.forEach(cell => {
-                cell.initializeUnits(gameInstance);
-            });
-        }
-
         public cells: Cell[];
         public gridSize: number;
     }
