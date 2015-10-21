@@ -2,25 +2,23 @@ module Muep {
     "use strict";
 
     export class Cell {
+        /** Call initializeUnits for each cell after all cells have been initialized. */
         constructor(
-            cellData: ICell,
-            gameInstance: Game
+            cellData: ICell
         ) {
             this.hex = new Hex(cellData.hex.r, cellData.hex.s, cellData.hex.t);
-
-            this.units = [];
-            cellData.units.forEach(unitData => {
-                const unit = new Unit(unitData, gameInstance);
-                this.addUnit(unit);
-            });
+            this.unitsData = cellData.units;
         }
 
-        // Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.
+        // TODO: Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.
         public dropAllowed = false;
         public hex: Hex;
         public hexagon: Konva.Shape;
         public hovered = false;
         public units: Unit[];
+
+        /** unitsData is saved for use by the initializeUnits method. */
+        private unitsData: IUnit[];
 
         public addUnit(unit: Unit) {
             if (this.units.filter(u => u === unit).length > 0) {
@@ -39,6 +37,15 @@ module Muep {
                 Math.abs(this.hex.t - other.hex.t));
 
             return distance;
+        }
+
+        public initializeUnits(gameInstance: Game) {
+            this.units = [];
+            this.unitsData.forEach(unitData => {
+                // TODO: Fix this: When the unit is initialized the move commands are also. But that throws an exception because it's only after the unit has been initialized that it's added to the cell. One solution would be to include the cell in the constructor, but we also need units that aren't placed on any cells yet, so that might not be a good idea.
+                const unit = new Unit(unitData, gameInstance);
+                this.addUnit(unit);
+            });
         }
 
         public get moveCommands(): MoveCommand[] {

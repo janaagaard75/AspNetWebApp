@@ -9,7 +9,8 @@ module Muep {
                 this.players.push(player);
             });
 
-            this.board = new Board(gameData.board, this);
+            this.board = new Board(gameData.board);
+            this.board.initializeUnits(this);
         }
 
         public board: Board;

@@ -2,19 +2,24 @@
     "use strict";
 
     export class Board {
+        /** Call initializeUnits after the board has been initialized. */
         constructor(
-            boardData: IBoard,
-            gameInstance: Game
+            boardData: IBoard
         ) {
-            // TODO: The cells have to be initialized before the move commands are. Otherwise the getCell command fails, when it's used by the constructor of the moveCommand. Fix this.
-
+            // No units and commands initialized yet.
             this.cells = [];
             boardData.cells.forEach(cellData => {
-                const cell = new Cell(cellData, gameInstance);
+                const cell = new Cell(cellData);
                 this.cells.push(cell);
             });
 
             this.gridSize = boardData.gridSize;
+        }
+
+        public initializeUnits(gameInstance: Game) {
+            this.cells.forEach(cell => {
+                cell.initializeUnits(gameInstance);
+            });
         }
 
         public cells: Cell[];
