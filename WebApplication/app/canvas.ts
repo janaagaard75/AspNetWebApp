@@ -32,9 +32,7 @@
             this.commandsLayer = new Konva.Layer();
             this.stage.add(this.commandsLayer);
 
-            this.dragLayer = new Konva.Layer({
-                opacity: 0.5
-            });
+            this.dragLayer = new Konva.Layer();
             this.stage.add(this.dragLayer);
         }
 
@@ -160,6 +158,10 @@
                 draggable: true,
                 fill: unit.color,
                 radius: CanvasSettings.unitRadius,
+                shadowBlur: 20,
+                shadowColor: "#000",
+                shadowEnabled: false,
+                shadowOpacity: 0.7,
                 stroke: "#888",
                 strokeWidth: CanvasSettings.lineWidth,
                 x: x,
@@ -173,6 +175,7 @@
 
             circle.on("dragstart", e => {
                 e.target.moveTo(this.dragLayer);
+                e.target.shadowEnabled(true);
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
 
@@ -223,6 +226,7 @@
 
             circle.on("dragend", e => {
                 e.target.moveTo(this.unitsLayer);
+                e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {

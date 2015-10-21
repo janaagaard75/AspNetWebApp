@@ -21,9 +21,8 @@ module Muep {
         private _color: string = undefined;
         private _player: Player = undefined;
 
-        public placeCommand: PlaceCommand;
-
         public cell: Cell;
+        public placeCommand: PlaceCommand;
 
         public get color() {
             return this._color;
