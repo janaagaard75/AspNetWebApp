@@ -2,7 +2,7 @@
     "use strict";
 
     export class DemoSetup {
-        // TODO: Has to return a JSON object that matches the IGame interface.
+        // TODO j: Has to return a JSON object that matches the IGame interface.
         //public static addUnitsAndCommands(game: Game) {
         //    const redPlayer = game.players[0];
         //    const yellowPlayer = game.players[1];

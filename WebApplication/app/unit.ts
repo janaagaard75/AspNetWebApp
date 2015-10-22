@@ -8,10 +8,6 @@ module Muep {
         ) {
             this.unitData = unitData;
             this.cell = cell;
-
-            // TODO: Transfer the data from unitData.
-            this.placeCommand = null;
-
             this._color = tinycolor(unitData.player.color).lighten(10).toString("hex6");
         }
 
@@ -19,10 +15,10 @@ module Muep {
 
         private _moveCommand: MoveCommand = undefined;
         private _color: string = undefined;
+        private _placeCommand: PlaceCommand = undefined;
         private _player: Player = undefined;
 
         public cell: Cell;
-        public placeCommand: PlaceCommand;
 
         public get color() {
             return this._color;
@@ -39,7 +35,7 @@ module Muep {
         public get moveCommand(): MoveCommand {
             if (this._moveCommand === undefined) {
                 if (this.unitData.moveCommand === null) {
-                    this._moveCommand = null;
+                    this.moveCommand = null;
                 } else {
                     const from = Main.game.getCell(this.unitData.moveCommand.fromHex);
                     this.setMoveCommand(from);
@@ -62,6 +58,32 @@ module Muep {
             this._moveCommand = newMoveCommand;
         }
 
+        public get placeCommand(): PlaceCommand {
+            if (this._placeCommand === undefined) {
+                if (this.unitData.placeCommand === null) {
+                    this.placeCommand = null;
+                } else {
+                    const on = Main.game.getCell(this.unitData.placeCommand.onHex);
+                    this.setPlaceCommand(on);
+                }
+            }
+
+            return this._placeCommand;
+        }
+
+        public set placeCommand(newPlaceCommand: PlaceCommand) {
+            if (newPlaceCommand === null) {
+                this._placeCommand = null;
+                return;
+            }
+
+            if (this.cell !== null) {
+                throw "Cannot assign a place command to a unit that already is placed on a cell.";
+            }
+
+            this._placeCommand = newPlaceCommand;
+        }
+
         public get player(): Player {
             if (this._player === undefined) {
                 this._player = Main.game.getPlayer(this.unitData.player);
@@ -75,10 +97,6 @@ module Muep {
         }
 
         public setPlaceCommand(on: Cell) {
-            if (this.cell !== null) {
-                throw "Cannot assign a place command ot a unit that already is placed on a cell.";
-            }
-
             this.placeCommand = new PlaceCommand(this, on);
         }
     }
