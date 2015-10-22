@@ -36,7 +36,7 @@ module CocaineCartels {
 
             const center = {
                 x: CanvasSettings.width / 2,
-                y: CanvasSettings.height / 2
+                y: CanvasSettings.width / 2 // Also using the width here because the canvas isn't square.
             };
             const x = center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.t + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.r;
             const y = center.y - 1.5 * CanvasSettings.cellRadius * hex.r;

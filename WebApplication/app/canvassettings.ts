@@ -19,10 +19,19 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
-            const canvasElement = document.getElementById(this.canvasId);
+            const availableHeigt = window.innerHeight;
+            const availableWidth = window.innerWidth;
+            const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
 
-            this.height = canvasElement.clientHeight;
-            this.width = canvasElement.clientWidth;
+            const correspondingWidth = availableHeigt * aspectRatio;
+            if (correspondingWidth <= availableWidth) {
+                this.height = availableHeigt;
+                this.width = correspondingWidth;
+            } else {
+                const correspondingHeight = availableWidth / aspectRatio;
+                this.height = correspondingHeight;
+                this.width = availableWidth;
+            }
 
             const boardSize = Math.min(this.height, this.width);
 

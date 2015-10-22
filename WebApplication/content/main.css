@@ -3,11 +3,6 @@
     margin: 0;
 }
 
-.canvas {
-    height: 320px;
-    width: 320px;
-}
-
 .grab-cursor {
     cursor: move;
     cursor: -moz-grab;
