@@ -12,7 +12,6 @@ module CocaineCartels {
         private cellData: ICell;
         private _units: Unit[] = undefined;
 
-        // TODO j: Should either merge hovered and dropAllowed into an enum or make the hovering highlight elsewhere, so that both are possible.
         public dropAllowed = false;
         public hex: Hex;
         public hexagon: Konva.Shape;

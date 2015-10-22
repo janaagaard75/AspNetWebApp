@@ -31,12 +31,18 @@ namespace CocaineCartels.BusinessLogic
                 throw new NumberOfPlayersExceeded(MaximumNumberOfPlayers);
             }
 
-            Player newPlayer = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
-            Players.Add(newPlayer);
+            Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
+            Players.Add(player);
 
-            AddAUnitToTheBoard(newPlayer, NumberOfPlayers);
+            AddANewUnitToThePlayer(player);
+            AddAUnitToTheBoard(player, NumberOfPlayers);
 
-            return newPlayer;
+            return player;
+        }
+
+        private void AddANewUnitToThePlayer(Player player)
+        {
+            // TODO j: Implement.
         }
 
         private void AddAUnitToTheBoard(Player player, int playerNumber)

@@ -2,7 +2,7 @@
     "use strict";
 
     export class DemoSetup {
-        // TODO j: Has to return a JSON object that matches the IGame interface.
+        // TODO j: Move this code to the backend, so that it's also a test of loading the game state.
         //public static addUnitsAndCommands(game: Game) {
         //    const redPlayer = game.players[0];
         //    const yellowPlayer = game.players[1];
