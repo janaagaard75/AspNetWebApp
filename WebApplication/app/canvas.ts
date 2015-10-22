@@ -241,6 +241,8 @@
                         Canvas.game.moveUnit(unit, to);
                         unit.setMoveCommand(from);
                     }
+
+                    to.hovered = false;
                 }
 
                 currentHexagon = null;
@@ -287,7 +289,7 @@
                 }
             } else {
                 if (cell.dropAllowed) {
-                    backgroundColor = "#eee";
+                    backgroundColor = "#f3f3f3";
                 } else {
                     backgroundColor = null;
                 }
