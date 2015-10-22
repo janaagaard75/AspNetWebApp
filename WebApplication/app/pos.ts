@@ -1,4 +1,4 @@
-module Muep {
+module CocaineCartels {
     "use strict";
 
     export class Pos implements Konva.Vector2d {

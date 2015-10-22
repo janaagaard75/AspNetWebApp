@@ -1,4 +1,4 @@
-module Muep {
+module CocaineCartels {
     "use strict";
 
     /** Hexagon coordinates with r, s and t. */

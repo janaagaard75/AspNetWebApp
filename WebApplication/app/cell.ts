@@ -1,5 +1,11 @@
-module Muep {
+module CocaineCartels {
     "use strict";
+
+    enum CellState {
+        Neutral,
+        DropAllowed,
+        DropAllowedAndHovered
+    }
 
     export class Cell {
         /** Call initializeUnits for each cell after all cells have been initialized. */

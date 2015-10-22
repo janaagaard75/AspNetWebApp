@@ -1,4 +1,4 @@
-module Muep {
+module CocaineCartels {
     "use strict";
 
     // All these settings are related to the canvas.
