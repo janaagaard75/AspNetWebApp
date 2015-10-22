@@ -11,6 +11,7 @@ namespace CocaineCartels.BusinessLogic
         {
             Board = new Board(Settings.GridSize);
             Players = new List<Player>();
+            // TODO j: Move some of the demo initialization code up here.
         }
 
         private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
@@ -34,15 +35,20 @@ namespace CocaineCartels.BusinessLogic
             Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
-            AddANewUnitToThePlayer(player);
+            // TODO j: Move this somewhere else - it's demo initialization data.
+            AddANewUnitsToThePlayer(player);
             AddAUnitToTheBoard(player, NumberOfPlayers);
 
             return player;
         }
 
-        private void AddANewUnitToThePlayer(Player player)
+        private void AddANewUnitsToThePlayer(Player player)
         {
-            // TODO j: Implement.
+            var unit1 = new Unit(player);
+            player.AddUnit(unit1);
+
+            var unit2 = new Unit(player);
+            player.AddUnit(unit2);
         }
 
         private void AddAUnitToTheBoard(Player player, int playerNumber)
