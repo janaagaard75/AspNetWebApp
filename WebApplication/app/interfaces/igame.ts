@@ -3,6 +3,6 @@
 
     export interface IGame {
         board: IBoard;
-        players: IPlayer[];
+        players: Array<IPlayer>;
     }
 }

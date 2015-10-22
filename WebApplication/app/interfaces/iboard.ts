@@ -2,7 +2,7 @@
     "use strict";
 
     export interface IBoard {
-        cells: ICell[];
+        cells: Array<ICell>;
         gridSize: number;
     }
 }

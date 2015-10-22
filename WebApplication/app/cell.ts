@@ -10,14 +10,14 @@ module CocaineCartels {
         }
 
         private cellData: ICell;
-        private _units: Unit[] = undefined;
+        private _units: Array<Unit> = undefined;
 
         public dropAllowed = false;
         public hex: Hex;
         public hexagon: Konva.Shape;
         public hovered = false;
 
-        public get moveCommands(): MoveCommand[] {
+        public get moveCommands(): Array<MoveCommand> {
             const moveCommands = this.units
                 .map(unit => unit.moveCommand)
                 .filter(moveCommand => moveCommand !== null);
@@ -25,7 +25,7 @@ module CocaineCartels {
             return moveCommands;
         }
 
-        public get units(): Unit[] {
+        public get units(): Array<Unit> {
             if (this._units === undefined) {
                 this._units = [];
                 this.cellData.units.forEach(unitData => {

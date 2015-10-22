@@ -16,7 +16,7 @@
             this.gridSize = boardData.gridSize;
         }
 
-        public cells: Cell[];
+        public cells: Array<Cell>;
         public gridSize: number;
     }
 }

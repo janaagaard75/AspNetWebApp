@@ -23,7 +23,7 @@ module CocaineCartels {
             return multiplied;
         }
 
-        public nearestHex(hexes: Hex[]): Hex {
+        public nearestHex(hexes: Array<Hex>): Hex {
             var minDist: number = null;
             var nearestHex: Hex;
             hexes.forEach(hex => {

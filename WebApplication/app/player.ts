@@ -10,6 +10,6 @@ module CocaineCartels {
         }
 
         public color: string;
-        public units: Unit[];
+        public units: Array<Unit>;
     }
 }

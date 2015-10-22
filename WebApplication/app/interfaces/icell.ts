@@ -3,6 +3,6 @@
 
     export interface ICell {
         hex: IHex;
-        units: IUnit[];
+        units: Array<IUnit>;
     }
 }

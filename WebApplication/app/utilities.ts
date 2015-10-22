@@ -2,7 +2,7 @@
     "use strict";
 
     export class Utilities {
-        public static flatten<T>(doubleArray: T[][]): T[] {
+        public static flatten<T>(doubleArray: Array<Array<T>>): Array<T> {
             const flattened = Array.prototype.concat.apply([], doubleArray);
             return flattened;
         }
@@ -22,7 +22,7 @@
             return parameters;
         }
 
-        public static groupBy<T>(array: T[], groupByFunc: IGroupByFunc<T>): T[][] {
+        public static groupBy<T>(array: Array<T>, groupByFunc: IGroupByFunc<T>): Array<Array<T>> {
             var associativeArray: IGroups<T> = {};
             array.forEach(item => {
                 var group = JSON.stringify(groupByFunc(item));

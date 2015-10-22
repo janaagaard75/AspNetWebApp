@@ -2,6 +2,6 @@
     "use strict";
 
     export interface IGroups<T> {
-        [index: string]: T[]
+        [index: string]: Array<T>
     }
 }

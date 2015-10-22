@@ -13,9 +13,9 @@ module CocaineCartels {
         }
 
         public board: Board;
-        public players: Player[];
+        public players: Array<Player>;
 
-        public allowedCellsForMove(unit: Unit): Cell[] {
+        public allowedCellsForMove(unit: Unit): Array<Cell> {
             if (unit.cell == null) {
                 return [];
             }
@@ -28,7 +28,7 @@ module CocaineCartels {
             return allowedCells;
         }
 
-        public allowedCellsForPlace(unit: Unit): Cell[] {
+        public allowedCellsForPlace(unit: Unit): Array<Cell> {
             throw "allowedCellsForPlace is not yet implemented.";
         }
 
@@ -37,7 +37,7 @@ module CocaineCartels {
             return cell;
         }
 
-        public getMoveCommands(from: Cell, to: Cell): MoveCommand[] {
+        public getMoveCommands(from: Cell, to: Cell): Array<MoveCommand> {
             const moveCommands = this.moveCommands.filter(moveCommand => moveCommand.from === from && moveCommand.to === to);
             return moveCommands;
         }
@@ -52,7 +52,7 @@ module CocaineCartels {
             return players[0];
         }
 
-        public get moveCommands(): MoveCommand[] {
+        public get moveCommands(): Array<MoveCommand> {
             const moveCommands = this.units
                 .map(unit => unit.moveCommand)
                 .filter(moveCommand => moveCommand !== null);
@@ -85,7 +85,7 @@ module CocaineCartels {
             return nearestCell;
         }
 
-        public get units(): Unit[] {
+        public get units(): Array<Unit> {
             const unitsDoubleArray = this.board.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);
             return units;
