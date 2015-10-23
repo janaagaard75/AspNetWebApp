@@ -9,21 +9,27 @@ namespace CocaineCartels.BusinessLogic
     {
         private Game()
         {
-            Board = new Board(Settings.GridSize);
-            Players = new List<Player>();
-            // TODO j: Move some of the demo initialization code up here.
+            _Board = new Board(Settings.GridSize);
+            _NewUnits = new List<Unit>();
+            _Players = new List<Player>();
         }
-
-        private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
-        public static Game Instance => _GameInstance.Value;
 
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
 
-        public readonly Board Board;
-        public readonly List<Player> Players;
+        private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
+
+        private readonly Board _Board;
+        private readonly List<Unit> _NewUnits;
+        private readonly List<Player> _Players;
 
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
+
+        public static Game Instance => _GameInstance.Value;
+
+        public Board Board => Instance._Board;
+        public List<Unit> NewUnits => Instance._NewUnits;
+        public List<Player> Players => Instance._Players;
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -36,19 +42,10 @@ namespace CocaineCartels.BusinessLogic
             Players.Add(player);
 
             // TODO j: Move this somewhere else - it's demo initialization data.
-            AddANewUnitsToThePlayer(player);
             AddAUnitToTheBoard(player, NumberOfPlayers);
+            AssignNewUnitsToPlayer(3, player);
 
             return player;
-        }
-
-        private void AddANewUnitsToThePlayer(Player player)
-        {
-            var unit1 = new Unit(player);
-            player.AddUnit(unit1);
-
-            var unit2 = new Unit(player);
-            player.AddUnit(unit2);
         }
 
         private void AddAUnitToTheBoard(Player player, int playerNumber)
@@ -98,6 +95,15 @@ namespace CocaineCartels.BusinessLogic
             unitCell.AddUnit(unit);
             Cell moveToCell = Board.GetCell(moveToHex);
             unit.SetMoveCommand(moveToCell);
+        }
+
+        private void AssignNewUnitsToPlayer(int numberOfNewUnits, Player player)
+        {
+            for (int i = 0; i < numberOfNewUnits; i++)
+            {
+                var unit = new Unit(player);
+                NewUnits.Add(unit);
+            }
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>

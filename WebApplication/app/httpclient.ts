@@ -9,7 +9,7 @@
                 client.responseType = "json";
                 client.open("GET", url);
                 client.send();
-                client.onload = (e: Event) => {
+                client.onload = (/*e: Event*/) => {
                     if (client.status !== 200) {
                         reject(`Status is ${client.status} ${client.statusText}. Only 200 OK is supported.`);
                     }
@@ -17,7 +17,7 @@
                     const object = <T>client.response;
                     resolve(object);
                 }
-                client.onerror = (e: Event) => {
+                client.onerror = (/*e: Event*/) => {
                     reject(`Error ${errorMessage} '${url}': ${client.statusText}.`);
                 }
             });

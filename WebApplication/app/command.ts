@@ -5,6 +5,10 @@ module CocaineCartels {
         constructor(
             public type: CommandType,
             public unit: Unit
-        ) { }
+        ) {
+            if (unit == null) {
+                throw "'unit' must be defined.";
+            }
+        }
     }
 }

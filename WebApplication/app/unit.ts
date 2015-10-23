@@ -18,14 +18,12 @@ module CocaineCartels {
         private _placeCommand: PlaceCommand = undefined;
         private _player: Player = undefined;
 
+        /** The cell that the unit is located on. If this is null the unit is a new unit, ready to be placed on the board in this turn. */
         public cell: Cell;
 
+        /** The color of the unit. Based on the color of the player who onws the unit. */
         public get color() {
             return this._color;
-        }
-
-        public get commandColor() {
-            return this.player.color;
         }
 
         public get maximumMoveDistance(): number {
