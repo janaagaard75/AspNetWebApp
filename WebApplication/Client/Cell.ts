@@ -5,11 +5,11 @@ module CocaineCartels {
         constructor(
             cellData: ICell
         ) {
-            this.cellData = cellData;
+            this._cellData = cellData;
             this.hex = new Hex(cellData.hex.r, cellData.hex.s, cellData.hex.t);
         }
 
-        private cellData: ICell;
+        private _cellData: ICell;
         private _units: Array<Unit> = undefined;
 
         public dropAllowed = false;
@@ -28,7 +28,7 @@ module CocaineCartels {
         public get units(): Array<Unit> {
             if (this._units === undefined) {
                 this._units = [];
-                this.cellData.units.forEach(unitData => {
+                this._cellData.units.forEach(unitData => {
                     const unit = new Unit(unitData, this);
                     this.addUnit(unit);
                 });

@@ -3,7 +3,7 @@
 
     export interface IGame {
         board: IBoard;
-        newUnits: Array<Unit>;
+        newUnits: Array<IUnit>;
         players: Array<IPlayer>;
     }
 }

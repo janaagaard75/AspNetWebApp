@@ -3,10 +3,8 @@ module CocaineCartels {
 
     export class Main {
         constructor() {
-            this.setCanvasSize();
-           if (this.isInDemoMode()) {
-                //this.game = new Game();
-                //DemoSetup.addUnitsAndCommands(this.game);
+            if (this.isInDemoMode()) {
+                // TODO j: Add a demo mode parameter to the call to the server.
                 return;
             }
 
@@ -29,6 +27,7 @@ module CocaineCartels {
             return inDemoMode;
         }
 
+        // TODO j: This method is not used. Should the size code be move in here, or should this method be deleted?
         private setCanvasSize() {
             const minSize = Math.min(window.innerWidth, window.innerHeight);
             const canvasSize = `${minSize}px`;

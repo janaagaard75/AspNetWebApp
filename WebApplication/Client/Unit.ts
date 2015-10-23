@@ -6,19 +6,18 @@ module CocaineCartels {
             unitData: IUnit,
             cell: Cell
         ) {
-            this.unitData = unitData;
+            this._unitData = unitData;
             this.cell = cell;
             this._color = tinycolor(unitData.player.color).lighten(10).toString("hex6");
         }
-
-        private unitData: IUnit;
 
         private _moveCommand: MoveCommand = undefined;
         private _color: string = undefined;
         private _placeCommand: PlaceCommand = undefined;
         private _player: Player = undefined;
+        private _unitData: IUnit;
 
-        /** The cell that the unit is located on. If this is null the unit is a new unit, ready to be placed on the board in this turn. */
+        /** The cell that the unit is located on. Null if this is a new unit that has not yet been placed on the board. */
         public cell: Cell;
 
         /** The color of the unit. Based on the color of the player who onws the unit. */
@@ -32,10 +31,10 @@ module CocaineCartels {
 
         public get moveCommand(): MoveCommand {
             if (this._moveCommand === undefined) {
-                if (this.unitData.moveCommand === null) {
+                if (this._unitData.moveCommand === null) {
                     this.moveCommand = null;
                 } else {
-                    const from = Main.game.getCell(this.unitData.moveCommand.fromHex);
+                    const from = Main.game.getCell(this._unitData.moveCommand.fromHex);
                     this.setMoveCommand(from);
                 }
             }
@@ -58,10 +57,10 @@ module CocaineCartels {
 
         public get placeCommand(): PlaceCommand {
             if (this._placeCommand === undefined) {
-                if (this.unitData.placeCommand === null) {
+                if (this._unitData.placeCommand === null) {
                     this.placeCommand = null;
                 } else {
-                    const on = Main.game.getCell(this.unitData.placeCommand.onHex);
+                    const on = Main.game.getCell(this._unitData.placeCommand.onHex);
                     this.setPlaceCommand(on);
                 }
             }
@@ -84,7 +83,8 @@ module CocaineCartels {
 
         public get player(): Player {
             if (this._player === undefined) {
-                this._player = Main.game.getPlayer(this.unitData.player);
+                this._player = Main.game.getPlayer(this._unitData.player);
+                this._player.addUnit(this);
             }
 
             return this._player;
