@@ -150,9 +150,9 @@
             throw "drawPlaceCommand() is not yet implemented.";
         }
 
-        private drawUnit(unit: Unit, unitIndex: number, numberOfUnits: number) {
+        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
-            const x = unit.cell.hex.pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
 
             const circle = new Konva.Circle({
                 draggable: true,
@@ -165,7 +165,7 @@
                 stroke: "#888",
                 strokeWidth: CanvasSettings.lineWidth,
                 x: x,
-                y: unit.cell.hex.pos.y
+                y: pos.y
             });
 
             /** Currently hovered hexagon. */
@@ -195,7 +195,7 @@
                 currentHexagon = this.boardLayer.getIntersection(pos);
                 if (currentHexagon !== null) {
                     const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
-                    const distance = unit.cell.distance(currentCell);
+                    const distance = unit.cell.distance(currentCell); // TODO j: Figure out what to do it this unit doesn't have a cell.
 
                     if (distance === 0 || distance > unit.maximumMoveDistance) {
                         currentHexagon = null;
@@ -230,7 +230,7 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const from = unit.cell;
+                    const from = unit.cell; // TODO j: Figure out what to do if this unit doesn't have a cell.
                     const event = <MouseEvent>e.evt;
                     const to = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
                     const distance = from.distance(to);
@@ -270,11 +270,26 @@
             Canvas.game.board.cells.forEach(cell => {
                 this.drawUnitsInCell(cell);
             });
+
+            Canvas.game.players.forEach((player, index, players) => {
+                this.drawNewUnitsForPlayer(player, index, players.length);
+            });
+        }
+
+        private drawNewUnitsForPlayer(player: Player, playerIndex: number, numberOfPlayers: number) {
+            const pos = new Pos(
+                (playerIndex + 1) * (CanvasSettings.width / (numberOfPlayers + 1)),
+                CanvasSettings.width + CanvasSettings.cellRadius // TODO j: Use another setting than cellRadius here.
+            );
+
+            player.newUnits.forEach((unit, unitIndex, units) => {
+                this.drawUnit(unit, pos, unitIndex, units.length);
+            });
         }
 
         private drawUnitsInCell(cell: Cell) {
             cell.units.forEach((unit, index) => {
-                this.drawUnit(unit, index, cell.units.length);
+                this.drawUnit(unit, unit.cell.hex.pos, index, cell.units.length);
             });
         }
 
@@ -297,5 +312,5 @@
 
             cell.hexagon.fill(backgroundColor);
         }
-   }
+    }
 }
