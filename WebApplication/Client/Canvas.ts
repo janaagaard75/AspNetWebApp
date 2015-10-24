@@ -193,6 +193,7 @@
                 });
 
                 this.boardLayer.draw();
+                this.unitsLayer.draw();
             });
             
             // Dragmove is called on every single pixel moved.
