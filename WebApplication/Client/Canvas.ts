@@ -170,6 +170,7 @@
 
             /** Currently hovered hexagon. */
             var currentHexagon: Konva.Shape = null;
+            
             /** Previously hovered hexagon.*/
             var previousHexagon: Konva.Shape = null;
 
@@ -179,6 +180,7 @@
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
 
+                // TODO j: Call allowedCellsForDrop if unit.cell is null instead of the code below.
                 const allowedCells = Canvas.game.allowedCellsForMove(unit);
                 allowedCells.forEach(cell => {
                     cell.dropAllowed = true;
@@ -191,16 +193,7 @@
             // Dragmove is called on every single pixel moved.
             circle.on("dragmove", () => {
                 const pos = this.stage.getPointerPosition();
-
                 currentHexagon = this.boardLayer.getIntersection(pos);
-                if (currentHexagon !== null) {
-                    const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
-                    const distance = unit.cell.distance(currentCell); // TODO j: Figure out what to do it this unit doesn't have a cell.
-
-                    if (distance === 0 || distance > unit.maximumMoveDistance) {
-                        currentHexagon = null;
-                    }
-                }
 
                 if (currentHexagon === previousHexagon) {
                     // Current same as previous: Don't change anything.
@@ -230,19 +223,23 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const from = unit.cell; // TODO j: Figure out what to do if this unit doesn't have a cell.
-                    const event = <MouseEvent>e.evt;
-                    const to = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
-                    const distance = from.distance(to);
+                    if (unit.cell === null) {
+                        // TODO j: Figure out what to do if this unit doesn't have a cell, i.e. is was dragged from the new cells.
+                    } else {
+                        const from = unit.cell;
+                        const event = <MouseEvent>e.evt;
+                        const to = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
+                        const distance = from.distance(to);
 
-                    if (from !== to && distance <= unit.maximumMoveDistance) {
-                        //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
-                        // Move the unit and assign a new move command to it.
-                        Canvas.game.moveUnit(unit, to);
-                        unit.setMoveCommand(from);
+                        if (from !== to && distance <= unit.maximumMoveDistance) {
+                            //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
+                            // Move the unit and assign a new move command to it.
+                            Canvas.game.moveUnit(unit, to);
+                            unit.setMoveCommand(from);
+                        }
+
+                        to.hovered = false;
                     }
-
-                    to.hovered = false;
                 }
 
                 currentHexagon = null;
@@ -299,7 +296,8 @@
                 if (cell.dropAllowed) {
                     backgroundColor = "#ddd";
                 } else {
-                    // This should not happen.
+                    // Drop is not allowed. 
+                    // TODO j: Remove this color once the drag and drop code is done.s
                     backgroundColor = "#f99";
                 }
             } else {
