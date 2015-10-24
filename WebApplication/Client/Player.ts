@@ -14,7 +14,7 @@ module CocaineCartels {
 
         public addNewUnit(unitData: IUnit) {
             const newUnit = new Unit(unitData, null);
-            // TODO j: Try using the addUnit method.
+            // Can't use addUnit bause calling unit.player now would fail.
             this.units.push(newUnit);
         }
 
