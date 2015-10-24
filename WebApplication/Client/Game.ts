@@ -23,7 +23,8 @@ module CocaineCartels {
 
         public allowedCellsForMove(unit: Unit): Array<Cell> {
             if (unit.cell == null) {
-                return [];
+                // TODO j: What about cells that have just been placed on the board?
+                throw "It's not allowed to move a cell that is not already on the board.";
             }
 
             const allowedCells = this.board.cells.filter(cell => {
@@ -35,7 +36,12 @@ module CocaineCartels {
         }
 
         public allowedCellsForPlace(unit: Unit): Array<Cell> {
-            throw "allowedCellsForPlace is not yet implemented.";
+            const allowedCells = this.board.cells.filter(cell => {
+                const cellHasUnitsBelongingToThePlayer = cell.units.filter(u => u.player === unit.player).length > 0;
+                return cellHasUnitsBelongingToThePlayer;
+            });
+
+            return allowedCells;
         }
 
         public getCell(hex: IHex): Cell {

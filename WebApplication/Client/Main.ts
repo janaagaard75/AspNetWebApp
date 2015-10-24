@@ -27,15 +27,6 @@ module CocaineCartels {
             return inDemoMode;
         }
 
-        // TODO j: This method is not used. Should the size code be move in here, or should this method be deleted?
-        private setCanvasSize() {
-            const minSize = Math.min(window.innerWidth, window.innerHeight);
-            const canvasSize = `${minSize}px`;
-            const canvasElement = document.getElementById(CanvasSettings.canvasId);
-            canvasElement.style.width = canvasSize;
-            canvasElement.style.height = canvasSize;
-        }
-
         private updateGameState(): Promise<void> {
             return GameService.getGameState().then(game => {
                 Main.game = game;

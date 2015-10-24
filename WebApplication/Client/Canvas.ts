@@ -180,8 +180,13 @@
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
 
-                // TODO j: Call allowedCellsForDrop if unit.cell is null instead of the code below.
-                const allowedCells = Canvas.game.allowedCellsForMove(unit);
+                var allowedCells: Array<Cell>;
+                if (unit.cell === null) {
+                    allowedCells = Canvas.game.allowedCellsForPlace(unit);
+                } else {
+                    allowedCells = Canvas.game.allowedCellsForMove(unit);
+                }
+
                 allowedCells.forEach(cell => {
                     cell.dropAllowed = true;
                     this.updateCellColor(cell);
@@ -223,22 +228,19 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
+                    const event = <MouseEvent>e.evt;
+                    const currentCell = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
+
                     if (unit.cell === null) {
                         // TODO j: Figure out what to do if this unit doesn't have a cell, i.e. is was dragged from the new cells.
                     } else {
-                        const from = unit.cell;
-                        const event = <MouseEvent>e.evt;
-                        const to = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
-                        const distance = from.distance(to);
-
-                        if (from !== to && distance <= unit.maximumMoveDistance) {
-                            //console.info(`Dragged ${unit.color} unit from (${from.hex.r},${from.hex.s},${from.hex.t}) to (${to.hex.r},${to.hex.s},${to.hex.t}).`);
-                            // Move the unit and assign a new move command to it.
-                            Canvas.game.moveUnit(unit, to);
+                        if (currentCell.dropAllowed) {
+                            const from = unit.cell;
+                            Canvas.game.moveUnit(unit, currentCell);
                             unit.setMoveCommand(from);
                         }
 
-                        to.hovered = false;
+                        currentCell.hovered = false;
                     }
                 }
 
