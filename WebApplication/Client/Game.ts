@@ -50,11 +50,20 @@ module CocaineCartels {
         }
 
         public allowedCellsForPlace(unit: Unit): Array<Cell> {
-            const allowedCells = this.board.cells.filter(cell => {
-                const cellHasUnitsBelongingToThePlayer = cell.units.filter(u => u.player === unit.player).length > 0;
-                return cellHasUnitsBelongingToThePlayer;
+            const cellsWithUnits = this.board.cells.filter(cell => {
+                const cellHasUnitsBelongingToCurrentPlayer = cell.units
+                    .filter(u => u.moveCommand === null)
+                    .filter(u => u.player === unit.player)
+                    .length > 0;
+
+                return cellHasUnitsBelongingToCurrentPlayer;
             });
 
+            const moveFromCells = this.moveCommands
+                .filter(mc => mc.unit.player === unit.player)
+                .map(mc => mc.from);
+
+            const allowedCells = Utilities.union(cellsWithUnits, moveFromCells);
             return allowedCells;
         }
 

@@ -53,5 +53,23 @@
             );
             return rotated;
         }
+
+        /** Returns a union of two arrays of the same type that does not contain any duplicate items. */
+        public static union<T>(array1: Array<T>, array2: Array<T>): Array<T> {
+            var union: Array<T> = [];
+            array1.forEach(item => {
+                if (union.filter(i => i === item).length === 0) {
+                    union.push(item);
+                }
+            });
+
+            array2.forEach(item => {
+                if (union.filter(i => i === item).length === 0) {
+                    union.push(item);
+                }
+            });
+
+            return union;
+        }
     }
 }

@@ -42,13 +42,13 @@ namespace CocaineCartels.BusinessLogic
             Players.Add(player);
 
             // TODO j: Move this somewhere else - it's demo initialization data.
-            AddAUnitToTheBoard(player, NumberOfPlayers);
+            AddTwoUnitsToTheBoard(player, NumberOfPlayers);
             AssignNewUnitsToPlayer(3, player);
 
             return player;
         }
 
-        private void AddAUnitToTheBoard(Player player, int playerNumber)
+        private void AddTwoUnitsToTheBoard(Player player, int playerNumber)
         {
             Hex unitHex = null;
             Hex moveToHex = null;
@@ -91,10 +91,13 @@ namespace CocaineCartels.BusinessLogic
             }
 
             Cell unitCell = Board.GetCell(unitHex);
-            Unit unit = new Unit(player);
-            unitCell.AddUnit(unit);
+            Unit unitWithMove = new Unit(player);
+            unitCell.AddUnit(unitWithMove);
             Cell moveToCell = Board.GetCell(moveToHex);
-            unit.SetMoveCommand(moveToCell);
+            unitWithMove.SetMoveCommand(moveToCell);
+
+            Unit unitWithoutMove = new Unit(player);
+            unitCell.AddUnit(unitWithoutMove);
         }
 
         private void AssignNewUnitsToPlayer(int numberOfNewUnits, Player player)
