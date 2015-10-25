@@ -286,7 +286,7 @@
             );
 
             player.newUnits.forEach((unit, unitIndex, units) => {
-                this.drawUnit(unit, pos, unitIndex, units.length);
+                this.drawUnit(unit, pos, unitIndex, units.length, false);
             });
         }
 
@@ -294,15 +294,11 @@
             const unitsToDisplay = cell.unitsToDisplay;
 
             unitsToDisplay.unitsToBeMovedHere.forEach((unit, index) => {
-                
+                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, true);
             });
 
             unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
-                
-            });
-
-            cell.units.forEach((unit, index) => {
-                this.drawUnit(unit, unit.cell.hex.pos, index, cell.units.length);
+                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, false);
             });
         }
 

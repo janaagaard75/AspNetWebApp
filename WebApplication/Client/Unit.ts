@@ -9,7 +9,7 @@ module CocaineCartels {
             this._unitData = unitData;
             this.cell = cell;
             this._color = unitData.player.color;
-            this._movedColor = tinycolor(unitData.player.color).lighten(20).toString("hex6");
+            this._movedColor = tinycolor(unitData.player.color).lighten(30).toString("hex6");
         }
 
         private _color: string;
