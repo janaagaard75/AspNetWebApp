@@ -232,13 +232,11 @@
                     const mouseEvent = <MouseEvent>e.evt;
                     const currentCell = Canvas.game.nearestCell(new Pos(mouseEvent.layerX, mouseEvent.layerY));
 
-                    if (unit.cell === null) {
-                        if (currentCell.dropAllowed) {
+                    if (currentCell.dropAllowed) {
+                        if (unit.cell === null) {
                             unit.setPlaceCommand(currentCell);
                             Canvas.game.moveUnit(unit, currentCell);
-                        }
-                    } else {
-                        if (currentCell.dropAllowed) {
+                        } else {
                             const from = unit.cell;
                             Canvas.game.moveUnit(unit, currentCell);
                             unit.setMoveCommand(from);
