@@ -84,7 +84,10 @@ module CocaineCartels {
         public get player(): Player {
             if (this._player === undefined) {
                 this._player = Main.game.getPlayer(this._unitData.player);
-                this._player.addUnit(this);
+                // New units not on the board are already associated with the player.
+                if (this._player.units.filter(u => u === this).length === 0) {
+                    this._player.addUnit(this);
+                }
             }
 
             return this._player;

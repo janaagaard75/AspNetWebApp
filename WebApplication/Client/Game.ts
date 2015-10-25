@@ -21,6 +21,20 @@ module CocaineCartels {
         public board: Board;
         public players: Array<Player>;
 
+        public get moveCommands(): Array<MoveCommand> {
+            const moveCommands = this.unitsOnBoard
+                .map(unit => unit.moveCommand)
+                .filter(moveCommand => moveCommand !== null);
+
+            return moveCommands;
+        }
+
+        public get unitsOnBoard(): Array<Unit> {
+            const unitsDoubleArray = this.board.cells.map(cell => cell.units);
+            const units = Utilities.flatten(unitsDoubleArray);
+            return units;
+        }
+
         public allowedCellsForMove(unit: Unit): Array<Cell> {
             if (unit.cell == null) {
                 // TODO j: What about cells that have just been placed on the board?
@@ -64,22 +78,31 @@ module CocaineCartels {
             return players[0];
         }
 
-        public get moveCommands(): Array<MoveCommand> {
-            const moveCommands = this.units
-                .map(unit => unit.moveCommand)
-                .filter(moveCommand => moveCommand !== null);
+        /** Hacky solution for initializing the new units. */
+        public initializeGame() {
+            // Initialize the units on the board.
+            this.board.cells.forEach(cell => {
+                cell.units.forEach(unit => {
+                    // ReSharper disable once WrongExpressionStatement
+                    unit.player;
+                });
+            });
 
-            return moveCommands;
+            // Initialize the new units.
+            this.players.forEach(player => {
+                player.units.forEach(unit => {
+                    // ReSharper disable once WrongExpressionStatement
+                    unit.player;
+                });
+            });
         }
 
-        /** Moves a unit to the specified cell. Also sets the move command to null. */
+        /** Moves a unit to the specified cell. If the unit was placed on another cell it is removed from that one. */
         public moveUnit(unit: Unit, to: Cell) {
-            if (unit.placeCommand !== null) {
-                throw "Cannot move a unit the has a place command assigned to it.";
+            if (unit.cell !== null) {
+                unit.cell.removeUnit(unit);
             }
 
-            unit.moveCommand = null;
-            unit.cell.removeUnit(unit);
             to.addUnit(unit);
         }
 
@@ -95,12 +118,6 @@ module CocaineCartels {
             });
 
             return nearestCell;
-        }
-
-        public get units(): Array<Unit> {
-            const unitsDoubleArray = this.board.cells.map(cell => cell.units);
-            const units = Utilities.flatten(unitsDoubleArray);
-            return units;
         }
     }
 }

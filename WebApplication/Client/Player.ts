@@ -14,13 +14,13 @@ module CocaineCartels {
 
         public addNewUnit(unitData: IUnit) {
             const newUnit = new Unit(unitData, null);
-            // Can't use addUnit bause calling unit.player now would fail.
+            // Can't use addUnit bause calling unit.player here fails when getPlayer is called.
             this.units.push(newUnit);
         }
 
         public addUnit(unit: Unit) {
             if (unit.player !== this) {
-                throw "Adding a unit to a player, but the unit's player is not this player.";
+                throw "Trying to add a unit that belongs to another player.";
             }
 
             this.units.push(unit);

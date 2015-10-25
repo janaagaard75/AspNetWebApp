@@ -59,12 +59,6 @@ module CocaineCartels {
         public removeUnit(unit: Unit) {
             const unitsToRemove = this.units.filter(u => u === unit);
             unitsToRemove.forEach(u => {
-                if (u.moveCommand !== null) {
-                    throw "Cannot remove unit since it has a move command assigned to it.";
-                } else if (u.placeCommand !== null) {
-                    throw "Cannot remove unit since it has a place command assigned to it.";
-                }
-
                 u.cell = null;
             });
 

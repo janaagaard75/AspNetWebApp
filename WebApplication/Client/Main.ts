@@ -30,6 +30,7 @@ module CocaineCartels {
         private updateGameState(): Promise<void> {
             return GameService.getGameState().then(game => {
                 Main.game = game;
+                Main.game.initializeGame();
             });
         }
 

@@ -229,20 +229,23 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const event = <MouseEvent>e.evt;
-                    const currentCell = Canvas.game.nearestCell(new Pos(event.layerX, event.layerY));
+                    const mouseEvent = <MouseEvent>e.evt;
+                    const currentCell = Canvas.game.nearestCell(new Pos(mouseEvent.layerX, mouseEvent.layerY));
 
                     if (unit.cell === null) {
-                        // TODO j: Figure out what to do if this unit doesn't have a cell, i.e. is was dragged from the new cells.
+                        if (currentCell.dropAllowed) {
+                            unit.setPlaceCommand(currentCell);
+                            Canvas.game.moveUnit(unit, currentCell);
+                        }
                     } else {
                         if (currentCell.dropAllowed) {
                             const from = unit.cell;
                             Canvas.game.moveUnit(unit, currentCell);
                             unit.setMoveCommand(from);
                         }
-
-                        currentCell.hovered = false;
                     }
+
+                    currentCell.hovered = false;
                 }
 
                 currentHexagon = null;
@@ -251,6 +254,8 @@
                 Canvas.game.board.cells.forEach(cell => {
                     cell.dropAllowed = false;
                 });
+
+                // TODO j: Why is it not necessary to call updateCellColor here?
 
                 this.drawGame();
             });

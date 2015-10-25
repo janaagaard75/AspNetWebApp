@@ -12,7 +12,6 @@
         public static getGameState(): Promise<Game> {
             return HttpClient.get<IGame>("/api/gamestate").then(gameData => {
                 const gameState = new Game(gameData);
-                console.info(gameState);
                 return gameState;
             });
         }
