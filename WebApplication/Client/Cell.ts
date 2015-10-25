@@ -17,12 +17,17 @@ module CocaineCartels {
         public hexagon: Konva.Shape;
         public hovered = false;
 
-        public get moveCommands(): Array<MoveCommand> {
+        public get moveCommandsFromCell(): Array<MoveCommand> {
             const moveCommands = this.units
                 .map(unit => unit.moveCommand)
                 .filter(moveCommand => moveCommand !== null);
 
             return moveCommands;
+        }
+
+        public get moveCommandsToCell(): Array<MoveCommand> {
+            const commands = Main.game.moveCommands.filter(moveCommand => moveCommand.to === this);
+            return commands;
         }
 
         public get units(): Array<Unit> {
@@ -37,7 +42,17 @@ module CocaineCartels {
             return this._units;
         }
 
+        public get unitsToDisplay(): UnitsToDisplay {
+            const unitsOnThisCell = this.units.filter(unit => unit.moveCommand === null);
+            const unitsToBeMovedToThisCell = this.moveCommandsToCell.map(command => command.unit);
+            return new UnitsToDisplay(unitsOnThisCell, unitsToBeMovedToThisCell);
+        }
+
+        // TODO j: Need an array of units to display on this cell. That would be units on this cell not being moved out and units on other cells being moved to this cell.
+
         public addUnit(unit: Unit) {
+            // TODO j: Fail if this unit is already placed on another cell.
+
             if (this.units.filter(u => u === unit).length > 0) {
                 throw "The unit is already on the cell.";
             }

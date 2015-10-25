@@ -4,25 +4,31 @@ module CocaineCartels {
     export class MoveCommand extends Command {
         constructor(
             public unit: Unit,
-            public from: Cell
+            public from: Cell,
+            public to: Cell
         ) {
             super(CommandType.MoveCommand, unit);
 
             if (unit.cell === null) {
-                throw "Can only assign move commands to units that are assigned to a cell.";
-            }
-
-            if (from == null) {
-                throw "'from' must be defined.";
+                throw "Can only assign move commands to units that are placed on a cell.";
             }
         }
+
+        private _color: string = undefined;
 
         public get color() {
-            return this.unit.player.color;
-        }
+            if (this._color === undefined) {
+                if (this.from === this.unit.cell) {
+                    // This is a move command that the player created this turn.
+                    this._color = this.unit.player.color;
+                } else {
+                    // This is a move command that was done last turn.
+                    // TODO j: Make the command transparent instead.
+                    this._color = tinycolor(this.unit.player.color).lighten(30).toString("hex6");
+                }
+            }
 
-        public get to(): Cell {
-            return this.unit.cell;
+            return this._color;
         }
     }
 }

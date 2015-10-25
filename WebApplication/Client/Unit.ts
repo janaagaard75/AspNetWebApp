@@ -8,13 +8,15 @@ module CocaineCartels {
         ) {
             this._unitData = unitData;
             this.cell = cell;
-            this._color = tinycolor(unitData.player.color).lighten(10).toString("hex6");
+            this._color = unitData.player.color;
+            this._movedColor = tinycolor(unitData.player.color).lighten(20).toString("hex6");
         }
 
-        private _moveCommand: MoveCommand = undefined;
-        private _color: string = undefined;
+        private _color: string;
         private _placeCommand: PlaceCommand = undefined;
         private _player: Player = undefined;
+        private _moveCommand: MoveCommand = undefined;
+        private _movedColor: string;
         private _unitData: IUnit;
 
         /** The cell that the unit is located on. Null if this is a new unit that has not yet been placed on the board. */
@@ -31,12 +33,15 @@ module CocaineCartels {
 
         public get moveCommand(): MoveCommand {
             if (this._moveCommand === undefined) {
-                if (this._unitData.moveCommand === null) {
-                    this.moveCommand = null;
-                } else {
-                    const from = Main.game.getCell(this._unitData.moveCommand.fromHex);
-                    this.setMoveCommand(from);
-                }
+                this._moveCommand = null;
+
+                // TODO j: Show the move commands received from the server.
+                //if (this._unitData.moveCommand === null) {
+                //    this.moveCommand = null;
+                //} else {
+                //    const from = Main.game.getCell(this._unitData.moveCommand.fromHex);
+                //    this.setMoveCommand(from, this.cell);
+                //}
             }
 
             return this._moveCommand;
@@ -53,6 +58,10 @@ module CocaineCartels {
             }
 
             this._moveCommand = newMoveCommand;
+        }
+
+        public get movedColor(): string {
+            return this._movedColor;
         }
 
         public get placeCommand(): PlaceCommand {
@@ -93,8 +102,8 @@ module CocaineCartels {
             return this._player;
         }
 
-        public setMoveCommand(from: Cell) {
-            this.moveCommand = new MoveCommand(this, from);
+        public setMoveCommand(from: Cell, to: Cell) {
+            this.moveCommand = new MoveCommand(this, from, to);
         }
 
         public setPlaceCommand(on: Cell) {

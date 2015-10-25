@@ -81,12 +81,12 @@
         }
 
         private drawCommands() {
-            var groupByFrom: IGroupByFunc<MoveCommand> = command => {
-                return command.from.hex;
+            var groupByTo: IGroupByFunc<MoveCommand> = command => {
+                return command.to.hex;
             }
 
             Canvas.game.board.cells.forEach(cell => {
-                var groups = Utilities.groupBy(cell.moveCommands, groupByFrom);
+                var groups = Utilities.groupBy(cell.moveCommandsFromCell, groupByTo);
                 groups.forEach(commands => {
                     const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
                     const totalCommands = commands.length + oppositeCommands.length;
@@ -150,13 +150,14 @@
             throw "drawPlaceCommand() is not yet implemented.";
         }
 
-        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
+        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number, movedHere: boolean) {
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            const color = movedHere ? unit.movedColor : unit.color;
 
             const circle = new Konva.Circle({
                 draggable: true,
-                fill: unit.color,
+                fill: color,
                 radius: CanvasSettings.unitRadius,
                 shadowBlur: 20,
                 shadowColor: "#000",
@@ -238,8 +239,7 @@
                             Canvas.game.moveUnit(unit, currentCell);
                         } else {
                             const from = unit.cell;
-                            Canvas.game.moveUnit(unit, currentCell);
-                            unit.setMoveCommand(from);
+                            unit.setMoveCommand(from, currentCell);
                         }
                     }
 
@@ -271,7 +271,7 @@
 
         private drawUnits() {
             Canvas.game.board.cells.forEach(cell => {
-                this.drawUnitsInCell(cell);
+                this.drawUnitsOnCell(cell);
             });
 
             Canvas.game.players.forEach((player, index, players) => {
@@ -290,7 +290,17 @@
             });
         }
 
-        private drawUnitsInCell(cell: Cell) {
+        private drawUnitsOnCell(cell: Cell) {
+            const unitsToDisplay = cell.unitsToDisplay;
+
+            unitsToDisplay.unitsToBeMovedHere.forEach((unit, index) => {
+                
+            });
+
+            unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
+                
+            });
+
             cell.units.forEach((unit, index) => {
                 this.drawUnit(unit, unit.cell.hex.pos, index, cell.units.length);
             });
@@ -303,7 +313,7 @@
                     backgroundColor = "#ddd";
                 } else {
                     // Drop is not allowed. 
-                    // TODO j: Remove this color once the drag and drop code is done.s
+                    // TODO j: Remove this color once the drag and drop code is done.
                     backgroundColor = "#f99";
                 }
             } else {

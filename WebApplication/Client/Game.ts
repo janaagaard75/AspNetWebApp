@@ -37,7 +37,6 @@ module CocaineCartels {
 
         public allowedCellsForMove(unit: Unit): Array<Cell> {
             if (unit.cell == null) {
-                // TODO j: What about cells that have just been placed on the board?
                 throw "It's not allowed to move a cell that is not already on the board.";
             }
 
@@ -106,6 +105,7 @@ module CocaineCartels {
             });
         }
 
+        // TODO j: Rename this to placeUnit. Moved units are not moved on the board, they are only assigned moved commands.
         /** Moves a unit to the specified cell. If the unit was placed on another cell it is removed from that one. */
         public moveUnit(unit: Unit, to: Cell) {
             if (unit.cell !== null) {
