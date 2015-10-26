@@ -9,7 +9,7 @@ module CocaineCartels {
             this._unitData = unitData;
             this.cell = cell;
             this._color = unitData.player.color;
-            this._movedColor = tinycolor(unitData.player.color).lighten(30).toString("hex6");
+            this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
         }
 
         private _color: string;
@@ -103,7 +103,11 @@ module CocaineCartels {
         }
 
         public setMoveCommand(from: Cell, to: Cell) {
-            this.moveCommand = new MoveCommand(this, from, to);
+            if (from === to) {
+                this.moveCommand = null;
+            } else {
+                this.moveCommand = new MoveCommand(this, from, to);
+            }
         }
 
         public setPlaceCommand(on: Cell) {

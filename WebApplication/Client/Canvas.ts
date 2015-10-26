@@ -238,8 +238,7 @@
                             unit.setPlaceCommand(currentCell);
                             Canvas.game.moveUnit(unit, currentCell);
                         } else {
-                            const from = unit.cell;
-                            unit.setMoveCommand(from, currentCell);
+                            unit.setMoveCommand(unit.cell, currentCell);
                         }
                     }
 

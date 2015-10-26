@@ -41,8 +41,8 @@ module CocaineCartels {
             }
 
             const allowedCells = this.board.cells.filter(cell => {
-                const distance = cell.distance(unit.cell);
-                return (distance > 0 && distance <= unit.maximumMoveDistance);
+                const allowed = cell.distance(unit.cell) <= unit.maximumMoveDistance;
+                return allowed;
             });
 
             return allowedCells;
