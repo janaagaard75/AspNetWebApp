@@ -51,10 +51,12 @@
     <Compile Include="Hex.cs" />
     <Compile Include="MoveCommand.cs" />
     <Compile Include="NumberOfPlayersExceeded.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="PlaceCommand.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Turn.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>

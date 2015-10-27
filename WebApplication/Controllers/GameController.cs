@@ -3,6 +3,7 @@ using System.Net;
 using System.Web;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
+using CocaineCartels.WebApplication.Models;
 
 namespace CocaineCartels.WebApplication.Controllers
 {
@@ -10,6 +11,7 @@ namespace CocaineCartels.WebApplication.Controllers
     {
         public GameController()
         {
+            // TODO j: Is there any idea in having this local instance variable?
             GameInstance = Game.Instance;
         }
 
@@ -34,6 +36,12 @@ namespace CocaineCartels.WebApplication.Controllers
         public Game GetGameState()
         {
             return GameInstance;
+        }
+
+        [HttpPost, Route("api/commands")]
+        public void PostCommands(PlayerCommands commands)
+        {
+            // TODO j: Loop through the place and then the move commands, adding them to the game.
         }
     }
 }

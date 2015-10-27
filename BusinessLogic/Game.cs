@@ -9,27 +9,24 @@ namespace CocaineCartels.BusinessLogic
     {
         private Game()
         {
-            _Board = new Board(Settings.GridSize);
-            _NewUnits = new List<Unit>();
-            _Players = new List<Player>();
+            Board = new Board(Settings.GridSize);
+            NewUnits = new List<Unit>();
+            Players = new List<Player>();
         }
 
-        private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
-
         private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
+        public static Game Instance => _GameInstance.Value;
 
-        private readonly Board _Board;
-        private readonly List<Unit> _NewUnits;
-        private readonly List<Player> _Players;
+        private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
 
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
-        public static Game Instance => _GameInstance.Value;
+        private Board NextBoard { get; set; }
 
-        public Board Board => Instance._Board;
-        public List<Unit> NewUnits => Instance._NewUnits;
-        public List<Player> Players => Instance._Players;
+        public Board Board { get; private set; }
+        public List<Unit> NewUnits { get; }
+        public List<Player> Players { get; }
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -41,66 +38,65 @@ namespace CocaineCartels.BusinessLogic
             Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
-            // TODO j: Move this somewhere else - it's demo initialization data.
-            AddTwoUnitsToTheBoard(player, NumberOfPlayers);
-            AssignNewUnitsToPlayer(3, player);
+            // TODO j: Trigger this by calling start game instead.
+            StartGame();
 
             return player;
         }
 
-        private void AddTwoUnitsToTheBoard(Player player, int playerNumber)
+        public void AddMoveCommand(Player player, Hex from, Hex to)
         {
-            Hex unitHex = null;
-            Hex moveToHex = null;
+            // TODO j: Add the move command to the next board.
+        }
+
+        public void AddPlaceCommand(Player player, Hex on)
+        {
+            // TODO j: Add the place command to the next board.
+        }
+
+        private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits)
+        {
+            Hex unitHex;
             switch (playerNumber)
             {
                 case 0:
                     unitHex = new Hex(Board.GridSize, 0, -Board.GridSize);
-                    moveToHex = new Hex(Board.GridSize - 1, 0, -(Board.GridSize - 1));
                     break;
 
                 case 1:
                     unitHex = new Hex(Board.GridSize, -Board.GridSize, 0);
-                    moveToHex = new Hex(Board.GridSize - 1, -(Board.GridSize - 1), 0);
                     break;
 
                 case 2:
                     unitHex = new Hex(0, -Board.GridSize, Board.GridSize);
-                    moveToHex = new Hex(0, -(Board.GridSize - 1), Board.GridSize - 1);
                     break;
 
                 case 3:
                     unitHex = new Hex(-Board.GridSize, 0, Board.GridSize);
-                    moveToHex = new Hex(-(Board.GridSize - 1), 0, Board.GridSize - 1);
                     break;
 
                 case 4:
                     unitHex = new Hex(-Board.GridSize, Board.GridSize, 0);
-                    moveToHex = new Hex(Board.GridSize - 1, -(Board.GridSize - 1), 0);
                     break;
 
                 case 5:
                     unitHex = new Hex(0, Board.GridSize, -Board.GridSize);
-                    moveToHex = new Hex(0, Board.GridSize - 1, -(Board.GridSize - 1));
                     break;
-            }
 
-            if (unitHex == null)
-            {
-                return;
+                default:
+                    throw new ApplicationException("Only supports up to 6 players.");
             }
 
             Cell unitCell = Board.GetCell(unitHex);
-            Unit unitWithMove = new Unit(player);
-            unitCell.AddUnit(unitWithMove);
-            Cell moveToCell = Board.GetCell(moveToHex);
-            unitWithMove.SetMoveCommand(moveToCell);
 
-            Unit unitWithoutMove = new Unit(player);
-            unitCell.AddUnit(unitWithoutMove);
+            for (int i = 0; i < numberOfUnits; i++)
+            {
+                Unit unit = new Unit(player);
+                unitCell.AddUnit(unit);
+            }
         }
 
-        private void AssignNewUnitsToPlayer(int numberOfNewUnits, Player player)
+        private void AssignNewUnitsToPlayer(Player player, int numberOfNewUnits)
         {
             for (int i = 0; i < numberOfNewUnits; i++)
             {
@@ -120,6 +116,39 @@ namespace CocaineCartels.BusinessLogic
             }
 
             return matchingPlayer;
+        }
+
+        public void StartGame()
+        {
+            for (int i = 0; i < NumberOfPlayers; i++)
+            {
+                Player player = Players[i];
+                AddStartingUnitsToTheBoard(player, NumberOfPlayers, 3);
+                AssignNewUnitsToPlayer(player, 3);
+            }
+
+            NextBoard = Board.Copy();
+        }
+
+        public void ExecuteCommands()
+        {
+            // Execution phase of the turn.
+            // Assume that all players have sent in their commands.
+            // Perform all the commands assigned to the units on the NextBoard.
+            
+            // Promote NextBoard to the current board.
+            Board = NextBoard;
+
+            // Clone Board in the NextBoard. Not using a reference here because we want to be able to assign 
+            NextBoard = Board.Copy();
+
+            // TODO j: Assign new units on all the players.
+            Players.ForEach(player =>
+            {
+                
+            });
+
+            //NewUnits = 
         }
     }
 }

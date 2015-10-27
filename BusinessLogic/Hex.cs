@@ -26,5 +26,10 @@ namespace CocaineCartels.BusinessLogic
             bool equals = (R == other.R && S == other.S && T == other.T);
             return equals;
         }
+
+        public override string ToString()
+        {
+            return $"({R},{S},{T})";
+        }
     }
 }
