@@ -48,8 +48,6 @@ module CocaineCartels {
             return new UnitsToDisplay(unitsOnThisCell, unitsToBeMovedToThisCell);
         }
 
-        // TODO j: Need an array of units to display on this cell. That would be units on this cell not being moved out and units on other cells being moved to this cell.
-
         public addUnit(unit: Unit) {
             // TODO j: Fail if this unit is already placed on another cell.
 
