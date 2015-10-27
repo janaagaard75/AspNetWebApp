@@ -9,9 +9,7 @@ namespace CocaineCartels.BusinessLogic
     {
         private Game()
         {
-            Board = new Board(Settings.GridSize);
-            NewUnits = new List<Unit>();
-            Players = new List<Player>();
+            ResetGame();
         }
 
         private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
@@ -25,8 +23,9 @@ namespace CocaineCartels.BusinessLogic
         private Board NextBoard { get; set; }
 
         public Board Board { get; private set; }
-        public List<Unit> NewUnits { get; }
-        public List<Player> Players { get; }
+        public List<Unit> NewUnits { get; private set; }
+        public List<Player> Players { get; private set; }
+        public bool Started;
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -38,8 +37,8 @@ namespace CocaineCartels.BusinessLogic
             Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
-            // TODO j: Trigger this by calling start game instead.
-            StartGame();
+            // TODO j: Delete this later. It's just here to show have many players are connected.
+            AddNewUnitsToPlayer(player, 1);
 
             return player;
         }
@@ -96,7 +95,7 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        private void AssignNewUnitsToPlayer(Player player, int numberOfNewUnits)
+        private void AddNewUnitsToPlayer(Player player, int numberOfNewUnits)
         {
             for (int i = 0; i < numberOfNewUnits; i++)
             {
@@ -118,16 +117,29 @@ namespace CocaineCartels.BusinessLogic
             return matchingPlayer;
         }
 
+        public void ResetGame()
+        {
+            Board = new Board(Settings.GridSize);
+            NewUnits = new List<Unit>();
+            Players = new List<Player>();
+            Started = false;
+        }
+
         public void StartGame()
         {
+            if (Started)
+            {
+                throw new ApplicationException("The game is already started.");
+            }
+
             for (int i = 0; i < NumberOfPlayers; i++)
             {
                 Player player = Players[i];
                 AddStartingUnitsToTheBoard(player, NumberOfPlayers, 3);
-                AssignNewUnitsToPlayer(player, 3);
             }
 
             NextBoard = Board.Copy();
+            Started = true;
         }
 
         public void ExecuteCommands()
