@@ -63,5 +63,17 @@ module CocaineCartels {
                 this.playerColor = color;
             });
         }
+
+        public resetGame() {
+            GameService.getResetGame().then(() => {
+                window.location.reload();
+            });
+        }
+
+        public startGame() {
+            GameService.getStartGame().then(() => {
+                window.location.reload();
+            });
+        }
     }
 }

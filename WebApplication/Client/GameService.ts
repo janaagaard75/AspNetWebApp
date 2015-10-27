@@ -16,6 +16,14 @@
             });
         }
 
+        public static getResetGame(): Promise<void> {
+            return HttpClient.get<void>("/api/reset");
+        }
+
+        public static getStartGame(): Promise<void> {
+            return HttpClient.get<void>("/api/start");
+        }
+
         public static postCommands(commands: PostCommands): Promise<void> {
             return HttpClient.post<void>("/api/commands", commands);
         }
