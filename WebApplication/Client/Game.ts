@@ -108,16 +108,6 @@ module CocaineCartels {
             });
         }
 
-        // TODO j: Rename this to placeUnit. Moved units are not moved on the board, they are only assigned moved commands.
-        /** Moves a unit to the specified cell. If the unit was placed on another cell it is removed from that one. */
-        public moveUnit(unit: Unit, to: Cell) {
-            if (unit.cell !== null) {
-                unit.cell.removeUnit(unit);
-            }
-
-            to.addUnit(unit);
-        }
-
         public nearestCell(pos: Konva.Vector2d): Cell {
             var minDist: number = null;
             var nearestCell: Cell;
@@ -130,6 +120,15 @@ module CocaineCartels {
             });
 
             return nearestCell;
+        }
+
+        /** Places a unit on the specified cell. */
+        public placeUnit(unit: Unit, on: Cell) {
+            if (unit.cell !== null) {
+                throw "The unit is already placed on a cell."
+            }
+
+            on.addUnit(unit);
         }
     }
 }

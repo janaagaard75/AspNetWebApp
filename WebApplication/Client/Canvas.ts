@@ -236,7 +236,7 @@
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
                             unit.setPlaceCommand(currentCell);
-                            Canvas.game.moveUnit(unit, currentCell);
+                            Canvas.game.placeUnit(unit, currentCell);
                         } else {
                             unit.setMoveCommand(unit.cell, currentCell);
                         }
