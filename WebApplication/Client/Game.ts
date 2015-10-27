@@ -16,10 +16,13 @@ module CocaineCartels {
             });
 
             this.board = new Board(gameData.board);
+
+            this.started = gameData.started;
         }
 
         public board: Board;
         public players: Array<Player>;
+        public started: boolean;
 
         public get moveCommands(): Array<MoveCommand> {
             const moveCommands = this.unitsOnBoard

@@ -11,6 +11,7 @@ module CocaineCartels {
             this.updatePlayerColor().then(() => {
                 this.updateGameState().then(() => {
                     this.canvas = new Canvas(Main.game);
+                    document.getElementById("gameStarted").innerHTML = Main.game.started.toString();
                 });
             });
         }
