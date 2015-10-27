@@ -31,7 +31,7 @@ namespace CocaineCartels.WebApplication.Controllers
         }
 
         [HttpPost, Route("api/commands")]
-        public void PostCommands(PlayerCommands commands)
+        public void PostCommands(PostCommands commands)
         {
             // TODO j: Loop through first the place and afterwords the move commands, adding them to the game.
         }

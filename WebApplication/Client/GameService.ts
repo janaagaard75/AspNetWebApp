@@ -15,5 +15,9 @@
                 return gameState;
             });
         }
+
+        public static postCommands(commands: PostCommands): Promise<void> {
+            return HttpClient.post<void>("/api/commands", commands);
+        }
     }
 }

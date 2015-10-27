@@ -2,11 +2,12 @@
     ViewBag.Title = "Cocaine Cartels";
 }
 <div id="canvas"></div>
-<p><a href="/api/start">Start Game</a> | <a href="/api/reset">Reset Game</a></p>
+<p><button onclick="cocaineCartels.sendCommands();">Send Commands</button></p>
+<p>[<a href="/api/start">Start Game</a>] [<a href="/api/reset">Reset Game</a>]</p>
 <p>Game started: <span id="gameStarted">unknown</span>.</p>
 @section scripts
 {
     <script>
-        new CocaineCartels.Main();
+        var cocaineCartels = new CocaineCartels.Main();
     </script>
 }

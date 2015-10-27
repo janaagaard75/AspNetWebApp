@@ -21,7 +21,8 @@ module CocaineCartels {
 
             const availableHeigt = window.innerHeight;
             const availableWidth = window.innerWidth;
-            const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
+            //const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
+            const aspectRatio = 4 / 5; // Using less right now to make space for buttons below.
 
             const correspondingWidth = availableHeigt * aspectRatio;
             if (correspondingWidth <= availableWidth) {

@@ -2,7 +2,7 @@
 
 namespace CocaineCartels.WebApplication.Models
 {
-    public class Hex
+    public class PostHex
     {
         [Required]
         public int R { get; set; }
