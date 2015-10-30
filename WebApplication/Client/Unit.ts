@@ -102,6 +102,13 @@ module CocaineCartels {
             return this._player;
         }
 
+        public deleteUnit() {
+            this.cell = null;
+            this._moveCommand = null;
+            this._placeCommand = null;
+            this._player = null;
+        }
+
         public setMoveCommand(from: Cell, to: Cell) {
             if (from === to) {
                 this.moveCommand = null;

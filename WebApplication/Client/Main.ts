@@ -69,10 +69,10 @@ module CocaineCartels {
                 window.location.reload();
             });
         }
-
+        
         // TODO j: Remove this method when it's done on the server.
         public simularCombat() {
-            Main.game.simularCombat();
+            Main.game.simulateCombat();
             this.canvas.drawGame();
         }
 

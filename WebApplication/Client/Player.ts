@@ -12,6 +12,11 @@ module CocaineCartels {
         public color: string;
         public units: Array<Unit>;
 
+        public get newUnits(): Array<Unit> {
+            const newUnits = this.units.filter(u => u.cell === null);
+            return newUnits;
+        }
+
         public addNewUnit(unitData: IUnit) {
             const newUnit = new Unit(unitData, null);
             // Can't use addUnit bause calling unit.player here fails when getPlayer is called.
@@ -26,9 +31,15 @@ module CocaineCartels {
             this.units.push(unit);
         }
 
-        public get newUnits(): Array<Unit> {
-            const newUnits = this.units.filter(u => u.cell === null);
-            return newUnits;
+        public removeUnit(unit: Unit) {
+            if (unit.player !== this) {
+                throw "Trying to remove a unit that belongs to another player.";
+            }
+
+            const unitsToRemove = this.units.filter(u => u === unit);
+            unitsToRemove.forEach(u => {
+                u.deleteUnit();
+            });
         }
     }
 }

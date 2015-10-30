@@ -22,8 +22,9 @@
             return parameters;
         }
 
-        public static groupBy<T>(array: Array<T>, groupByFunc: IGroupByFunc<T>): Array<Array<T>> {
-            var associativeArray: IGroups<T> = {};
+        // TODO j: Why is this returned as a double array and not an associative array?
+        public static groupBy<TItem, TKey>(array: Array<TItem>, groupByFunc: IGroupByFunc<TItem, TKey>): Array<Array<TItem>> {
+            var associativeArray: IGroups<TItem> = {};
             array.forEach(item => {
                 var group = JSON.stringify(groupByFunc(item));
                 if (associativeArray[group] === undefined) {

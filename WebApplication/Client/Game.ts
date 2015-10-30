@@ -125,14 +125,64 @@ module CocaineCartels {
         /** Places a unit on the specified cell. */
         public placeUnit(unit: Unit, on: Cell) {
             if (unit.cell !== null) {
-                throw "The unit is already placed on a cell."
+                throw "The unit is already placed on a cell.";
             }
 
             on.addUnit(unit);
         }
 
+        public simulateCombat() {
+            var atLeastOneUnitRemoved = true;
+            while (atLeastOneUnitRemoved) {
+                atLeastOneUnitRemoved = this.simulateCombatOneTurn();
+            }
+
+            // Asign three new units to all players.
+            this.players.forEach(player => {
+                for (var i = 0; i < 3; i++) {
+                    var newUnitData: IUnit = {
+                        moveCommand: null,
+                        placeCommand: null,
+                        player: player
+                    };
+                    player.addNewUnit(newUnitData);
+                }
+            });
+        }
+
+        public simulateCombatOneTurn(): boolean {
+            var atLeastOneUnitRemoved = false;
+            this.board.cells
+                .filter(cell => cell.units.length >= 1)
+                .filter(cell => {
+                    const groupedByPlayer = Utilities.groupBy(cell.units, unit => unit.player.color);
+                    return groupedByPlayer.length >= 2;
+                })
+                .forEach(cell => {
+                    this.removeAUnitFromEachPlayer(cell);
+                    atLeastOneUnitRemoved = true;
+                });
+            return atLeastOneUnitRemoved;
+        }
+
+        private removeAUnitFromEachPlayer(cell: Cell) {
+            this.players.forEach(player => {
+                const unitsBelongingToPlayer = cell.units.filter(unit => unit.player === player);
+                if (unitsBelongingToPlayer.length >= 1) {
+                    const unitToRemove = unitsBelongingToPlayer[0];
+                    cell.removeUnit(unitToRemove);
+                    unitToRemove.player.removeUnit(unitToRemove);
+                }
+            });
+        }
+
         public simulateMove() {
             // Remove place commands.
+            this.unitsOnBoard
+                .filter(unit => unit.placeCommand !== null)
+                .forEach(unit => {
+                    unit.placeCommand = null;
+                });
 
             // Execute move commands.
             this.unitsOnBoard

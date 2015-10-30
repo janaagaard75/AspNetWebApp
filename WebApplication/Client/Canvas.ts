@@ -81,7 +81,7 @@
         }
 
         private drawCommands() {
-            var groupByTo: IGroupByFunc<MoveCommand> = command => {
+            var groupByTo: IGroupByFunc<MoveCommand, Hex> = command => {
                 return command.to.hex;
             }
 

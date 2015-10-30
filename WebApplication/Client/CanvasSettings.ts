@@ -19,7 +19,7 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
-            const heightForButtons = 100;
+            const heightForButtons = 120;
             const availableHeigt = window.innerHeight - heightForButtons;
             const availableWidth = window.innerWidth;
             //const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
