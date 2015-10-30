@@ -135,7 +135,7 @@ namespace CocaineCartels.BusinessLogic
             for (int i = 0; i < NumberOfPlayers; i++)
             {
                 Player player = Players[i];
-                AddStartingUnitsToTheBoard(player, NumberOfPlayers, 3);
+                AddStartingUnitsToTheBoard(player, i, 3);
             }
 
             NextBoard = Board.Copy();
