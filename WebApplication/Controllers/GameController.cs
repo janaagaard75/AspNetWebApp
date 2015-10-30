@@ -34,6 +34,8 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpPost, Route("api/commands")]
         public void PostCommands(ClientCommands commands)
         {
+            Game.Instance.ResetPlayersCommands(commands.PlayerColor);
+
             commands.PlaceCommands.ForEach(placeCommand =>
             {
                 Game.Instance.AddPlaceCommand(commands.PlayerColor, placeCommand.On.ToHex());

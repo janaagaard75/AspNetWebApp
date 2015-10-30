@@ -45,12 +45,12 @@ namespace CocaineCartels.BusinessLogic
 
         public void AddMoveCommand(string playerColor, Hex from, Hex to)
         {
-            // TODO j: Add the move command to the next board.
+            throw new NotImplementedException("TODO j");
         }
 
         public void AddPlaceCommand(string playerColor, Hex on)
         {
-            // TODO j: Add the place command to the next board.
+            throw new NotImplementedException("TODO j");
         }
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits)
@@ -104,6 +104,27 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
+        public void ExecuteCommands()
+        {
+            // Execution phase of the turn.
+            // Assume that all players have sent in their commands.
+            // Perform all the commands assigned to the units on the NextBoard.
+
+            // Promote NextBoard to the current board.
+            Board = NextBoard;
+
+            // Clone Board in the NextBoard. Not using a reference here because we want to be able to assign 
+            NextBoard = Board.Copy();
+
+            // TODO j: Assign new units on all the players.
+            Players.ForEach(player =>
+            {
+
+            });
+
+            //NewUnits = 
+        }
+
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
         public Player GetPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -125,6 +146,11 @@ namespace CocaineCartels.BusinessLogic
             Started = false;
         }
 
+        public void ResetPlayersCommands(string playerColor)
+        {
+            throw new NotImplementedException("TODO j");
+        }
+
         public void StartGame()
         {
             if (Started)
@@ -141,38 +167,5 @@ namespace CocaineCartels.BusinessLogic
             NextBoard = Board.Copy();
             Started = true;
         }
-
-        public void ExecuteCommands()
-        {
-            // Execution phase of the turn.
-            // Assume that all players have sent in their commands.
-            // Perform all the commands assigned to the units on the NextBoard.
-            
-            // Promote NextBoard to the current board.
-            Board = NextBoard;
-
-            // Clone Board in the NextBoard. Not using a reference here because we want to be able to assign 
-            NextBoard = Board.Copy();
-
-            // TODO j: Assign new units on all the players.
-            Players.ForEach(player =>
-            {
-                
-            });
-
-            //NewUnits = 
-        }
     }
 }
-
-// TODO: Try to implement this lazy instation. It should be more thread-safe.
-// http://www.asp.net/signalr/overview/getting-started/tutorial-server-broadcast-with-signalr
-//private readonly static Lazy<StockTicker> _instance = new Lazy<StockTicker>(() => new StockTicker(GlobalHost.ConnectionManager.GetHubContext<StockTickerHub>().Clients));
-
-//public static StockTicker Instance
-//{
-//    get
-//    {
-//        return _instance.Value;
-//    }
-//}
