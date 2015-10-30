@@ -292,12 +292,12 @@
         private drawUnitsOnCell(cell: Cell) {
             const unitsToDisplay = cell.unitsToDisplay;
 
-            unitsToDisplay.unitsToBeMovedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, true);
+            unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, false);
             });
 
-            unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, unitsToDisplay.unitsToBeMovedHere.length + index, unitsToDisplay.numberOfUnits, false);
+            unitsToDisplay.unitsToBeMovedHere.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, unitsToDisplay.unitsOnThisCell.length + index, unitsToDisplay.numberOfUnits, true);
             });
         }
 
