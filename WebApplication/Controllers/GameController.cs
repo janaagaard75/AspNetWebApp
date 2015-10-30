@@ -32,7 +32,7 @@ namespace CocaineCartels.WebApplication.Controllers
         }
 
         [HttpPost, Route("api/commands")]
-        public void PostCommands(PostCommands commands)
+        public void PostCommands(ClientCommands commands)
         {
             commands.PlaceCommands.ForEach(placeCommand =>
             {

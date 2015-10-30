@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CocaineCartels.WebApplication.Models
 {
-    public class PostCommands
+    public class ClientCommands
     {
-        public IEnumerable<PostMoveCommand> MoveCommands { get; set; }
-        public IEnumerable<PostPlaceCommand> PlaceCommands { get; set; }
+        public IEnumerable<ClientMoveCommand> MoveCommands { get; set; }
+        public IEnumerable<ClientPlaceCommand> PlaceCommands { get; set; }
         [Required]
         public string PlayerColor { get; set; }
     }

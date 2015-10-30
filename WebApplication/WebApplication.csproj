@@ -169,10 +169,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\PostHex.cs" />
-    <Compile Include="Models\PostMoveCommand.cs" />
-    <Compile Include="Models\PostPlaceCommand.cs" />
-    <Compile Include="Models\PostCommands.cs" />
+    <Compile Include="Models\ClientHex.cs" />
+    <Compile Include="Models\ClientMoveCommand.cs" />
+    <Compile Include="Models\ClientPlaceCommand.cs" />
+    <Compile Include="Models\ClientCommands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

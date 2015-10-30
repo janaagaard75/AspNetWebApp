@@ -3,7 +3,7 @@ using CocaineCartels.BusinessLogic;
 
 namespace CocaineCartels.WebApplication.Models
 {
-    public class PostHex
+    public class ClientHex
     {
         [Required]
         public int R { get; set; }
