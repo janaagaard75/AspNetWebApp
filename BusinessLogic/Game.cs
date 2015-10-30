@@ -104,6 +104,16 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
+        /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
+        public void DeleteNextTurnCommands(string playerColor)
+        {
+            IEnumerable<Unit> playersUnits = NextBoard.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            playersUnits.ForEach(unit =>
+            {
+                unit.RemoveCommands();
+            });
+        }
+
         public void ExecuteCommands()
         {
             // Execution phase of the turn.
@@ -144,11 +154,6 @@ namespace CocaineCartels.BusinessLogic
             NewUnits = new List<Unit>();
             Players = new List<Player>();
             Started = false;
-        }
-
-        public void ResetPlayersCommands(string playerColor)
-        {
-            throw new NotImplementedException("TODO j");
         }
 
         public void StartGame()

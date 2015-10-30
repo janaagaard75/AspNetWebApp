@@ -49,6 +49,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hex.cs" />
+    <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="MoveCommand.cs" />
     <Compile Include="NumberOfPlayersExceeded.cs" />
     <Compile Include="ObjectExtensions.cs" />

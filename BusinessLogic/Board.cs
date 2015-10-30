@@ -37,5 +37,10 @@ namespace CocaineCartels.BusinessLogic
             Cell cell = Cells.First(c => c.Hex.Equals(hex));
             return cell;
         }
+
+        internal IEnumerable<Unit> GetUnits()
+        {
+            return Cells.SelectMany(cell => cell.Units);
+        }
     }
 }

@@ -4,7 +4,6 @@ using System.Web;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
 using CocaineCartels.WebApplication.Models;
-using Microsoft.Ajax.Utilities;
 
 namespace CocaineCartels.WebApplication.Controllers
 {
@@ -34,7 +33,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpPost, Route("api/commands")]
         public void PostCommands(ClientCommands commands)
         {
-            Game.Instance.ResetPlayersCommands(commands.PlayerColor);
+            Game.Instance.DeleteNextTurnCommands(commands.PlayerColor);
 
             commands.PlaceCommands.ForEach(placeCommand =>
             {

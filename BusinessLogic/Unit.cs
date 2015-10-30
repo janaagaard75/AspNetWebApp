@@ -12,10 +12,16 @@ namespace CocaineCartels.BusinessLogic
         }
 
         public MoveCommand MoveCommand { get; private set; }
-        public readonly PlaceCommand PlaceCommand;
+        public PlaceCommand PlaceCommand { get; private set; }
         public readonly Player Player;
 
         internal Cell Cell;
+
+        public void RemoveCommands()
+        {
+            PlaceCommand = null;
+            MoveCommand = null;
+        }
 
         public MoveCommand SetMoveCommand(Cell to)
         {
@@ -26,6 +32,11 @@ namespace CocaineCartels.BusinessLogic
 
             MoveCommand = new MoveCommand(this, to);
             return MoveCommand;
+        }
+
+        public PlaceCommand SetPlaceCommand(Cell on)
+        {
+            throw new NotImplementedException("TODO j");
         }
     }
 }
