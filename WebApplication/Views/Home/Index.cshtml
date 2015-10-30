@@ -2,8 +2,15 @@
     ViewBag.Title = "Cocaine Cartels";
 }
 <div id="canvas"></div>
-<p><button onclick="cocaineCartels.sendCommands();">Send Commands</button></p>
-<p><button onclick="cocaineCartels.startGame();">Start Game</button> <button onclick="cocaineCartels.resetGame();">Reset Game</button></p>
+<p>
+    <button onclick="cocaineCartels.sendCommands();">Send Commands</button> &middot;
+    <button onclick="cocaineCartels.simulateMove();">Move Units</button>
+    <button onclick="cocaineCartels.simularCombat();">Fight</button>
+</p>
+<p>
+    <button onclick="cocaineCartels.startGame();">Start Game</button>
+    <button onclick="cocaineCartels.resetGame();">Reset Game</button>
+</p>
 <p>Game started: <span id="gameStarted">unknown</span>.</p>
 @section scripts
 {

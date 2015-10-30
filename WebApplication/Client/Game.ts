@@ -130,5 +130,23 @@ module CocaineCartels {
 
             on.addUnit(unit);
         }
+
+        public simulateMove() {
+            // Remove place commands.
+
+            // Execute move commands.
+            this.unitsOnBoard
+                .filter(unit => unit.moveCommand !== null)
+                .forEach(unit => {
+                    const moveCommand = unit.moveCommand;
+                    unit.moveCommand = null;
+                    if (moveCommand.from === null || moveCommand.to === null) {
+                        console.info(moveCommand);
+                        throw "Move command is missing from or to.";
+                    }
+                    moveCommand.from.removeUnit(unit);
+                    moveCommand.to.addUnit(unit);
+                });
+        }
     }
 }
