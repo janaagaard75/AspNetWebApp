@@ -146,6 +146,17 @@
             this.commandsLayer.add(arrow);
         }
 
+        private drawNewUnitsForPlayer(player: Player, playerIndex: number, numberOfPlayers: number) {
+            const pos = new Pos(
+                (playerIndex + 1) * (CanvasSettings.width / (numberOfPlayers + 1)),
+                CanvasSettings.width + CanvasSettings.cellRadius // TODO j: Use another setting than cellRadius here.
+            );
+
+            player.newUnits.forEach((unit, unitIndex, units) => {
+                this.drawUnit(unit, pos, unitIndex, units.length, false);
+            });
+        }
+
         private drawPlaceCommand(command: PlaceCommand) {
             throw "drawPlaceCommand() is not yet implemented.";
         }
@@ -278,17 +289,6 @@
             });
         }
 
-        private drawNewUnitsForPlayer(player: Player, playerIndex: number, numberOfPlayers: number) {
-            const pos = new Pos(
-                (playerIndex + 1) * (CanvasSettings.width / (numberOfPlayers + 1)),
-                CanvasSettings.width + CanvasSettings.cellRadius // TODO j: Use another setting than cellRadius here.
-            );
-
-            player.newUnits.forEach((unit, unitIndex, units) => {
-                this.drawUnit(unit, pos, unitIndex, units.length, false);
-            });
-        }
-
         private drawUnitsOnCell(cell: Cell) {
             const unitsToDisplay = cell.unitsToDisplay;
 
@@ -297,7 +297,7 @@
             });
 
             unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, false);
+                this.drawUnit(unit, cell.hex.pos, unitsToDisplay.unitsToBeMovedHere.length + index, unitsToDisplay.numberOfUnits, false);
             });
         }
 
