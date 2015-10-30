@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CocaineCartels.BusinessLogic;
 
 namespace CocaineCartels.WebApplication.Models
 {
@@ -10,5 +11,10 @@ namespace CocaineCartels.WebApplication.Models
         public int S { get; set; }
         [Required]
         public int T { get; set; }
+
+        public Hex ToHex()
+        {
+            return new Hex(R, S, T);
+        }
     }
 }

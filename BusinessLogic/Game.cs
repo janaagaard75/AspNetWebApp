@@ -43,12 +43,12 @@ namespace CocaineCartels.BusinessLogic
             return player;
         }
 
-        public void AddMoveCommand(Player player, Hex from, Hex to)
+        public void AddMoveCommand(string playerColor, Hex from, Hex to)
         {
             // TODO j: Add the move command to the next board.
         }
 
-        public void AddPlaceCommand(Player player, Hex on)
+        public void AddPlaceCommand(string playerColor, Hex on)
         {
             // TODO j: Add the place command to the next board.
         }

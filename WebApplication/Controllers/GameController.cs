@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
 using CocaineCartels.WebApplication.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace CocaineCartels.WebApplication.Controllers
 {
@@ -33,7 +34,15 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpPost, Route("api/commands")]
         public void PostCommands(PostCommands commands)
         {
-            // TODO j: Loop through first the place and afterwords the move commands, adding them to the game.
+            commands.PlaceCommands.ForEach(placeCommand =>
+            {
+                Game.Instance.AddPlaceCommand(commands.PlayerColor, placeCommand.On.ToHex());
+            });
+
+            commands.MoveCommands.ForEach(moveCommand =>
+            {
+                Game.Instance.AddMoveCommand(commands.PlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
+            });
         }
 
         [HttpGet, Route("api/reset")]
