@@ -19,7 +19,7 @@ module CocaineCartels {
         private canvas: Canvas;
         private playerColor: string;
 
-        // TODO j: Why is this static, but playerColor is not?
+        // Game is static to make it available in the Cell and the Unit class.
         public static game: Game;
 
         private isInDemoMode(): boolean {
