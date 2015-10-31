@@ -49,7 +49,9 @@ module CocaineCartels {
         }
 
         public addUnit(unit: Unit) {
-            // TODO j: Fail if this unit is already placed on another cell.
+            if (unit.cell !== null) {
+                throw "The unit is already placed on a cell.";
+            }
 
             if (this.units.filter(u => u === unit).length > 0) {
                 throw "The unit is already on the cell.";
