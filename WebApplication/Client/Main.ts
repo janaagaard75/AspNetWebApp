@@ -3,11 +3,6 @@ module CocaineCartels {
 
     export class Main {
         constructor() {
-            if (this.isInDemoMode()) {
-                // TODO j: Add a demo mode parameter to the call to the server.
-                return;
-            }
-
             this.updatePlayerColor().then(() => {
                 this.updateGameState().then(() => {
                     this.canvas = new Canvas(Main.game);

@@ -155,7 +155,7 @@ module CocaineCartels {
             this.board.cells
                 .filter(cell => cell.units.length >= 1)
                 .filter(cell => {
-                    const groupedByPlayer = Utilities.groupBy(cell.units, unit => unit.player.color);
+                    const groupedByPlayer = Utilities.groupByIntoArray(cell.units, unit => unit.player.color);
                     return groupedByPlayer.length >= 2;
                 })
                 .forEach(cell => {

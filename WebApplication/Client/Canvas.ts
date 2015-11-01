@@ -81,12 +81,12 @@
         }
 
         private drawCommands() {
-            var groupByTo: IGroupByFunc<MoveCommand, Hex> = command => {
-                return command.to.hex;
+            var groupByTo: IGroupByFunc<MoveCommand> = command => {
+                return command.to.hex.toString();
             }
 
             Canvas.game.board.cells.forEach(cell => {
-                var groups = Utilities.groupBy(cell.moveCommandsFromCell, groupByTo);
+                var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByTo);
                 groups.forEach(commands => {
                     const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
                     const totalCommands = commands.length + oppositeCommands.length;
