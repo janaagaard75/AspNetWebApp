@@ -235,14 +235,12 @@
             });
 
             circle.on("dragend", e => {
-                console.info("dragend fired.");
                 e.target.moveTo(this.unitsLayer);
                 e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const mouseEvent = <MouseEvent>e.evt;
-                    const currentCell = Canvas.game.nearestCell(new Pos(mouseEvent.layerX, mouseEvent.layerY));
+                    const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
