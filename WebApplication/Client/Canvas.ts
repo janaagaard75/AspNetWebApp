@@ -149,7 +149,7 @@
         private drawNewUnitsForPlayer(player: Player, playerIndex: number, numberOfPlayers: number) {
             const pos = new Pos(
                 (playerIndex + 1) * (CanvasSettings.width / (numberOfPlayers + 1)),
-                CanvasSettings.width + CanvasSettings.cellRadius // TODO j: Use another setting than cellRadius here.
+                CanvasSettings.width + CanvasSettings.spaceToNewUnits
             );
 
             player.newUnits.forEach((unit, unitIndex, units) => {

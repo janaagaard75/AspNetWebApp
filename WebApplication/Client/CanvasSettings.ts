@@ -11,6 +11,7 @@ module CocaineCartels {
         public static cellRadius: number;
         public static height: number;
         public static lineWidth: number;
+        public static spaceToNewUnits: number;
         public static unitRadius: number;
         public static width: number;
 
@@ -39,6 +40,7 @@ module CocaineCartels {
 
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
             this.lineWidth = 1 + boardSize / 1000;
+            this.spaceToNewUnits = boardSize / 12;
 
             this.arrowWidth = 2 * this.lineWidth;
             this.unitRadius = this.cellRadius / 2.5;
