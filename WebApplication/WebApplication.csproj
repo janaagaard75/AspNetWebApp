@@ -232,7 +232,6 @@
     <TypeScriptCompile Include="Client\Cell.ts" />
     <TypeScriptCompile Include="Client\ComandType.ts" />
     <TypeScriptCompile Include="Client\Command.ts" />
-    <TypeScriptCompile Include="Client\DemoSetup.ts" />
     <TypeScriptCompile Include="Client\GameService.ts" />
     <TypeScriptCompile Include="Client\HexagonEvent.ts" />
     <TypeScriptCompile Include="Client\HttpClient.ts" />
