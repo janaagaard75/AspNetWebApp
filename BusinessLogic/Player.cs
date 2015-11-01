@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using Newtonsoft.Json;
 
 namespace CocaineCartels.BusinessLogic
 {
-    public class Player
+    public class Player : IEquatable<Player>
     {
         internal Player(string color, IPAddress ipAddress, string userAgent)
         {
@@ -21,5 +21,11 @@ namespace CocaineCartels.BusinessLogic
 
         [JsonIgnore]
         public readonly string UserAgent;
+
+        public bool Equals(Player other)
+        {
+            bool areEqual = Color == other.Color;
+            return areEqual;
+        }
     }
 }

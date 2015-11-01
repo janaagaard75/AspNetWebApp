@@ -47,7 +47,7 @@ namespace CocaineCartels.BusinessLogic
         {
             Game.Instance.Players.ForEach(player =>
             {
-                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player == player);
+                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player.Equals(player));
                 if (unitToRemove != null)
                 {
                     RemoveUnit(unitToRemove);

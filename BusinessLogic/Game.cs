@@ -50,7 +50,7 @@ namespace CocaineCartels.BusinessLogic
             Unit unit = fromCell.Units.FirstOrDefault(u => u.Player.Color == playerColor && u.MoveCommand == null);
             if (unit == null)
             {
-                unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
+                unit = NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand != null && u.PlaceCommand.On == fromCell);
             }
 
             Cell toCell = NextBoard.GetCell(toHex);
@@ -60,7 +60,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Assign a place command to a unit. The unit is not moved to the cell.</summary>
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
-            Unit unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
+            Unit unit = NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand == null);
             Cell onCell = NextBoard.GetCell(onHex);
             unit.SetPlaceCommand(onCell);
         }
@@ -147,21 +147,24 @@ namespace CocaineCartels.BusinessLogic
             // Assume that all players have sent in their commands.
 
             // Place all new units.
-            NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ForEach(newUnit =>
+            var unitsToPlace = NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+            unitsToPlace.ForEach(unit =>
             {
-                newUnit.PlaceCommand.On.AddUnit(newUnit);
-                newUnit.RemovePlaceCommand();
+                NewUnits.Remove(unit);
+                unit.PlaceCommand.On.AddUnit(unit);
+                unit.RemovePlaceCommand();
             });
 
             // Move all the units.
-            NextBoard.GetUnits().Where(unit => unit.MoveCommand != null).ForEach(unit =>
+            var unitsToMove = NextBoard.GetUnits().Where(unit => unit.MoveCommand != null).ToList();
+            unitsToMove.ForEach(unit =>
             {
                 unit.Cell.RemoveUnit(unit);
                 unit.MoveCommand.To.AddUnit(unit);
                 unit.RemoveMoveCommand();
             });
 
-            Board.Fight();
+            NextBoard.Fight();
 
             // Promote NextBoard to the current board and create copy of the board to the next board. Copying instead of assigning, because we want to be able to assign new commands.
             Board = NextBoard;
