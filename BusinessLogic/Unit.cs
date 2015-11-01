@@ -6,21 +6,21 @@ namespace CocaineCartels.BusinessLogic
     {
         public Unit(Player player)
         {
-            MoveCommand = null;
-            PlaceCommand = null;
+            ServerMoveCommand = null;
+            ServerPlaceCommand = null;
             Player = player;
         }
 
-        public MoveCommand MoveCommand { get; private set; }
-        public PlaceCommand PlaceCommand { get; private set; }
+        public ServerMoveCommand ServerMoveCommand { get; private set; }
+        public ServerPlaceCommand ServerPlaceCommand { get; private set; }
         public readonly Player Player;
 
         internal Cell Cell;
 
         public void RemoveCommands()
         {
-            PlaceCommand = null;
-            MoveCommand = null;
+            ServerPlaceCommand = null;
+            ServerMoveCommand = null;
         }
 
         public void SetMoveCommand(Cell from)
@@ -30,7 +30,7 @@ namespace CocaineCartels.BusinessLogic
                 throw new ApplicationException("Cannot assign a move command to a unit that isn't positioned on a cell.");
             }
 
-            MoveCommand = new MoveCommand(this, from);
+            ServerMoveCommand = new ServerMoveCommand(this, from);
         }
 
         public void SetPlaceCommand(Cell on)
@@ -40,7 +40,7 @@ namespace CocaineCartels.BusinessLogic
                 throw new ApplicationException("Can only assign a place command to a unit's current cell.");
             }
 
-            PlaceCommand = new PlaceCommand(this, on);
+            ServerPlaceCommand = new ServerPlaceCommand(this, on);
         }
     }
 }

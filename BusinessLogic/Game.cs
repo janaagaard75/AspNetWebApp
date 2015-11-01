@@ -46,7 +46,7 @@ namespace CocaineCartels.BusinessLogic
         public void AddMoveCommand(string playerColor, Hex fromHex, Hex toHex)
         {
             Cell fromCell = Board.GetCell(fromHex);
-            Unit unit = fromCell.Units.Single(u => u.Player.Color == playerColor && u.MoveCommand == null);
+            Unit unit = fromCell.Units.Single(u => u.Player.Color == playerColor && u.ServerMoveCommand == null);
             fromCell.RemoveUnit(unit);
 
             Cell toCell = Board.GetCell(toHex);
@@ -55,7 +55,7 @@ namespace CocaineCartels.BusinessLogic
             unit.SetMoveCommand(toCell);
         }
 
-        /// <summary>Removed a unit from the player's stack of new units, put the unit on the specified cell and assign a place command to the unit.</summary>
+        /// <summary>Assign a place command to a unit from the player's stack of new units.</summary>
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
             Unit unit = NewUnits.Single(u => u.Player.Color == playerColor);
