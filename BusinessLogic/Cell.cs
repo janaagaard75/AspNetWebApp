@@ -39,7 +39,7 @@ namespace CocaineCartels.BusinessLogic
 
         private int NumberOfPlayersOnCell()
         {
-            int numberOfPlayers = UnitsList.GroupBy(unit => unit.Player).Count();
+            int numberOfPlayers = UnitsList.GroupBy(unit => unit.Player.Color).Count();
             return numberOfPlayers;
         }
 
