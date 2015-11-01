@@ -4,9 +4,9 @@
 <div id="canvas"></div>
 <p>
     <button onclick="cocaineCartels.sendCommands();">Send Commands</button> &middot;
-    <button onclick=""></button> &middot;
+    <button onclick="if (confirm('Perform Next Turn? Make sure all players ready.')) { cocaineCartels.nextTurn(); }">Next Turn</button> &middot;
     <button onclick="cocaineCartels.simulateMove();">Move Units</button>
-    <button onclick="cocaineCartels.simularCombat();">Fight</button>
+    <button onclick="cocaineCartels.simulateCombat();">Fight</button>
 </p>
 <p>
     <button onclick="cocaineCartels.startGame();">Start Game</button>

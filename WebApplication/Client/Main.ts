@@ -71,7 +71,7 @@ module CocaineCartels {
         }
         
         // TODO j: Remove this method when it's done on the server.
-        public simularCombat() {
+        public simulateCombat() {
             Main.game.simulateCombat();
             this.canvas.drawGame();
         }
