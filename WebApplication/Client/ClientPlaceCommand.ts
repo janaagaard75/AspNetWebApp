@@ -1,7 +1,7 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export class PostPlaceCommand {
+    export class ClientPlaceCommand {
         constructor(
             public on: Hex
         ) { }

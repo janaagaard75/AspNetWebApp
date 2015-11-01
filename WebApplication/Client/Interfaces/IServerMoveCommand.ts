@@ -1,7 +1,8 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export interface IMoveCommand {
+    export interface IServerMoveCommand {
         fromHex: IHex;
+        toHex: IHex;
     }
 }

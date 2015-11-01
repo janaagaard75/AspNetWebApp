@@ -24,7 +24,7 @@
             return HttpClient.get<void>("/api/start");
         }
 
-        public static postCommands(commands: PostCommands): Promise<void> {
+        public static postCommands(commands: ClientCommands): Promise<void> {
             return HttpClient.post<void>("/api/commands", commands);
         }
     }

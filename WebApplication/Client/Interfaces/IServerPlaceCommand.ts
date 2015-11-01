@@ -1,7 +1,7 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export interface IPlaceCommand {
+    export interface IServerPlaceCommand {
         onHex: IHex;
     }
 }

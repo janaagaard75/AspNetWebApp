@@ -241,12 +241,12 @@
     <TypeScriptCompile Include="Client\Interfaces\IGroupByFunc.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGroups.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IHex.ts" />
-    <TypeScriptCompile Include="Client\Interfaces\IMoveCommand.ts" />
-    <TypeScriptCompile Include="Client\Interfaces\IPlaceCommand.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IServerMoveCommand.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IServerPlaceCommand.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IPlayer.ts" />
-    <TypeScriptCompile Include="Client\PostCommands.ts" />
-    <TypeScriptCompile Include="Client\PostMoveCommand.ts" />
-    <TypeScriptCompile Include="Client\PostPlaceCommand.ts" />
+    <TypeScriptCompile Include="Client\ClientCommands.ts" />
+    <TypeScriptCompile Include="Client\ClientMoveCommand.ts" />
+    <TypeScriptCompile Include="Client\ClientPlaceCommand.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IUnit.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IUrlParameters.ts" />
     <TypeScriptCompile Include="Client\CanvasSettings.ts" />

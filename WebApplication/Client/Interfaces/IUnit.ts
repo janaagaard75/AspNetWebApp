@@ -2,8 +2,8 @@
     "use strict";
 
     export interface IUnit {
-        moveCommand: IMoveCommand;
-        placeCommand: IPlaceCommand;
+        moveCommand: IServerMoveCommand;
+        placeCommand: IServerPlaceCommand;
         player: IPlayer;
     }
 }

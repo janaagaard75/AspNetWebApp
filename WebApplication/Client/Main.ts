@@ -29,13 +29,13 @@ module CocaineCartels {
 
             const moveCommands = units
                 .filter(unit => unit.moveCommand !== null)
-                .map(unit => new PostMoveCommand(unit.moveCommand.from.hex, unit.moveCommand.to.hex));
+                .map(unit => new ClientMoveCommand(unit.moveCommand.from.hex, unit.moveCommand.to.hex));
 
             const placeCommands = units
                 .filter(unit => unit.placeCommand !== null)
-                .map(unit => new PostPlaceCommand(unit.placeCommand.on.hex));
+                .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new PostCommands(moveCommands, placeCommands, this.playerColor);
+            const commands = new ClientCommands(moveCommands, placeCommands, this.playerColor);
 
             GameService.postCommands(commands)
                 .then(() => {
