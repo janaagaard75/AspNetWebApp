@@ -42,15 +42,17 @@ namespace CocaineCartels.BusinessLogic
             return player;
         }
 
-        /// <summary>Move the unit from the 
-        /// 
-        /// </summary>
-        /// <param name="playerColor"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        public void AddMoveCommand(string playerColor, Hex from, Hex to)
+        /// <summary>Move the unit from one cell to the other. Add a move command to the unit.</summary>
+        public void AddMoveCommand(string playerColor, Hex fromHex, Hex toHex)
         {
-            throw new NotImplementedException("TODO j");
+            Cell fromCell = Board.GetCell(fromHex);
+            Unit unit = fromCell.Units.Single(u => u.Player.Color == playerColor && u.MoveCommand == null);
+            fromCell.RemoveUnit(unit);
+
+            Cell toCell = Board.GetCell(toHex);
+            toCell.AddUnit(unit);
+
+            unit.SetMoveCommand(toCell);
         }
 
         /// <summary>Removed a unit from the player's stack of new units, put the unit on the specified cell and assign a place command to the unit.</summary>

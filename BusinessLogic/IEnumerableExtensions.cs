@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace CocaineCartels.BusinessLogic
 {
     // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once InconsistentNaming
     public static class IEnumerableExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)

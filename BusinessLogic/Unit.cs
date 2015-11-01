@@ -23,20 +23,24 @@ namespace CocaineCartels.BusinessLogic
             MoveCommand = null;
         }
 
-        public MoveCommand SetMoveCommand(Cell to)
+        public void SetMoveCommand(Cell from)
         {
-            if (Cell == null && PlaceCommand == null)
+            if (Cell == null)
             {
-                throw new ApplicationException("Cannot assign a move command to a unit that isn't positioned on a cell or doesn't have a place command.");
+                throw new ApplicationException("Cannot assign a move command to a unit that isn't positioned on a cell.");
             }
 
-            MoveCommand = new MoveCommand(this, to);
-            return MoveCommand;
+            MoveCommand = new MoveCommand(this, from);
         }
 
-        public PlaceCommand SetPlaceCommand(Cell on)
+        public void SetPlaceCommand(Cell on)
         {
-            throw new NotImplementedException("TODO j");
+            if (Cell != on)
+            {
+                throw new ApplicationException("Can only assign a place command to a unit's current cell.");
+            }
+
+            PlaceCommand = new PlaceCommand(this, on);
         }
     }
 }

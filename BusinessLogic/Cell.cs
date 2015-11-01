@@ -27,5 +27,16 @@ namespace CocaineCartels.BusinessLogic
             unit.Cell = this;
             UnitsList.Add(unit);
         }
+
+        public void RemoveUnit(Unit unit)
+        {
+            if (unit.Cell != this)
+            {
+                throw new ApplicationException("Trying to remove a unit that isn't placed on this cell.");
+            }
+
+            unit.Cell = null;
+            UnitsList.Remove(unit);
+        }
     }
 }
