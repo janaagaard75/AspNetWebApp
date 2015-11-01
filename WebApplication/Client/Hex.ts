@@ -43,5 +43,10 @@ module CocaineCartels {
             const pos = new Pos(x, y);
             return pos;
         }
+
+        public toString(): string {
+            const stringValue = `(${this.r},${this.s}${this.t})`;
+            return stringValue;
+        }
     }
 }
