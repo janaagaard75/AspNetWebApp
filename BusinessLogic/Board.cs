@@ -42,5 +42,14 @@ namespace CocaineCartels.BusinessLogic
         {
             return Cells.SelectMany(cell => cell.Units);
         }
+
+        /// <summary>Resolve combats on cells.</summary>
+        internal void Fight()
+        {
+            Cells.ForEach(cell =>
+            {
+                cell.Fight();
+            });
+        }
     }
 }

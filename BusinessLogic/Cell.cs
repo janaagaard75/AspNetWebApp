@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
@@ -28,7 +29,33 @@ namespace CocaineCartels.BusinessLogic
             UnitsList.Add(unit);
         }
 
-        public void RemoveUnit(Unit unit)
+        internal void Fight()
+        {
+            while (NumberOfPlayersOnCell() > 1)
+            {
+                RemoveAUnitFromEachPlayer();
+            }
+        }
+
+        private int NumberOfPlayersOnCell()
+        {
+            int numberOfPlayers = UnitsList.GroupBy(unit => unit.Player).Count();
+            return numberOfPlayers;
+        }
+
+        private void RemoveAUnitFromEachPlayer()
+        {
+            Game.Instance.Players.ForEach(player =>
+            {
+                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player == player);
+                if (unitToRemove != null)
+                {
+                    RemoveUnit(unitToRemove);
+                }
+            });
+        }
+
+        internal void RemoveUnit(Unit unit)
         {
             if (unit.Cell != this)
             {

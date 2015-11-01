@@ -20,6 +20,7 @@ namespace CocaineCartels.BusinessLogic
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
+        // The next board will only become necessary once the game will be able to show the commands from the previous turn.
         private Board NextBoard { get; set; }
 
         public Board Board { get; private set; }
@@ -127,27 +128,6 @@ namespace CocaineCartels.BusinessLogic
             });
         }
 
-        public void ExecuteCommands()
-        {
-            // Execution phase of the turn.
-            // Assume that all players have sent in their commands.
-            // Perform all the commands assigned to the units on the NextBoard.
-
-            // Promote NextBoard to the current board.
-            Board = NextBoard;
-
-            // Clone Board in the NextBoard. Not using a reference here because we want to be able to assign 
-            NextBoard = Board.Copy();
-
-            // TODO j: Assign new units on all the players.
-            Players.ForEach(player =>
-            {
-
-            });
-
-            //NewUnits = 
-        }
-
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
         public Player GetPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -159,6 +139,39 @@ namespace CocaineCartels.BusinessLogic
             }
 
             return matchingPlayer;
+        }
+
+        /// <summary>Executes the commands. Resolves combats. Assigns new units.</summary>
+        public void PerformTurn()
+        {
+            // Assume that all players have sent in their commands.
+
+            // Place all new units.
+            NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ForEach(newUnit =>
+            {
+                newUnit.PlaceCommand.On.AddUnit(newUnit);
+                newUnit.RemovePlaceCommand();
+            });
+
+            // Move all the units.
+            NextBoard.GetUnits().Where(unit => unit.MoveCommand != null).ForEach(unit =>
+            {
+                unit.Cell.RemoveUnit(unit);
+                unit.MoveCommand.To.AddUnit(unit);
+                unit.RemoveMoveCommand();
+            });
+
+            Board.Fight();
+
+            // Promote NextBoard to the current board and create copy of the board to the next board. Copying instead of assigning, because we want to be able to assign new commands.
+            Board = NextBoard;
+            NextBoard = Board.Copy();
+
+            // Assign new units to the players.
+            Players.ForEach(player =>
+            {
+                AddNewUnitsToPlayer(player, Settings.NewUnitsPerTurn);
+            });
         }
 
         public void ResetGame()

@@ -46,6 +46,13 @@ namespace CocaineCartels.WebApplication.Controllers
             });
         }
 
+        [HttpGet, Route("api/performturn")]
+        public Game PerformTurn()
+        {
+            Game.Instance.PerformTurn();
+            return GetGameState();
+        }
+
         [HttpGet, Route("api/reset")]
         public void ResetGame()
         {

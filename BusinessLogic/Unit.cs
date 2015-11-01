@@ -19,8 +19,18 @@ namespace CocaineCartels.BusinessLogic
 
         public void RemoveCommands()
         {
-            PlaceCommand = null;
+            RemovePlaceCommand();
+            RemoveMoveCommand();
+        }
+
+        public void RemoveMoveCommand()
+        {
             MoveCommand = null;
+        }
+
+        public void RemovePlaceCommand()
+        {
+            PlaceCommand = null;
         }
 
         public void SetMoveCommand(Cell to)
