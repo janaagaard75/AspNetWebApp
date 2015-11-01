@@ -1,6 +1,6 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    public class ServerMoveCommand : Command
+    public class ServerMoveCommand : ServerCommand
     {
         public ServerMoveCommand(Unit unit, Cell from, Cell to)
             : base(unit)
