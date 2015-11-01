@@ -42,31 +42,25 @@ namespace CocaineCartels.BusinessLogic
             return player;
         }
 
-        /// <summary>Move the unit from one cell to the other. Add a move command to the unit.</summary>
+        /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
         public void AddMoveCommand(string playerColor, Hex fromHex, Hex toHex)
         {
             Cell fromCell = Board.GetCell(fromHex);
-            Unit unit = fromCell.Units.Single(u => u.Player.Color == playerColor && u.ServerMoveCommand == null);
-            fromCell.RemoveUnit(unit);
+            Unit unit = fromCell.Units.FirstOrDefault(u => u.Player.Color == playerColor && u.MoveCommand == null);
+            if (unit == null)
+            {
+                unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
+            }
 
             Cell toCell = Board.GetCell(toHex);
-            toCell.AddUnit(unit);
-
             unit.SetMoveCommand(toCell);
         }
 
-        /// <summary>Assign a place command to a unit from the player's stack of new units.</summary>
+        /// <summary>Assign a place command to a unit. The unit is not moved to the cell.</summary>
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
-            Unit unit = NewUnits.Single(u => u.Player.Color == playerColor);
-            NewUnits.Remove(unit);
+            Unit unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
             Cell onCell = Board.GetCell(onHex);
-            if (onCell.Units.All(u => u.Player.Color != playerColor))
-            {
-                throw new ApplicationException("Can only place new units on cells belonging to the player.");
-            }
-
-            onCell.AddUnit(unit);
             unit.SetPlaceCommand(onCell);
         }
 

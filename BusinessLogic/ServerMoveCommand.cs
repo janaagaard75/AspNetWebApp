@@ -2,17 +2,14 @@
 {
     public class ServerMoveCommand : ServerCommand
     {
-        public ServerMoveCommand(Unit unit, Cell from, Cell to)
+        public ServerMoveCommand(Unit unit, Cell to)
             : base(unit)
         {
-            From = from;
             To = to;
         }
 
-        internal readonly Cell From;
         internal readonly Cell To;
 
-        public Hex FromHex => From.Hex;
-        public Hex ToHex => From.Hex;
+        public Hex ToHex => To.Hex;
     }
 }
