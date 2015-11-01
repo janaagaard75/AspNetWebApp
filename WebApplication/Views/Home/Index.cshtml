@@ -3,8 +3,13 @@
 }
 <div id="canvas"></div>
 <div class="commands player-commands">
-    <button class="send-button" onclick="cocaineCartels.sendCommands();">Send Commands</button>
-    <span class="your-color">Your color: <span id="playerColor" class="color"></span></span>
+    <table class="player-commands-table">
+        <tr>
+            <td><button class="send-button" onclick="cocaineCartels.sendCommands();">Send Commands</button></td>
+            <td class="moves">Moves: <span id="numberOfMoves">0</span></td>
+            <td class="your-color">Your color: <span id="playerColor" class="color"></span></td>
+        </tr>
+    </table>
 </div>
 <div class="commands administrator-commands">
     <button onclick="cocaineCartels.performTurn();">Next Turn</button> &middot;

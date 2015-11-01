@@ -258,6 +258,7 @@
     <TypeScriptCompile Include="Client\PlaceCommand.ts" />
     <TypeScriptCompile Include="Client\Player.ts" />
     <TypeScriptCompile Include="Client\Pos.ts" />
+    <TypeScriptCompile Include="Client\Settings.ts" />
     <TypeScriptCompile Include="Client\Unit.ts" />
     <TypeScriptCompile Include="Client\UnitsToDisplay.ts" />
     <TypeScriptCompile Include="Client\Utilities.ts" />

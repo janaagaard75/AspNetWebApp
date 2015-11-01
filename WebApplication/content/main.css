@@ -34,16 +34,23 @@ input {
     cursor: grabbing;
 }
 
+.moves {
+    text-align: center;
+}
+
 .player-commands {
     background-color: white;
     height: 50px;
 }
 
-.send-button {
-    float: right;
-    margin-right: 10px;
+.player-commands-table {
+    width: 100%;
+}
+
+.player-commands-table td {
+    padding: 10px;
 }
 
 .your-color {
-    margin-left: 10px;
+    text-align: right;
 }
