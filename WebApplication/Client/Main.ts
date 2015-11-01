@@ -76,18 +76,6 @@ module CocaineCartels {
             });
         }
 
-        // TODO j: Remove this method when it's done on the server.
-        public simulateCombat() {
-            Main.game.simulateCombat();
-            this.canvas.drawGame();
-        }
-
-        // TODO j: Remove this method when it's done on the server.
-        public simulateMove() {
-            Main.game.simulateMove();
-            this.canvas.drawGame();
-        }
-
         public startGame() {
             GameService.startGame().then(() => {
                 this.reloadPage();
