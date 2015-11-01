@@ -306,11 +306,11 @@
             if (cell.hovered) {
                 if (cell.dropAllowed) {
                     backgroundColor = "#ddd";
-                } else {
+                } /*else {
                     // Drop is not allowed on this cell.
                     // TODO j: Remove this color once the drag and drop code is done.
                     backgroundColor = "#f99";
-                }
+                }*/
             } else {
                 if (cell.dropAllowed) {
                     backgroundColor = "#f3f3f3";
