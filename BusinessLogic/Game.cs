@@ -42,14 +42,30 @@ namespace CocaineCartels.BusinessLogic
             return player;
         }
 
+        /// <summary>Move the unit from the 
+        /// 
+        /// </summary>
+        /// <param name="playerColor"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
         public void AddMoveCommand(string playerColor, Hex from, Hex to)
         {
             throw new NotImplementedException("TODO j");
         }
 
-        public void AddPlaceCommand(string playerColor, Hex on)
+        /// <summary>Removed a unit from the player's stack of new units, put the unit on the specified cell and assign a place command to the unit.</summary>
+        public void AddPlaceCommand(string playerColor, Hex onHex)
         {
-            throw new NotImplementedException("TODO j");
+            Unit unit = NewUnits.Single(u => u.Player.Color == playerColor);
+            NewUnits.Remove(unit);
+            Cell onCell = Board.GetCell(onHex);
+            if (onCell.Units.All(u => u.Player.Color != playerColor))
+            {
+                throw new ApplicationException("Can only place new units on cells belonging to the player.");
+            }
+
+            onCell.AddUnit(unit);
+            unit.SetPlaceCommand(onCell);
         }
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits)
@@ -106,7 +122,9 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
-            IEnumerable<Unit> playersUnits = NextBoard.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersUnitsOnBoard = NextBoard.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersNewUnits = NewUnits.Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersUnits = playersUnitsOnBoard.Concat(playersNewUnits);
             playersUnits.ForEach(unit =>
             {
                 unit.RemoveCommands();
