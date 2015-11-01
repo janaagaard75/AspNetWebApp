@@ -45,14 +45,14 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
         public void AddMoveCommand(string playerColor, Hex fromHex, Hex toHex)
         {
-            Cell fromCell = Board.GetCell(fromHex);
+            Cell fromCell = NextBoard.GetCell(fromHex);
             Unit unit = fromCell.Units.FirstOrDefault(u => u.Player.Color == playerColor && u.MoveCommand == null);
             if (unit == null)
             {
                 unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
             }
 
-            Cell toCell = Board.GetCell(toHex);
+            Cell toCell = NextBoard.GetCell(toHex);
             unit.SetMoveCommand(toCell);
         }
 
@@ -60,7 +60,7 @@ namespace CocaineCartels.BusinessLogic
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
             Unit unit = NewUnits.Single(u => u.Player.Color == playerColor && u.PlaceCommand == null);
-            Cell onCell = Board.GetCell(onHex);
+            Cell onCell = NextBoard.GetCell(onHex);
             unit.SetPlaceCommand(onCell);
         }
 
