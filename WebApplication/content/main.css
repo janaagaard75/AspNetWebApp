@@ -3,6 +3,13 @@
     margin: 0;
 }
 
+body,
+button,
+input {
+    /* Using native system fonts. https://medium.com/@mwichary/system-shock-6b1dc6d6596f. */
+    font-family: -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
 .color {
     vertical-align: bottom;
     border: 1px solid #888; /* Same color as unit border. */
