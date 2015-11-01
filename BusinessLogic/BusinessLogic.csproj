@@ -52,7 +52,6 @@
     <Compile Include="Hex.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="MoveCommand.cs" />
-    <Compile Include="NumberOfPlayersExceeded.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="PlaceCommand.cs" />
     <Compile Include="Player.cs" />

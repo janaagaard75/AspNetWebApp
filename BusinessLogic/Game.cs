@@ -31,7 +31,7 @@ namespace CocaineCartels.BusinessLogic
         {
             if (NumberOfPlayers == MaximumNumberOfPlayers)
             {
-                throw new NumberOfPlayersExceeded(MaximumNumberOfPlayers);
+                throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
             }
 
             Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
