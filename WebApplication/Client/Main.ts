@@ -40,6 +40,16 @@ module CocaineCartels {
         }
 
         public sendCommands() {
+            const exceeding = Main.game.numberOfMoveCommands - Settings.movesPerTurn;
+            if (exceeding > 0) {
+                var commandText = "command";
+                if (exceeding >= 2) {
+                    commandText += "s";
+                }
+                alert(`Only up to ${Settings.movesPerTurn} moves are allowed. Please remove ${exceeding} ${commandText} and click Send Commands again.`);
+                return;
+            }
+
             const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === Main.playerColor);
 
             const moveCommands = units

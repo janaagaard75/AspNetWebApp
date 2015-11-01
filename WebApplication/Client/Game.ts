@@ -32,6 +32,12 @@ module CocaineCartels {
             return moveCommands;
         }
 
+        /** Returns the number of move commands that the current player has assigned. */
+        public get numberOfMoveCommands(): number {
+            const numberOfMoveCommands = this.moveCommands.filter(command => command.unit.player.color === Main.playerColor).length;
+            return numberOfMoveCommands;
+        }
+
         public get unitsOnBoard(): Array<Unit> {
             const unitsDoubleArray = this.board.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);

@@ -257,8 +257,14 @@
                     currentCell.hovered = false;
                 }
 
-                const moveCommands = Main.game.moveCommands.filter(command => command.unit.player.color === Main.playerColor).length;
-                document.getElementById("numberOfMoves").innerHTML = moveCommands.toString();
+                const numberOfMoveCommands = Main.game.numberOfMoveCommands;
+                document.getElementById("numberOfMoves").innerHTML = numberOfMoveCommands.toString();
+                const movesElement = document.getElementsByClassName("moves")[0];
+                if (numberOfMoveCommands > Settings.movesPerTurn) {
+                    movesElement.setAttribute("style", "color: red");
+                } else {
+                    movesElement.removeAttribute("style");
+                }
 
                 currentHexagon = null;
                 previousHexagon = null;
