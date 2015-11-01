@@ -85,11 +85,11 @@ module CocaineCartels {
             return moveCommands;
         }
 
-        public getPlayer(playerData: IPlayer): Player {
-            const players = this.players.filter(p => p.color === playerData.color);
+        public getPlayer(playerColor: string): Player {
+            const players = this.players.filter(p => p.color === playerColor);
 
             if (players.length === 0) {
-                throw `Player with color ${playerData.color} not found.`;
+                throw `Player with color ${playerColor} not found.`;
             }
 
             return players[0];

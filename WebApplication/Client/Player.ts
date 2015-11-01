@@ -6,10 +6,12 @@ module CocaineCartels {
             playerData: IPlayer
         ) {
             this.color = playerData.color;
+            this.ready = playerData.ready;
             this.units = [];
         }
 
         public color: string;
+        public ready: boolean;
         public units: Array<Unit>;
 
         public get newUnits(): Array<Unit> {

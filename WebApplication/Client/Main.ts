@@ -22,11 +22,7 @@ module CocaineCartels {
                         document.getElementById("resetGameButton").setAttribute("disabled", "disabled");
                     }
 
-                    var playersWhoAreReady = "";
-                    for (let i = 0; i < Main.game.players.length; i++) {
-                        playersWhoAreReady += "<span class=\"color\"></span> ";
-                    }
-                    document.getElementById("playersWhoAreReady").innerHTML = playersWhoAreReady;
+                    this.updatePlayersStatus();
                 });
             });
         }
@@ -76,23 +72,12 @@ module CocaineCartels {
 
             GameService.sendCommands(commands)
                 .then(() => {
+                    Main.game.getPlayer(Main.playerColor).ready = true;
+                    this.updatePlayersStatus();
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
                 });
-        }
-
-        private updateGameState(): Promise<void> {
-            return GameService.getGameState().then(game => {
-                Main.game = game;
-                Main.game.initializeGame();
-            });
-        }
-
-        private updatePlayerColor(): Promise<void> {
-            return GameService.getCurrentPlayer().then(color => {
-                Main.playerColor = color;
-            });
         }
 
         private reloadPage() {
@@ -109,6 +94,31 @@ module CocaineCartels {
             GameService.startGame().then(() => {
                 this.reloadPage();
             });
+        }
+
+        private updateGameState(): Promise<void> {
+            return GameService.getGameState().then(game => {
+                Main.game = game;
+                Main.game.initializeGame();
+            });
+        }
+
+        private updatePlayerColor(): Promise<void> {
+            return GameService.getCurrentPlayer().then(color => {
+                Main.playerColor = color;
+            });
+        }
+
+        private updatePlayersStatus() {
+            var playersStatus = "";
+            Main.game.players.forEach(player => {
+                if (player.ready) {
+                    playersStatus += `<span class="color" style="background-color: ${player.color}"></span> `;
+                } else {
+                    playersStatus += `<span class="color"></span> `;
+                }
+            });
+            document.getElementById("playersStatus").innerHTML = playersStatus;
         }
     }
 }
