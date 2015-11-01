@@ -7,6 +7,14 @@ module CocaineCartels {
                 this.updateGameState().then(() => {
                     this.canvas = new Canvas(Main.game);
                     document.getElementById("gameStarted").innerHTML = Main.game.started.toString();
+
+                    const playerColor = document.getElementById("playerColor");
+                    playerColor.setAttribute("style", `background-color: ${Main.playerColor}`);
+
+                    const commandElements = document.getElementsByClassName("commands");
+                    for (let i = 0; i < commandElements.length; i++) {
+                        commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
+                    }
                 });
             });
         }

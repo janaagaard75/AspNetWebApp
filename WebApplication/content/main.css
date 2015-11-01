@@ -3,6 +3,14 @@
     margin: 0;
 }
 
+.color {
+    vertical-align: bottom;
+    border: 1px solid #888; /* Same color as unit border. */
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+
 .grab-cursor {
     cursor: move;
     cursor: -moz-grab;
@@ -17,4 +25,18 @@
     cursor: -webkit-grabbing;
     /* ReSharper disable once InvalidValue */
     cursor: grabbing;
+}
+
+.player-commands {
+    background-color: white;
+    height: 50px;
+}
+
+.send-button {
+    float: right;
+    margin-right: 10px;
+}
+
+.your-color {
+    margin-left: 10px;
 }
