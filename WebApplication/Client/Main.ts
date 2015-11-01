@@ -64,10 +64,9 @@ module CocaineCartels {
 
             GameService.sendCommands(commands)
                 .then(() => {
-                    console.info("Commands sent without errors.");
                 })
                 .catch(e => {
-                    console.info("Error sending commands.", e);
+                    alert(`Error sending commands: ${e}.`);
                 });
         }
 

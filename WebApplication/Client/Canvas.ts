@@ -64,14 +64,12 @@
             cell.hexagon = hexagon;
 
             hexagon.on(HexagonEvent.dragEnter, () => {
-                //console.info(`Drag entered cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = true;
                 this.updateCellColor(cell);
                 this.boardLayer.draw();
             });
 
             hexagon.on(HexagonEvent.dragLeave, () => {
-                //console.info(`Drag left cell (${cell.hex.r},${cell.hex.s},${cell.hex.t}).`);
                 cell.hovered = false;
                 this.updateCellColor(cell);
                 this.boardLayer.draw();
@@ -237,6 +235,7 @@
             });
 
             circle.on("dragend", e => {
+                console.info("dragend fired.");
                 e.target.moveTo(this.unitsLayer);
                 e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");

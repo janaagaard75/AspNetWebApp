@@ -4,7 +4,6 @@
     export class GameService {
         public static getCurrentPlayer(): Promise<string> {
             return HttpClient.get<string>("/api/currentplayercolor").then(color => {
-                console.info(`Current player: ${color}.`);
                 return color;
             });
         }
