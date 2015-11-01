@@ -1,16 +1,19 @@
-﻿body {
-    background-color: #f7f7f7;
-    margin: 0;
-}
-
-body,
+﻿body,
 button,
-input {
+input
+{
     /* Using native system fonts. https://medium.com/@mwichary/system-shock-6b1dc6d6596f. */
     font-family: -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
 }
 
-.color {
+body
+{
+    background-color: #f7f7f7;
+    margin: 0;
+}
+
+.color
+{
     vertical-align: bottom;
     border: 1px solid #888; /* Same color as unit border. */
     display: inline-block;
@@ -18,7 +21,8 @@ input {
     width: 20px;
 }
 
-.grab-cursor {
+.grab-cursor
+{
     cursor: move;
     cursor: -moz-grab;
     cursor: -webkit-grab;
@@ -26,7 +30,8 @@ input {
     cursor: grab;
 }
 
-.grabbing-cursor {
+.grabbing-cursor
+{
     cursor: move;
     cursor: -moz-grabbing;
     cursor: -webkit-grabbing;
@@ -34,23 +39,34 @@ input {
     cursor: grabbing;
 }
 
-.moves {
+.moves
+{
     text-align: center;
 }
 
-.player-commands {
+.player-commands
+{
     background-color: white;
-    height: 50px;
+    height: 100px;
 }
 
-.player-commands-table {
+.player-commands-row
+{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.player-commands-table
+{
     width: 100%;
 }
 
-.player-commands-table td {
-    padding: 10px;
-}
+    .player-commands-table td
+    {
+        padding: 10px;
+    }
 
-.your-color {
+.your-color
+{
     text-align: right;
 }

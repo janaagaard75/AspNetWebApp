@@ -44,6 +44,8 @@ namespace CocaineCartels.WebApplication.Controllers
             {
                 Game.Instance.AddMoveCommand(commands.PlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
             });
+
+            Game.Instance.SetPlayerReady(commands.PlayerColor);
         }
 
         [HttpGet, Route("api/performturn")]

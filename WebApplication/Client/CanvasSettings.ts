@@ -20,11 +20,11 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
-            const heightForButtons = 120;
+            const heightForButtons = 100;
             const availableHeigt = window.innerHeight - heightForButtons;
             const availableWidth = window.innerWidth;
             //const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
-            const aspectRatio = 4 / 5; // Using less right now to make space for buttons below.
+            const aspectRatio = 6 / 7; // A more sto make space for buttons below.
 
             const correspondingWidth = availableHeigt * aspectRatio;
             if (correspondingWidth <= availableWidth) {
@@ -40,7 +40,7 @@ module CocaineCartels {
 
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
             this.lineWidth = 1 + boardSize / 1000;
-            this.spaceToNewUnits = boardSize / 12;
+            this.spaceToNewUnits = boardSize / 16;
 
             this.arrowWidth = 2 * this.lineWidth;
             this.unitRadius = this.cellRadius / 2.5;

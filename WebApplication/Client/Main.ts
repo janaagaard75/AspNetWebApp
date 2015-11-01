@@ -6,7 +6,6 @@ module CocaineCartels {
             this.updatePlayerColor().then(() => {
                 this.updateGameState().then(() => {
                     this.canvas = new Canvas(Main.game);
-                    document.getElementById("gameStarted").innerHTML = Main.game.started.toString();
 
                     const playerColor = document.getElementById("playerColor");
                     playerColor.setAttribute("style", `background-color: ${Main.playerColor}`);
@@ -15,6 +14,19 @@ module CocaineCartels {
                     for (let i = 0; i < commandElements.length; i++) {
                         commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
                     }
+
+                    if (Main.game.started) {
+                        document.getElementById("startGameButton").setAttribute("disabled", "disabled");
+                    } else {
+                        document.getElementById("sendButton").setAttribute("disabled", "disabled");
+                        document.getElementById("resetGameButton").setAttribute("disabled", "disabled");
+                    }
+
+                    var playersWhoAreReady = "";
+                    for (let i = 0; i < Main.game.players.length; i++) {
+                        playersWhoAreReady += "<span class=\"color\"></span> ";
+                    }
+                    document.getElementById("playersWhoAreReady").innerHTML = playersWhoAreReady;
                 });
             });
         }

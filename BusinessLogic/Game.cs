@@ -185,6 +185,14 @@ namespace CocaineCartels.BusinessLogic
             Started = false;
         }
 
+        public void SetPlayerReady(string playerColor)
+        {
+            Players.Where(player => player.Color == playerColor).ForEach(player =>
+            {
+                player.Ready = true;
+            });
+        }
+
         public void StartGame()
         {
             if (Started)

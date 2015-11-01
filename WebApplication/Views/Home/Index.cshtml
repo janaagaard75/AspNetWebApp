@@ -5,17 +5,20 @@
 <div class="commands player-commands">
     <table class="player-commands-table">
         <tr>
-            <td><button class="send-button" onclick="cocaineCartels.sendCommands();">Send Commands</button></td>
+            <td><button id="sendButton" class="send-button" onclick="cocaineCartels.sendCommands();">Send Commands</button></td>
             <td class="moves">Moves: <span id="numberOfMoves">0</span></td>
             <td class="your-color">Your color: <span id="playerColor" class="color"></span></td>
         </tr>
     </table>
+    <div class="player-commands-row">
+        Are ready:
+        <span style="padding-left: 1em" id="playersWhoAreReady"></span>
+    </div>
 </div>
 <div class="commands administrator-commands">
     <button onclick="cocaineCartels.performTurn();">Next Turn</button> &middot;
-    <button onclick="cocaineCartels.startGame();">Start Game</button>
-    <button onclick="cocaineCartels.resetGame();">Reset Game</button> &middot;
-    Started: <span id="gameStarted">unknown</span>
+    <button id="startGameButton" onclick="cocaineCartels.startGame();">Start Game</button>
+    <button id="resetGameButton" onclick="cocaineCartels.resetGame();">Reset Game</button>
 </div>
 @section scripts
 {
