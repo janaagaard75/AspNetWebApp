@@ -18,14 +18,7 @@ module CocaineCartels {
 
         public get color() {
             if (this._color === undefined) {
-                if (this.from === this.unit.cell) {
-                    // This is a move command that the player created this turn.
-                    this._color = this.unit.player.color;
-                } else {
-                    // This is a move command that was done last turn.
-                    // TODO j: Make the command transparent instead.
-                    this._color = tinycolor(this.unit.player.color).lighten(30).toString("hex6");
-                }
+                this._color = this.unit.player.color;
             }
 
             return this._color;

@@ -16,16 +16,23 @@
             });
         }
 
-        public static getResetGame(): Promise<void> {
+        public static performTurn(): Promise<Game> {
+            return HttpClient.get<IGame>("/api/performturn").then(gameData => {
+                const gameState = new Game(gameData);
+                return gameState;
+            });
+        }
+
+        public static resetGame(): Promise<void> {
             return HttpClient.get<void>("/api/reset");
         }
 
-        public static getStartGame(): Promise<void> {
-            return HttpClient.get<void>("/api/start");
+        public static sendCommands(commands: ClientCommands): Promise<void> {
+            return HttpClient.post<void>("/api/commands", commands);
         }
 
-        public static postCommands(commands: ClientCommands): Promise<void> {
-            return HttpClient.post<void>("/api/commands", commands);
+        public static startGame(): Promise<void> {
+            return HttpClient.get<void>("/api/start");
         }
     }
 }

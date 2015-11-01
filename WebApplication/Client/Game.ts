@@ -122,7 +122,6 @@ module CocaineCartels {
             return nearestCell;
         }
 
-        /** Places a unit on the specified cell. */
         public placeUnit(unit: Unit, on: Cell) {
             if (unit.cell !== null) {
                 throw "The unit is already placed on a cell.";

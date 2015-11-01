@@ -24,6 +24,13 @@ module CocaineCartels {
             return inDemoMode;
         }
 
+        public performTurn() {
+            GameService.performTurn().then(() => {
+                // TODO j: Use the returned game state instead of reloading the page.
+                this.reloadPage();
+            });
+        }
+
         public sendCommands() {
             const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === this.playerColor);
 
@@ -37,7 +44,7 @@ module CocaineCartels {
 
             const commands = new ClientCommands(moveCommands, placeCommands, this.playerColor);
 
-            GameService.postCommands(commands)
+            GameService.sendCommands(commands)
                 .then(() => {
                     console.info("Commands sent without errors.");
                 })
@@ -59,12 +66,16 @@ module CocaineCartels {
             });
         }
 
+        private reloadPage() {
+            window.location.reload();
+        }
+
         public resetGame() {
-            GameService.getResetGame().then(() => {
-                window.location.reload();
+            GameService.resetGame().then(() => {
+                this.reloadPage();
             });
         }
-        
+
         // TODO j: Remove this method when it's done on the server.
         public simulateCombat() {
             Main.game.simulateCombat();
@@ -78,8 +89,8 @@ module CocaineCartels {
         }
 
         public startGame() {
-            GameService.getStartGame().then(() => {
-                window.location.reload();
+            GameService.startGame().then(() => {
+                this.reloadPage();
             });
         }
     }
