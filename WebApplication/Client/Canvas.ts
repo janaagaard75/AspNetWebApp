@@ -303,20 +303,14 @@
 
         private updateCellColor(cell: Cell) {
             var backgroundColor: string;
-            if (cell.hovered) {
-                if (cell.dropAllowed) {
+            if (cell.dropAllowed) {
+                if (cell.hovered) {
                     backgroundColor = "#ddd";
-                } /*else {
-                    // Drop is not allowed on this cell.
-                    // TODO j: Remove this color once the drag and drop code is done.
-                    backgroundColor = "#f99";
-                }*/
-            } else {
-                if (cell.dropAllowed) {
-                    backgroundColor = "#f3f3f3";
                 } else {
-                    backgroundColor = null;
+                    backgroundColor = "#dfd";
                 }
+            } else {
+                backgroundColor = null;
             }
 
             cell.hexagon.fill(backgroundColor);
