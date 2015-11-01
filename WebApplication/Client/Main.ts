@@ -12,9 +12,9 @@ module CocaineCartels {
         }
 
         private canvas: Canvas;
-        private playerColor: string;
 
-        // Game is static to make it available in the Cell and the Unit class.
+        // Static to make them available in other classes.
+        public static playerColor: string;
         public static game: Game;
 
         private isInDemoMode(): boolean {
@@ -32,7 +32,7 @@ module CocaineCartels {
         }
 
         public sendCommands() {
-            const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === this.playerColor);
+            const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === Main.playerColor);
 
             const moveCommands = units
                 .filter(unit => unit.moveCommand !== null)
@@ -42,7 +42,7 @@ module CocaineCartels {
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new ClientCommands(moveCommands, placeCommands, this.playerColor);
+            const commands = new ClientCommands(moveCommands, placeCommands, Main.playerColor);
 
             GameService.sendCommands(commands)
                 .then(() => {
@@ -62,7 +62,7 @@ module CocaineCartels {
 
         private updatePlayerColor(): Promise<void> {
             return GameService.getCurrentPlayer().then(color => {
-                this.playerColor = color;
+                Main.playerColor = color;
             });
         }
 

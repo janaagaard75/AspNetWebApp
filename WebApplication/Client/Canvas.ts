@@ -162,12 +162,13 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number, movedHere: boolean) {
-            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
-            const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const color = movedHere ? unit.movedColor : unit.color;
+            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
+            const draggable = unit.player.color === Main.playerColor;
+            const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
 
             const circle = new Konva.Circle({
-                draggable: true,
+                draggable: draggable,
                 fill: color,
                 radius: CanvasSettings.unitRadius,
                 shadowBlur: 20,
@@ -268,13 +269,15 @@
                 this.drawGame();
             });
 
-            circle.on("mouseover", () => {
-                document.body.classList.add("grab-cursor");
-            });
+            if (draggable) {
+                circle.on("mouseover", () => {
+                    document.body.classList.add("grab-cursor");
+                });
 
-            circle.on("mouseout", () => {
-                document.body.classList.remove("grab-cursor");
-            });
+                circle.on("mouseout", () => {
+                    document.body.classList.remove("grab-cursor");
+                });
+            }
 
             this.unitsLayer.add(circle);
         }
