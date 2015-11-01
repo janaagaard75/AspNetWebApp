@@ -37,7 +37,6 @@ namespace CocaineCartels.BusinessLogic
             Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
-            // TODO j: Delete this later. It's just here to show have many players are connected.
             AddNewUnitsToPlayer(player, 1);
 
             return player;
@@ -168,6 +167,9 @@ namespace CocaineCartels.BusinessLogic
                 Player player = Players[i];
                 AddStartingUnitsToTheBoard(player, i, 3);
             }
+
+            // Resetting the list of new units, since all players had a single new unit to show how many players where connected.
+            NewUnits = new List<Unit>();
 
             NextBoard = Board.Copy();
             Started = true;
