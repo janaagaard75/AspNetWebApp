@@ -33,6 +33,11 @@ module CocaineCartels {
         public static playerColor: string;
         public static game: Game;
 
+        private allPlayersAreReady(): boolean {
+            const playersWhoAreNotReady = Main.game.players.filter(player => !player.ready).length;
+            return playersWhoAreNotReady > 0;
+        }
+
         private isInDemoMode(): boolean {
             const paramters = Utilities.getUrlParameters();
             const mode = paramters["mode"];
@@ -41,6 +46,12 @@ module CocaineCartels {
         }
 
         public performTurn() {
+            if (!this.allPlayersAreReady()) {
+                if (!confirm("Not all players are ready. Continue anyways?")) {
+                    return;
+                }
+            }
+
             GameService.performTurn().then(() => {
                 // TODO j: Use the returned game state instead of reloading the page.
                 this.reloadPage();
