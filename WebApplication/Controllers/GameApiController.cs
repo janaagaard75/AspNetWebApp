@@ -7,7 +7,7 @@ using CocaineCartels.WebApplication.Models;
 
 namespace CocaineCartels.WebApplication.Controllers
 {
-    public class GameController : ApiController
+    public class GameApiController : ApiController
     {
         [HttpGet, Route("api/currentplayercolor")]
         public string GetCurrentPlayerColor()
