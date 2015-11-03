@@ -173,6 +173,7 @@
     <Compile Include="Models\ClientMoveCommand.cs" />
     <Compile Include="Models\ClientPlaceCommand.cs" />
     <Compile Include="Models\ClientCommands.cs" />
+    <Compile Include="Models\GameState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -233,11 +234,13 @@
     <TypeScriptCompile Include="Client\ComandType.ts" />
     <TypeScriptCompile Include="Client\Command.ts" />
     <TypeScriptCompile Include="Client\GameService.ts" />
+    <TypeScriptCompile Include="Client\GameState.ts" />
     <TypeScriptCompile Include="Client\HexagonEvent.ts" />
     <TypeScriptCompile Include="Client\HttpClient.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IBoard.ts" />
     <TypeScriptCompile Include="Client\Interfaces\ICell.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGame.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IGameState.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGroupByFunc.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGroups.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IHex.ts" />

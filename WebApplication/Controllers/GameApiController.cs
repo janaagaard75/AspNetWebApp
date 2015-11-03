@@ -25,9 +25,18 @@ namespace CocaineCartels.WebApplication.Controllers
         }
 
         [HttpGet, Route("api/gamestate")]
-        public Game GetGameState()
+        public GameState GetGameState()
         {
-            return Game.Instance;
+            if (HttpContext.Current.Request.UserHostAddress == null)
+            {
+                throw new ApplicationException("HttpContext.Current.Request.UserHostAddress is null.");
+            }
+
+            IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
+            string userAgent = HttpContext.Current.Request.UserAgent;
+            Player currentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
+            GameState state = new GameState(currentPlayer.Color, Game.Instance);
+            return state;
         }
 
         [HttpPost, Route("api/commands")]
@@ -49,7 +58,7 @@ namespace CocaineCartels.WebApplication.Controllers
         }
 
         [HttpGet, Route("api/performturn")]
-        public Game PerformTurn()
+        public GameState PerformTurn()
         {
             Game.Instance.PerformTurn();
             return GetGameState();

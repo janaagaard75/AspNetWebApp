@@ -3,34 +3,34 @@ module CocaineCartels {
 
     export class Main {
         constructor() {
-            this.updatePlayerColor().then(() => {
-                this.updateGameState().then(() => {
-                    this.canvas = new Canvas(Main.game);
+            this.updateGameState().then(() => {
+                this.canvas = new Canvas(Main.game);
 
-                    const playerColor = document.getElementById("playerColor");
-                    playerColor.setAttribute("style", `background-color: ${Main.playerColor}`);
+                const playerColor = document.getElementById("playerColor");
+                playerColor.setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
 
-                    const commandElements = document.getElementsByClassName("commands");
-                    for (let i = 0; i < commandElements.length; i++) {
-                        commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
-                    }
+                const commandElements = document.getElementsByClassName("commands");
+                for (let i = 0; i < commandElements.length; i++) {
+                    commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
+                }
 
-                    if (Main.game.started) {
-                        document.getElementById("startGameButton").setAttribute("disabled", "disabled");
-                    } else {
-                        document.getElementById("sendButton").setAttribute("disabled", "disabled");
-                        document.getElementById("resetGameButton").setAttribute("disabled", "disabled");
-                    }
+                if (Main.game.started) {
+                    document.getElementById("startGameButton").setAttribute("disabled", "disabled");
+                } else {
+                    document.getElementById("sendButton").setAttribute("disabled", "disabled");
+                    document.getElementById("resetGameButton").setAttribute("disabled", "disabled");
+                }
 
-                    this.updatePlayersStatus();
-                });
+                this.updatePlayersStatus();
             });
         }
 
         private canvas: Canvas;
 
         // Static to make them available in other classes.
-        public static playerColor: string;
+        //public static administrator: boolean;
+        //public static playerColor: string;
+        public static currentPlayer: Player;
         public static game: Game;
 
         private allPlayersAreReady(): boolean {
@@ -59,7 +59,7 @@ module CocaineCartels {
         }
 
         public sendCommands() {
-            const exceeding = Main.game.numberOfMoveCommands - Settings.movesPerTurn;
+            const exceeding = Main.currentPlayer.numberOfMoveCommands - Settings.movesPerTurn;
             if (exceeding > 0) {
                 var commandText = "command";
                 if (exceeding >= 2) {
@@ -69,7 +69,7 @@ module CocaineCartels {
                 return;
             }
 
-            const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === Main.playerColor);
+            const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
             const moveCommands = units
                 .filter(unit => unit.moveCommand !== null)
@@ -79,11 +79,11 @@ module CocaineCartels {
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new ClientCommands(moveCommands, placeCommands, Main.playerColor);
+            const commands = new ClientCommands(moveCommands, placeCommands, Main.currentPlayer.color);
 
             GameService.sendCommands(commands)
                 .then(() => {
-                    Main.game.getPlayer(Main.playerColor).ready = true;
+                    Main.game.getPlayer(Main.currentPlayer.color).ready = true;
                     this.updatePlayersStatus();
                 })
                 .catch(e => {
@@ -108,15 +108,10 @@ module CocaineCartels {
         }
 
         private updateGameState(): Promise<void> {
-            return GameService.getGameState().then(game => {
-                Main.game = game;
+            return GameService.getGameState().then(gameState => {
+                Main.game = gameState.gameInstance;
                 Main.game.initializeGame();
-            });
-        }
-
-        private updatePlayerColor(): Promise<void> {
-            return GameService.getCurrentPlayer().then(color => {
-                Main.playerColor = color;
+                Main.currentPlayer = gameState.currentPlayer;
             });
         }
 

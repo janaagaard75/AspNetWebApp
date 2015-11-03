@@ -162,7 +162,7 @@
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number, movedHere: boolean) {
             const color = movedHere ? unit.movedColor : unit.color;
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
-            const ownedByThisPlayer = unit.player.color === Main.playerColor;
+            const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
 
             const circle = new Konva.Circle({
@@ -254,7 +254,7 @@
                     currentCell.hovered = false;
                 }
 
-                const numberOfMoveCommands = Main.game.numberOfMoveCommands;
+                const numberOfMoveCommands = Main.currentPlayer.numberOfMoveCommands;
                 document.getElementById("numberOfMoves").innerHTML = numberOfMoveCommands.toString();
                 const movesElement = document.getElementsByClassName("moves")[0];
                 if (numberOfMoveCommands > Settings.movesPerTurn) {

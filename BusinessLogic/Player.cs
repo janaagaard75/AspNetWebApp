@@ -6,8 +6,9 @@ namespace CocaineCartels.BusinessLogic
 {
     public class Player : IEquatable<Player>
     {
-        internal Player(string color, IPAddress ipAddress, string userAgent)
+        internal Player(bool administrator, string color, IPAddress ipAddress, string userAgent)
         {
+            Administrator = administrator;
             Color = color;
             IpAddress = ipAddress;
             UserAgent = userAgent;
@@ -20,6 +21,8 @@ namespace CocaineCartels.BusinessLogic
 
         /// <summary>The player has sent in commands and is thus ready for the next turn.</summary>
         public bool Ready;
+
+        public bool Administrator { get; }
 
         [JsonIgnore]
         public readonly IPAddress IpAddress;

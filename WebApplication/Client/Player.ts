@@ -5,11 +5,13 @@ module CocaineCartels {
         constructor(
             playerData: IPlayer
         ) {
+            this.administrator = playerData.administrator;
             this.color = playerData.color;
             this.ready = playerData.ready;
             this.units = [];
         }
 
+        public administrator: boolean;
         public color: string;
         public ready: boolean;
         public units: Array<Unit>;
@@ -31,6 +33,12 @@ module CocaineCartels {
             }
 
             this.units.push(unit);
+        }
+
+        /** Returns the number of move commands that the current has assigned. */
+        public get numberOfMoveCommands(): number {
+            const numberOfMoveCommands = Main.game.moveCommands.filter(command => command.unit.player.color === this.color).length;
+            return numberOfMoveCommands;
         }
 
         public removeUnit(unit: Unit) {

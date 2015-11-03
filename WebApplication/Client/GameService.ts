@@ -8,16 +8,16 @@
             });
         }
 
-        public static getGameState(): Promise<Game> {
-            return HttpClient.get<IGame>("/api/gamestate").then(gameData => {
-                const gameState = new Game(gameData);
+        public static getGameState(): Promise<GameState> {
+            return HttpClient.get<IGameState>("/api/gamestate").then(gameStateData => {
+                const gameState = new GameState(gameStateData);
                 return gameState;
             });
         }
 
-        public static performTurn(): Promise<Game> {
-            return HttpClient.get<IGame>("/api/performturn").then(gameData => {
-                const gameState = new Game(gameData);
+        public static performTurn(): Promise<GameState> {
+            return HttpClient.get<IGameState>("/api/performturn").then(gameStateData => {
+                const gameState = new GameState(gameStateData);
                 return gameState;
             });
         }

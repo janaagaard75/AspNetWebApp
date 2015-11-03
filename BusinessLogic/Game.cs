@@ -35,7 +35,8 @@ namespace CocaineCartels.BusinessLogic
                 throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
             }
 
-            Player player = new Player(PlayerColors[NumberOfPlayers], ipAddress, userAgent);
+            bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
+            Player player = new Player(administrator, PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
             AddNewUnitsToPlayer(player, 1);
