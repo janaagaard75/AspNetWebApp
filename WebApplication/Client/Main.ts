@@ -43,7 +43,7 @@ module CocaineCartels {
 
         private allPlayersAreReady(): boolean {
             const playersWhoAreNotReady = Main.game.players.filter(player => !player.ready).length;
-            return playersWhoAreNotReady > 0;
+            return playersWhoAreNotReady === 0;
         }
 
         private isInDemoMode(): boolean {
