@@ -15,6 +15,10 @@
             });
         }
 
+        public static getPlayers(): Promise<Array<IPlayer>> {
+            return HttpClient.get<Array<IPlayer>>("/api/players");
+        }
+
         public static performTurn(): Promise<GameState> {
             return HttpClient.get<IGameState>("/api/performturn").then(gameStateData => {
                 const gameState = new GameState(gameStateData);

@@ -53,16 +53,28 @@ module CocaineCartels {
             return inDemoMode;
         }
 
-        public performTurn() {
-            if (!this.allPlayersAreReady()) {
-                if (!confirm("Not all players are ready. Continue anyways?")) {
-                    return;
-                }
-            }
+        public fetchPlayersStatus(): Promise<void> {
+            return GameService.getPlayers().then(playersData => {
+                playersData.forEach(playerData => {
+                    Main.game.getPlayer(playerData.color).ready = playerData.ready;
+                });
+                this.updatePlayersStatus();
+            });
+        }
 
-            GameService.performTurn().then(() => {
-                // TODO j: Use the returned game state instead of reloading the page.
-                this.reloadPage();
+        public performTurn() {
+            // TODO j: If all players are ready there is no need to start out making the server side call.
+            this.fetchPlayersStatus().then(() => {
+                if (!this.allPlayersAreReady()) {
+                    if (!confirm("Not all players are ready. Continue anyways?")) {
+                        return;
+                    }
+                }
+
+                GameService.performTurn().then(() => {
+                    // TODO j: Use the returned game state instead of reloading the page.
+                    this.reloadPage();
+                });
             });
         }
 

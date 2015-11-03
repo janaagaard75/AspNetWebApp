@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Web;
 using System.Web.Http;
@@ -62,6 +63,12 @@ namespace CocaineCartels.WebApplication.Controllers
         {
             Game.Instance.PerformTurn();
             return GetGameState();
+        }
+
+        [HttpGet, Route("api/players")]
+        public IEnumerable<Player> GetPlayers()
+        {
+            return Game.Instance.Players;
         }
 
         [HttpGet, Route("api/reset")]
