@@ -182,6 +182,7 @@ namespace CocaineCartels.BusinessLogic
             {
                 AddPointsToPlayer(player);
                 AddNewUnitsToPlayer(player, Settings.NewUnitsPerTurn);
+                player.Ready = false;
             });
         }
 
