@@ -66,40 +66,82 @@ namespace CocaineCartels.BusinessLogic
             unit.SetPlaceCommand(onCell);
         }
 
-        private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits)
+        private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits, int numberOfPlayers)
         {
-            Hex unitHex;
+            Hex ne = new Hex(Board.GridSize, 0, -Board.GridSize);
+            Hex e = new Hex(Board.GridSize, -Board.GridSize, 0);
+            Hex se = new Hex(0, -Board.GridSize, Board.GridSize);
+            Hex sw = new Hex(-Board.GridSize, 0, Board.GridSize);
+            Hex w = new Hex(-Board.GridSize, Board.GridSize, 0);
+            Hex nw = new Hex(0, Board.GridSize, -Board.GridSize);
+
+            Hex startingHex;
             switch (playerNumber)
             {
                 case 0:
-                    unitHex = new Hex(Board.GridSize, 0, -Board.GridSize);
+                    startingHex = ne;
                     break;
 
                 case 1:
-                    unitHex = new Hex(Board.GridSize, -Board.GridSize, 0);
+                    switch (numberOfPlayers)
+                    {
+                        case 2:
+                            startingHex = sw;
+                            break;
+                        case 3:
+                        case 4:
+                            startingHex = se;
+                            break;
+
+                        default:
+                            startingHex = e;
+                            break;
+                    }
                     break;
 
                 case 2:
-                    unitHex = new Hex(0, -Board.GridSize, Board.GridSize);
+                    switch (numberOfPlayers)
+                    {
+                        case 3:
+                            startingHex = w;
+                            break;
+
+                        case 4:
+                            startingHex = sw;
+                            break;
+
+                        default:
+                            startingHex = se;
+                            break;
+                    }
                     break;
 
                 case 3:
-                    unitHex = new Hex(-Board.GridSize, 0, Board.GridSize);
+                    switch (numberOfPlayers)
+                    {
+                        case 4:
+                            startingHex = nw;
+                            break;
+
+                        default:
+                            startingHex = sw;
+                            break;
+                    }
                     break;
 
                 case 4:
-                    unitHex = new Hex(-Board.GridSize, Board.GridSize, 0);
+                    startingHex = w;
                     break;
 
                 case 5:
-                    unitHex = new Hex(0, Board.GridSize, -Board.GridSize);
+                    startingHex = nw;
                     break;
 
                 default:
                     throw new ApplicationException("Only supports up to 6 players.");
             }
 
-            Cell unitCell = Board.GetCell(unitHex);
+            Cell unitCell = Board.GetCell(startingHex);
 
             for (int i = 0; i < numberOfUnits; i++)
             {
@@ -214,7 +256,7 @@ namespace CocaineCartels.BusinessLogic
             for (int i = 0; i < NumberOfPlayers; i++)
             {
                 Player player = Players[i];
-                AddStartingUnitsToTheBoard(player, i, 3);
+                AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
             }
 
             // Resetting the list of new units, since all players had a single new unit to show how many players where connected.
