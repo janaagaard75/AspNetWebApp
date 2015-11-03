@@ -1,18 +1,21 @@
 module CocaineCartels {
     "use strict";
 
+    // TODO j: Should players have links to their commands?
     export class Player {
         constructor(
             playerData: IPlayer
         ) {
             this.administrator = playerData.administrator;
             this.color = playerData.color;
+            this.points = playerData.points;
             this.ready = playerData.ready;
             this.units = [];
         }
 
         public administrator: boolean;
         public color: string;
+        public points: number;
         public ready: boolean;
         public units: Array<Unit>;
 
@@ -37,7 +40,7 @@ module CocaineCartels {
 
         /** Returns the number of move commands that the current has assigned. */
         public get numberOfMoveCommands(): number {
-            const numberOfMoveCommands = Main.game.moveCommands.filter(command => command.unit.player.color === this.color).length;
+            const numberOfMoveCommands = Main.game.moveCommands.filter(command => command.player.color === this.color).length;
             return numberOfMoveCommands;
         }
 

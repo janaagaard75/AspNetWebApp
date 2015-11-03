@@ -117,6 +117,12 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
+        private void AddPointsToPlayer(Player player)
+        {
+            int pointsThisTurn = Board.Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(player)));
+            player.Points += pointsThisTurn;
+        }
+
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
@@ -174,6 +180,7 @@ namespace CocaineCartels.BusinessLogic
             // Assign new units to the players.
             Players.ForEach(player =>
             {
+                AddPointsToPlayer(player);
                 AddNewUnitsToPlayer(player, Settings.NewUnitsPerTurn);
             });
         }

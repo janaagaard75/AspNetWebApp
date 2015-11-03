@@ -5,6 +5,7 @@
         administrator: boolean;
         /** The color is also the ID of the player. */
         color: string;
+        points: number;
         ready: boolean;
     }
 }

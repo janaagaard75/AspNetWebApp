@@ -12,13 +12,20 @@ body
     margin: 0;
 }
 
-.color
+.color,
+.points
 {
-    vertical-align: bottom;
-    border: 1px solid #888; /* Same color as unit border. */
+    border-style: solid;
+    border-width: 1px;
     display: inline-block;
     height: 20px;
-    width: 20px;
+    vertical-align: bottom;
+    width: 30px;
+}
+
+.color
+{
+    border-color: #888; /* Same color as unit border. */
 }
 
 .grab-cursor
@@ -69,6 +76,11 @@ body
     {
         padding: 10px;
     }
+
+.points
+{
+    text-align: center;
+}
 
 .your-color
 {

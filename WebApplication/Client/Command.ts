@@ -10,5 +10,9 @@ module CocaineCartels {
                 throw "'unit' must be defined.";
             }
         }
+
+        public get player() {
+            return this.unit.player;
+        }
     }
 }

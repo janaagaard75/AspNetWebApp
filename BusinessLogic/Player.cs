@@ -13,19 +13,22 @@ namespace CocaineCartels.BusinessLogic
             IpAddress = ipAddress;
             UserAgent = userAgent;
 
+            Points = 0;
             Ready = false;
         }
+
+        public bool Administrator { get; }
 
         /// <summary>The color also identifies a player, so use this property the player ID.</summary>
         public readonly string Color;
 
-        /// <summary>The player has sent in commands and is thus ready for the next turn.</summary>
-        public bool Ready;
-
-        public bool Administrator { get; }
-
         [JsonIgnore]
         public readonly IPAddress IpAddress;
+
+        public int Points { get; set; }
+
+        /// <summary>The player has sent in commands and is thus ready for the next turn.</summary>
+        public bool Ready;
 
         [JsonIgnore]
         public readonly string UserAgent;
