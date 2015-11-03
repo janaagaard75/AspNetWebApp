@@ -11,6 +11,7 @@
         public static getGameState(): Promise<GameState> {
             return HttpClient.get<IGameState>("/api/gamestate").then(gameStateData => {
                 const gameState = new GameState(gameStateData);
+                console.info(`Current player is administrator: ${gameState.currentPlayer.administrator}.`);
                 return gameState;
             });
         }

@@ -22,14 +22,20 @@ module CocaineCartels {
                 }
 
                 this.updatePlayersStatus();
+
+                if (Main.currentPlayer.administrator) {
+                    document.getElementById("administratorCommands").classList.remove("hidden");
+                } else {
+                    document.getElementById("administratorCommands").classList.add("hidden");
+                }
+
+
             });
         }
 
         private canvas: Canvas;
 
         // Static to make them available in other classes.
-        //public static administrator: boolean;
-        //public static playerColor: string;
         public static currentPlayer: Player;
         public static game: Game;
 
