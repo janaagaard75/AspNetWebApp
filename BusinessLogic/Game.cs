@@ -119,7 +119,7 @@ namespace CocaineCartels.BusinessLogic
 
         private void AddPointsToPlayer(Player player)
         {
-            int pointsThisTurn = Board.Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(player)));
+            int pointsThisTurn = player.NumberOfCells();
             player.Points += pointsThisTurn;
         }
 
@@ -181,7 +181,9 @@ namespace CocaineCartels.BusinessLogic
             Players.ForEach(player =>
             {
                 AddPointsToPlayer(player);
-                AddNewUnitsToPlayer(player, Settings.NewUnitsPerTurn);
+
+                int newUnitsThisTurn = Settings.NewUnitsPerTurn + player.NumberOfCells() / Settings.CellsForEachNewUnit;
+                AddNewUnitsToPlayer(player, newUnitsThisTurn);
                 player.Ready = false;
             });
         }
