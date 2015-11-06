@@ -224,7 +224,12 @@ namespace CocaineCartels.BusinessLogic
             {
                 AddPointsToPlayer(player);
 
-                int newUnitsThisTurn = Settings.NewUnitsPerTurn + player.NumberOfCells() / Settings.CellsForEachNewUnit;
+                int newUnitsThisTurn = Settings.NewUnitsPerTurn;
+                if (Settings.NewUnitPerCellsControlled != 0)
+                {
+                    newUnitsThisTurn += player.NumberOfCells() / Settings.NewUnitPerCellsControlled;
+                }
+
                 AddNewUnitsToPlayer(player, newUnitsThisTurn);
                 player.Ready = false;
             });
