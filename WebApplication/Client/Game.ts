@@ -7,7 +7,7 @@ module CocaineCartels {
             gameData.players.forEach(playerData => {
                 const player = new Player(playerData);
 
-                const newUnitsForThisPlayer = gameData.newUnits.filter(u => u.player.color === player.color);
+                const newUnitsForThisPlayer = gameData.board.newUnits.filter(u => u.player.color === player.color);
                 newUnitsForThisPlayer.forEach(unitData => {
                     player.addNewUnit(unitData);
                 });

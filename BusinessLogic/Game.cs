@@ -12,7 +12,7 @@ namespace CocaineCartels.BusinessLogic
             ResetGame();
         }
 
-        private readonly static Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
+        private static readonly Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
         public static Game Instance => _GameInstance.Value;
 
         private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
@@ -24,7 +24,6 @@ namespace CocaineCartels.BusinessLogic
         private Board NextBoard { get; set; }
 
         public Board Board { get; private set; }
-        public List<Unit> NewUnits { get; private set; }
         public List<Player> Players { get; private set; }
         public bool Started;
 
@@ -51,7 +50,7 @@ namespace CocaineCartels.BusinessLogic
             Unit unit = fromCell.Units.FirstOrDefault(u => u.Player.Color == playerColor && u.MoveCommand == null);
             if (unit == null)
             {
-                unit = NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand != null && u.PlaceCommand.On == fromCell);
+                unit = Board.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand != null && u.PlaceCommand.On == fromCell);
             }
 
             Cell toCell = NextBoard.GetCell(toHex);
@@ -61,7 +60,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Assign a place command to a unit. The unit is not moved to the cell.</summary>
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
-            Unit unit = NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand == null);
+            Unit unit = Board.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand == null);
             Cell onCell = NextBoard.GetCell(onHex);
             unit.SetPlaceCommand(onCell);
         }
@@ -155,7 +154,7 @@ namespace CocaineCartels.BusinessLogic
             for (int i = 0; i < numberOfNewUnits; i++)
             {
                 var unit = new Unit(player);
-                NewUnits.Add(unit);
+                Board.NewUnits.Add(unit);
             }
         }
 
@@ -169,7 +168,7 @@ namespace CocaineCartels.BusinessLogic
         public void DeleteNextTurnCommands(string playerColor)
         {
             IEnumerable<Unit> playersUnitsOnBoard = NextBoard.GetUnits().Where(unit => unit.Player.Color == playerColor);
-            IEnumerable<Unit> playersNewUnits = NewUnits.Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersNewUnits = Board.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> playersUnits = playersUnitsOnBoard.Concat(playersNewUnits);
             playersUnits.ForEach(unit =>
             {
@@ -196,10 +195,10 @@ namespace CocaineCartels.BusinessLogic
             // Assume that all players have sent in their commands.
 
             // Place all new units.
-            var unitsToPlace = NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+            var unitsToPlace = Board.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
             unitsToPlace.ForEach(unit =>
             {
-                NewUnits.Remove(unit);
+                Board.NewUnits.Remove(unit);
                 unit.PlaceCommand.On.AddUnit(unit);
                 unit.RemovePlaceCommand();
             });
@@ -225,6 +224,7 @@ namespace CocaineCartels.BusinessLogic
                 AddPointsToPlayer(player);
 
                 int newUnitsThisTurn = Settings.NewUnitsPerTurn;
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (Settings.NewUnitPerCellsControlled != 0)
                 {
                     newUnitsThisTurn += player.NumberOfCells() / Settings.NewUnitPerCellsControlled;
@@ -238,7 +238,6 @@ namespace CocaineCartels.BusinessLogic
         public void ResetGame()
         {
             Board = new Board(Settings.GridSize);
-            NewUnits = new List<Unit>();
             Players = new List<Player>();
             Started = false;
         }
@@ -265,8 +264,7 @@ namespace CocaineCartels.BusinessLogic
             }
 
             // Resetting the list of new units, since all players had a single new unit to show how many players where connected.
-            NewUnits = new List<Unit>();
-
+            Board.ResetNewUnits();
             NextBoard = Board.Copy();
             Started = true;
         }

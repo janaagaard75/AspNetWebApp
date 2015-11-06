@@ -105,6 +105,7 @@
 
             this.addLayers();
 
+            // Draw methods are separated this way to match the layers in the game.
             this.drawBoard();
             this.drawUnits();
             this.drawCommands();
@@ -164,7 +165,14 @@
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-            const strokeColor = "#888";
+
+            let strokeColor: string;
+            if (/*unit.placeCommand === null*/true) {
+                strokeColor = "#888";
+            } else {
+                strokeColor = "#000";
+            }
+
 
             const circle = new Konva.Circle({
                 draggable: ownedByThisPlayer,

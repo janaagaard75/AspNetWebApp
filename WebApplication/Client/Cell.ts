@@ -30,7 +30,7 @@ module CocaineCartels {
             return commands;
         }
 
-        /** Units on this cell. This array does not take into account that the unit might have been moved to another cell or that other units might have been moved to this cell. */
+        /** Units on this cell, not taking into account that some of them might have move commands to other cells. Units placed on this cell are included. */
         public get units(): Array<Unit> {
             if (this._units === undefined) {
                 this._units = [];
@@ -43,9 +43,14 @@ module CocaineCartels {
             return this._units;
         }
 
-        public get unitsMovingHere() {
+        public get unitsMovingHere(): Array<Unit> {
             const unitsMovingHere = this.moveCommandsToCell.map(command => command.unit);
             return unitsMovingHere;
+        }
+
+        public get unitsPlacedHere(): Array<Unit> {
+            const unitsPlacedHere = this.units.filter(unit => unit.placeCommand !== null);
+            return unitsPlacedHere;
         }
 
         public get unitsStaying(): Array<Unit> {
