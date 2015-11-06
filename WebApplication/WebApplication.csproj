@@ -263,7 +263,6 @@
     <TypeScriptCompile Include="Client\Pos.ts" />
     <TypeScriptCompile Include="Client\Settings.ts" />
     <TypeScriptCompile Include="Client\Unit.ts" />
-    <TypeScriptCompile Include="Client\UnitsToDisplay.ts" />
     <TypeScriptCompile Include="Client\Utilities.ts" />
     <TypeScriptCompile Include="scripts\typings\es6-promise\es6-promise.d.ts" />
     <TypeScriptCompile Include="scripts\typings\konva\konva.d.ts" />

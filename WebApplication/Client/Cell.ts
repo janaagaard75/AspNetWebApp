@@ -30,6 +30,7 @@ module CocaineCartels {
             return commands;
         }
 
+        /** Units on this cell. This array does not take into account that the unit might have been moved to another cell or that other units might have been moved to this cell. */
         public get units(): Array<Unit> {
             if (this._units === undefined) {
                 this._units = [];
@@ -42,10 +43,14 @@ module CocaineCartels {
             return this._units;
         }
 
-        public get unitsToDisplay(): UnitsToDisplay {
-            const unitsOnThisCell = this.units.filter(unit => unit.moveCommand === null);
-            const unitsToBeMovedToThisCell = this.moveCommandsToCell.map(command => command.unit);
-            return new UnitsToDisplay(unitsOnThisCell, unitsToBeMovedToThisCell);
+        public get unitsMovingHere() {
+            const unitsMovingHere = this.moveCommandsToCell.map(command => command.unit);
+            return unitsMovingHere;
+        }
+
+        public get unitsStaying(): Array<Unit> {
+            const unitsStaying = this.units.filter(unit => unit.moveCommand === null);
+            return unitsStaying;
         }
 
         public addUnit(unit: Unit) {

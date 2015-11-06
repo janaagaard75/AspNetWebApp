@@ -164,6 +164,7 @@
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            const strokeColor = "#888";
 
             const circle = new Konva.Circle({
                 draggable: ownedByThisPlayer,
@@ -173,7 +174,7 @@
                 shadowColor: "#000",
                 shadowEnabled: false,
                 shadowOpacity: 0.7,
-                stroke: "#888",
+                stroke: strokeColor,
                 strokeWidth: CanvasSettings.lineWidth,
                 x: x,
                 y: pos.y
@@ -299,14 +300,14 @@
         }
 
         private drawUnitsOnCell(cell: Cell) {
-            const unitsToDisplay = cell.unitsToDisplay;
+            const total = cell.unitsStaying.length + cell.unitsMovingHere.length;
 
-            unitsToDisplay.unitsOnThisCell.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, index, unitsToDisplay.numberOfUnits, false);
+            cell.unitsStaying.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, index, total, false);
             });
 
-            unitsToDisplay.unitsToBeMovedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, unitsToDisplay.unitsOnThisCell.length + index, unitsToDisplay.numberOfUnits, true);
+            cell.unitsMovingHere.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, cell.unitsStaying.length + index, total, true);
             });
         }
 
