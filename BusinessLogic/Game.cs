@@ -20,10 +20,22 @@ namespace CocaineCartels.BusinessLogic
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
-        // The next board will only become necessary once the game will be able to show the commands from the previous turn.
-        private Board NextBoard { get; set; }
+        /// <summary>1. The board from the previous turn, before any commands are executed, with all the new units besides the board.</summary>
+        public Board PreviousTurn { get; private set; }
 
-        public Board Board { get; private set; }
+        /// <summary>2. The board from the previous turn, with all the new units placed on the board, but no move commands have been executed.</summary>
+        public Board PreviousTurnShowingPlaceCommands { get; private set; }
+
+        /// <summary>3. The board from the previous turn, with all move commands executed, but not combats resolved.</summary>
+        public Board PreviousTurnShowingMoveCommands { get; private set; }
+
+        /// <summary>4. The board for the current turn, with combats resolved and new units ready for each player.</summary>
+        /// <remarks>Later on, this will also inlucde the player's planned moves, so that it's possible to refresh the page. Figure out what to do when copyging this to the previous turn.</remarks>
+        public Board CurrentTurn { get; private set; }
+
+        /// <summary>5. Player's commands for the next turn are assigned to this board. Private because it's not sent to the clients.</summary>
+        private Board NextTurn { get; set; }
+
         public List<Player> Players { get; private set; }
         public bool Started;
 
@@ -46,33 +58,35 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
         public void AddMoveCommand(string playerColor, Hex fromHex, Hex toHex)
         {
-            Cell fromCell = NextBoard.GetCell(fromHex);
+            Cell fromCell = NextTurn.GetCell(fromHex);
             Unit unit = fromCell.Units.FirstOrDefault(u => u.Player.Color == playerColor && u.MoveCommand == null);
+
+            // If there wasn't an availble unit on the cell, check if a unit is to be placed on the cell.
             if (unit == null)
             {
-                unit = Board.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand != null && u.PlaceCommand.On == fromCell);
+                unit = NextTurn.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand != null && u.PlaceCommand.On == fromCell);
             }
 
-            Cell toCell = NextBoard.GetCell(toHex);
+            Cell toCell = NextTurn.GetCell(toHex);
             unit.SetMoveCommand(toCell);
         }
 
         /// <summary>Assign a place command to a unit. The unit is not moved to the cell.</summary>
         public void AddPlaceCommand(string playerColor, Hex onHex)
         {
-            Unit unit = Board.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand == null);
-            Cell onCell = NextBoard.GetCell(onHex);
+            Unit unit = NextTurn.NewUnits.First(u => u.Player.Color == playerColor && u.PlaceCommand == null);
+            Cell onCell = NextTurn.GetCell(onHex);
             unit.SetPlaceCommand(onCell);
         }
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits, int numberOfPlayers)
         {
-            Hex ne = new Hex(Board.GridSize, 0, -Board.GridSize);
-            Hex e = new Hex(Board.GridSize, -Board.GridSize, 0);
-            Hex se = new Hex(0, -Board.GridSize, Board.GridSize);
-            Hex sw = new Hex(-Board.GridSize, 0, Board.GridSize);
-            Hex w = new Hex(-Board.GridSize, Board.GridSize, 0);
-            Hex nw = new Hex(0, Board.GridSize, -Board.GridSize);
+            Hex ne = new Hex(CurrentTurn.GridSize, 0, -CurrentTurn.GridSize);
+            Hex e = new Hex(CurrentTurn.GridSize, -CurrentTurn.GridSize, 0);
+            Hex se = new Hex(0, -CurrentTurn.GridSize, CurrentTurn.GridSize);
+            Hex sw = new Hex(-CurrentTurn.GridSize, 0, CurrentTurn.GridSize);
+            Hex w = new Hex(-CurrentTurn.GridSize, CurrentTurn.GridSize, 0);
+            Hex nw = new Hex(0, CurrentTurn.GridSize, -CurrentTurn.GridSize);
 
             Hex startingHex;
             switch (playerNumber)
@@ -140,7 +154,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Only supports up to 6 players.");
             }
 
-            Cell unitCell = Board.GetCell(startingHex);
+            Cell unitCell = CurrentTurn.GetCell(startingHex);
 
             for (int i = 0; i < numberOfUnits; i++)
             {
@@ -154,7 +168,7 @@ namespace CocaineCartels.BusinessLogic
             for (int i = 0; i < numberOfNewUnits; i++)
             {
                 var unit = new Unit(player);
-                Board.NewUnits.Add(unit);
+                CurrentTurn.NewUnits.Add(unit);
             }
         }
 
@@ -167,8 +181,8 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
-            IEnumerable<Unit> playersUnitsOnBoard = NextBoard.GetUnits().Where(unit => unit.Player.Color == playerColor);
-            IEnumerable<Unit> playersNewUnits = Board.NewUnits.Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersUnitsOnBoard = NextTurn.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> playersNewUnits = CurrentTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> playersUnits = playersUnitsOnBoard.Concat(playersNewUnits);
             playersUnits.ForEach(unit =>
             {
@@ -189,34 +203,38 @@ namespace CocaineCartels.BusinessLogic
             return matchingPlayer;
         }
 
-        /// <summary>Executes the commands. Resolves combats. Assigns new units.</summary>
+        /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
+        /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
         public void PerformTurn()
         {
-            // Assume that all players have sent in their commands.
+            // NextTurn now becomes the previous turn.
+            PreviousTurn = NextTurn.Clone();
 
             // Place all new units.
-            var unitsToPlace = Board.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+            var unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
             unitsToPlace.ForEach(unit =>
             {
-                Board.NewUnits.Remove(unit);
+                NextTurn.NewUnits.Remove(unit);
                 unit.PlaceCommand.On.AddUnit(unit);
                 unit.RemovePlaceCommand();
             });
+            PreviousTurnShowingPlaceCommands = NextTurn.Clone();
 
             // Move all the units.
-            var unitsToMove = NextBoard.GetUnits().Where(unit => unit.MoveCommand != null).ToList();
+            var unitsToMove = NextTurn.GetUnits().Where(unit => unit.MoveCommand != null).ToList();
             unitsToMove.ForEach(unit =>
             {
                 unit.Cell.RemoveUnit(unit);
                 unit.MoveCommand.To.AddUnit(unit);
                 unit.RemoveMoveCommand();
             });
+            PreviousTurnShowingMoveCommands = NextTurn.Clone();
 
-            NextBoard.Fight();
+            NextTurn.Fight();
 
-            // Promote NextBoard to the current board and create copy of the board to the next board. Copying instead of assigning, because we want to be able to assign new commands.
-            Board = NextBoard;
-            NextBoard = Board.Copy();
+            // Promote NextTurn to the current board and create copy of the board to the next board. Copying instead of assigning, because we want to be able to assign new commands.
+            CurrentTurn = NextTurn.Clone();
+            NextTurn = CurrentTurn.Clone();
 
             // Assign new units to the players.
             Players.ForEach(player =>
@@ -237,7 +255,10 @@ namespace CocaineCartels.BusinessLogic
 
         public void ResetGame()
         {
-            Board = new Board(Settings.GridSize);
+            PreviousTurn = null;
+            PreviousTurnShowingPlaceCommands = null;
+            PreviousTurnShowingMoveCommands = null;
+            CurrentTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
             Started = false;
         }
@@ -264,8 +285,8 @@ namespace CocaineCartels.BusinessLogic
             }
 
             // Resetting the list of new units, since all players had a single new unit to show how many players where connected.
-            Board.ResetNewUnits();
-            NextBoard = Board.Copy();
+            CurrentTurn.ResetNewUnits();
+            NextTurn = CurrentTurn.Clone();
             Started = true;
         }
     }

@@ -17,13 +17,14 @@ module CocaineCartels {
         public color: string;
         public points: number;
         public ready: boolean;
-        public units: Array<Unit>;
+        public units: Array<Unit>; // TODO j: The value is ambious since we not have multiple boards.
 
         public get newUnits(): Array<Unit> {
             const newUnits = this.units.filter(u => u.cell === null);
             return newUnits;
         }
 
+        // TODO j: New units has to be added to a board instead of to a player.
         public addNewUnit(unitData: IUnit) {
             const newUnit = new Unit(unitData, null);
             // Can't use addUnit bause calling unit.player here fails when getPlayer is called.

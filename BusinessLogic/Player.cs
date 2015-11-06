@@ -42,7 +42,7 @@ namespace CocaineCartels.BusinessLogic
 
         public int NumberOfCells()
         {
-            int numberOfCells = Game.Instance.Board.Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(this)));
+            int numberOfCells = Game.Instance.CurrentTurn.Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(this)));
             return numberOfCells;
         }
     }

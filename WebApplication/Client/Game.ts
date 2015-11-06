@@ -7,7 +7,7 @@ module CocaineCartels {
             gameData.players.forEach(playerData => {
                 const player = new Player(playerData);
 
-                const newUnitsForThisPlayer = gameData.board.newUnits.filter(u => u.player.color === player.color);
+                const newUnitsForThisPlayer = gameData.currentTurn.newUnits.filter(u => u.player.color === player.color);
                 newUnitsForThisPlayer.forEach(unitData => {
                     player.addNewUnit(unitData);
                 });
@@ -15,12 +15,12 @@ module CocaineCartels {
                 this.players.push(player);
             });
 
-            this.board = new Board(gameData.board);
+            this.board = new Board(gameData.currentTurn);
 
             this.started = gameData.started;
         }
 
-        public board: Board;
+        public board: Board; // TODO j: Split into three boards.
         public players: Array<Player>;
         public started: boolean;
 
