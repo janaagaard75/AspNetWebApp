@@ -5,7 +5,7 @@
         constructor(
             gameStateData: IGameState
         ) {
-            this.gameInstance = new Game(gameStateData.gameInstance);
+            this.gameInstance = new Game(gameStateData.currentTurn, gameStateData.gameInstance);
             this.currentPlayer = this.gameInstance.getPlayer(gameStateData.currentPlayerColor);
         }
 

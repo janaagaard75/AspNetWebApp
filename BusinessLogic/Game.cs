@@ -20,20 +20,16 @@ namespace CocaineCartels.BusinessLogic
         private int MaximumNumberOfPlayers => PlayerColors.Length;
         private int NumberOfPlayers => Players.Count;
 
-        /// <summary>1. The board from the previous turn, before any commands are executed, with all the new units besides the board.</summary>
+        /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
         public Board PreviousTurn { get; private set; }
 
-        /// <summary>2. The board from the previous turn, with all the new units placed on the board, but no move commands have been executed.</summary>
+        /// <summary>The board from the previous turn, with all the new units placed on the board, but no move commands have been executed. This board is <see cref="PreviousTurn"/> with place commands executed.</summary>
         public Board PreviousTurnShowingPlaceCommands { get; private set; }
 
-        /// <summary>3. The board from the previous turn, with all move commands executed, but not combats resolved.</summary>
+        /// <summary>The board from the previous turn, with all move commands executed, but not combats resolved. This board is <see cref="PreviousTurnShowingPlaceCommands"/> with move commands executed.</summary>
         public Board PreviousTurnShowingMoveCommands { get; private set; }
 
-        /// <summary>4. The board for the current turn, with combats resolved and new units ready for each player.</summary>
-        /// <remarks>Later on, this will also inlucde the player's planned moves, so that it's possible to refresh the page. Figure out what to do when copyging this to the previous turn.</remarks>
-        public Board CurrentTurn { get; private set; }
-
-        /// <summary>5. Player's commands for the next turn are assigned to this board. Private because it's not sent to the clients.</summary>
+        /// <summary>This board is the one used to store the player's commands for the next turn. It's <see cref="PreviousTurnShowingMoveCommands"/> with combat resolved.</summary>
         private Board NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
@@ -49,8 +45,6 @@ namespace CocaineCartels.BusinessLogic
             bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
             Player player = new Player(administrator, PlayerColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
-
-            AddNewUnitsToPlayer(player, 1);
 
             return player;
         }
@@ -81,12 +75,12 @@ namespace CocaineCartels.BusinessLogic
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits, int numberOfPlayers)
         {
-            Hex ne = new Hex(CurrentTurn.GridSize, 0, -CurrentTurn.GridSize);
-            Hex e = new Hex(CurrentTurn.GridSize, -CurrentTurn.GridSize, 0);
-            Hex se = new Hex(0, -CurrentTurn.GridSize, CurrentTurn.GridSize);
-            Hex sw = new Hex(-CurrentTurn.GridSize, 0, CurrentTurn.GridSize);
-            Hex w = new Hex(-CurrentTurn.GridSize, CurrentTurn.GridSize, 0);
-            Hex nw = new Hex(0, CurrentTurn.GridSize, -CurrentTurn.GridSize);
+            Hex ne = new Hex(NextTurn.GridSize, 0, -NextTurn.GridSize);
+            Hex e = new Hex(NextTurn.GridSize, -NextTurn.GridSize, 0);
+            Hex se = new Hex(0, -NextTurn.GridSize, NextTurn.GridSize);
+            Hex sw = new Hex(-NextTurn.GridSize, 0, NextTurn.GridSize);
+            Hex w = new Hex(-NextTurn.GridSize, NextTurn.GridSize, 0);
+            Hex nw = new Hex(0, NextTurn.GridSize, -NextTurn.GridSize);
 
             Hex startingHex;
             switch (playerNumber)
@@ -154,7 +148,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Only supports up to 6 players.");
             }
 
-            Cell unitCell = CurrentTurn.GetCell(startingHex);
+            Cell unitCell = NextTurn.GetCell(startingHex);
 
             for (int i = 0; i < numberOfUnits; i++)
             {
@@ -163,28 +157,56 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        private void AddNewUnitsToPlayer(Player player, int numberOfNewUnits)
-        {
-            for (int i = 0; i < numberOfNewUnits; i++)
-            {
-                var unit = new Unit(player);
-                CurrentTurn.NewUnits.Add(unit);
-            }
-        }
-
         private void AddPointsToPlayer(Player player)
         {
-            int pointsThisTurn = player.NumberOfCells();
+            int pointsThisTurn = NextTurn.NumberOfControlledCells(player);
             player.Points += pointsThisTurn;
+        }
+
+        /// <summary>Returns the NextTurn board, but only with the specified player's commands.</summary>
+        public Board GetCurrentTurn(Player player)
+        {
+            var currentTurn = NextTurn.Clone();
+
+            var units = currentTurn.Cells.SelectMany(cell => cell.Units);
+            units.ForEach(unit =>
+            {
+                if (unit.MoveCommand != null && unit.Player != player)
+                { 
+                    unit.RemoveMoveCommand();
+                }
+            });
+
+            currentTurn.NewUnits.ForEach(unit =>
+            {
+                if (unit.Player != player)
+                {
+                    unit.RemovePlaceCommand();
+                }
+            });
+
+            return currentTurn;
+        }
+
+        private int GetNumberOfNewUnitsForPlayer(Player player)
+        {
+            int newUnitsThisTurn = Settings.NewUnitsPerTurn;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (Settings.NewUnitPerCellsControlled != 0)
+            {
+                newUnitsThisTurn += NextTurn.NumberOfControlledCells(player) / Settings.NewUnitPerCellsControlled;
+            }
+
+            return newUnitsThisTurn;
         }
 
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
-            IEnumerable<Unit> playersUnitsOnBoard = NextTurn.GetUnits().Where(unit => unit.Player.Color == playerColor);
-            IEnumerable<Unit> playersNewUnits = CurrentTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
-            IEnumerable<Unit> playersUnits = playersUnitsOnBoard.Concat(playersNewUnits);
-            playersUnits.ForEach(unit =>
+            IEnumerable<Unit> unitsOnBoard = NextTurn.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> units = unitsOnBoard.Concat(newUnits);
+            units.ForEach(unit =>
             {
                 unit.RemoveCommands();
             });
@@ -232,23 +254,11 @@ namespace CocaineCartels.BusinessLogic
 
             NextTurn.Fight();
 
-            // Promote NextTurn to the current board and create copy of the board to the next board. Copying instead of assigning, because we want to be able to assign new commands.
-            CurrentTurn = NextTurn.Clone();
-            NextTurn = CurrentTurn.Clone();
-
-            // Assign new units to the players.
+            // Assign new units to the players, add points to them and set their ready state to false.
             Players.ForEach(player =>
             {
+                NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
                 AddPointsToPlayer(player);
-
-                int newUnitsThisTurn = Settings.NewUnitsPerTurn;
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (Settings.NewUnitPerCellsControlled != 0)
-                {
-                    newUnitsThisTurn += player.NumberOfCells() / Settings.NewUnitPerCellsControlled;
-                }
-
-                AddNewUnitsToPlayer(player, newUnitsThisTurn);
                 player.Ready = false;
             });
         }
@@ -258,7 +268,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurn = null;
             PreviousTurnShowingPlaceCommands = null;
             PreviousTurnShowingMoveCommands = null;
-            CurrentTurn = new Board(Settings.GridSize);
+            NextTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
             Started = false;
         }
@@ -284,9 +294,6 @@ namespace CocaineCartels.BusinessLogic
                 AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
             }
 
-            // Resetting the list of new units, since all players had a single new unit to show how many players where connected.
-            CurrentTurn.ResetNewUnits();
-            NextTurn = CurrentTurn.Clone();
             Started = true;
         }
     }

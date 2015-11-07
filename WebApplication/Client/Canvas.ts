@@ -6,7 +6,7 @@
             game: Game
         ) {
             Canvas.game = game;
-            CanvasSettings.initialize(game.board.gridSize);
+            CanvasSettings.initialize(game.currentTurn.gridSize);
             this.drawGame();
         }
 
@@ -46,7 +46,7 @@
             });
             this.backgroundLayer.add(background);
 
-            Canvas.game.board.cells.forEach(cell => {
+            Canvas.game.currentTurn.cells.forEach(cell => {
                 this.drawCell(cell);
             });
         }
@@ -83,7 +83,7 @@
                 return command.to.hex.toString();
             }
 
-            Canvas.game.board.cells.forEach(cell => {
+            Canvas.game.currentTurn.cells.forEach(cell => {
                 var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByTo);
                 groups.forEach(commands => {
                     const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
@@ -275,7 +275,7 @@
                 currentHexagon = null;
                 previousHexagon = null;
 
-                Canvas.game.board.cells.forEach(cell => {
+                Canvas.game.currentTurn.cells.forEach(cell => {
                     cell.dropAllowed = false;
                 });
 
@@ -298,7 +298,7 @@
         }
 
         private drawUnits() {
-            Canvas.game.board.cells.forEach(cell => {
+            Canvas.game.currentTurn.cells.forEach(cell => {
                 this.drawUnitsOnCell(cell);
             });
 

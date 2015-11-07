@@ -2,10 +2,6 @@
     "use strict";
 
     export interface IGame {
-        /** Never null. */
-        currentTurn: IBoard;
-
-        /** Never null. */
         players: Array<IPlayer>;
 
         /** Null on first turn. */
@@ -17,7 +13,6 @@
         /** Null on first turn. */
         previousTurnShowingPlaceCommands: IBoard;
 
-        /** Never null. */
         started: boolean;
     }
 }

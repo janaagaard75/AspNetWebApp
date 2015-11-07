@@ -2,12 +2,12 @@ module CocaineCartels {
     "use strict";
 
     export class Game {
-        constructor(gameData: IGame) {
+        constructor(currentTurnData: IBoard, gameData: IGame) {
             this.players = [];
             gameData.players.forEach(playerData => {
                 const player = new Player(playerData);
 
-                const newUnitsForThisPlayer = gameData.currentTurn.newUnits.filter(u => u.player.color === player.color);
+                const newUnitsForThisPlayer = currentTurnData.newUnits.filter(u => u.player.color === player.color);
                 newUnitsForThisPlayer.forEach(unitData => {
                     player.addNewUnit(unitData);
                 });
@@ -15,13 +15,34 @@ module CocaineCartels {
                 this.players.push(player);
             });
 
-            this.board = new Board(gameData.currentTurn);
+            if (gameData.previousTurn === null) {
+                this.previousTurn = null;
+            } else {
+                this.previousTurn = new Board(gameData.previousTurn);
+            }
+
+            if (gameData.previousTurnShowingPlaceCommands === null) {
+                this.previousTurnWithPlaceCommands = null;
+            } else {
+                this.previousTurnWithPlaceCommands = new Board(gameData.previousTurnShowingPlaceCommands);
+            }
+
+            if (gameData.previousTurnShowingMoveCommands === null) {
+                this.previousTurnWithMoveCommands = null;
+            } else {
+                this.previousTurnWithMoveCommands = new Board(gameData.previousTurnShowingMoveCommands);
+            }
+
+            this.currentTurn = new Board(currentTurnData);
 
             this.started = gameData.started;
         }
 
-        public board: Board; // TODO j: Split into three boards.
+        public currentTurn: Board;
         public players: Array<Player>;
+        public previousTurn: Board;
+        public previousTurnWithPlaceCommands: Board;
+        public previousTurnWithMoveCommands: Board;
         public started: boolean;
 
         public get moveCommands(): Array<MoveCommand> {
@@ -33,7 +54,7 @@ module CocaineCartels {
         }
 
         public get unitsOnBoard(): Array<Unit> {
-            const unitsDoubleArray = this.board.cells.map(cell => cell.units);
+            const unitsDoubleArray = this.currentTurn.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);
             return units;
         }
@@ -43,7 +64,7 @@ module CocaineCartels {
                 throw "It's not allowed to move a cell that is not already on the board.";
             }
 
-            const allowedCells = this.board.cells.filter(cell => {
+            const allowedCells = this.currentTurn.cells.filter(cell => {
                 const allowed = cell.distance(unit.cell) <= unit.maximumMoveDistance;
                 return allowed;
             });
@@ -52,7 +73,7 @@ module CocaineCartels {
         }
 
         public allowedCellsForPlace(unit: Unit): Array<Cell> {
-            const cellsWithUnits = this.board.cells.filter(cell => {
+            const cellsWithUnits = this.currentTurn.cells.filter(cell => {
                 const cellHasUnitsBelongingToCurrentPlayer = cell.units
                     .filter(u => u.moveCommand === null)
                     .filter(u => u.player === unit.player)
@@ -70,7 +91,7 @@ module CocaineCartels {
         }
 
         public getCell(hex: IHex): Cell {
-            const cell = this.board.cells.filter(c => { return c.hex.equals(hex); })[0];
+            const cell = this.currentTurn.cells.filter(c => { return c.hex.equals(hex); })[0];
             return cell;
         }
 
@@ -92,7 +113,7 @@ module CocaineCartels {
         /** Hacky solution for initializing the new units. */
         public initializeGame() {
             // Initialize the units on the board.
-            this.board.cells.forEach(cell => {
+            this.currentTurn.cells.forEach(cell => {
                 cell.units.forEach(unit => {
                     // ReSharper disable once WrongExpressionStatement
                     unit.player;
@@ -111,7 +132,7 @@ module CocaineCartels {
         public nearestCell(pos: Konva.Vector2d): Cell {
             var minDist: number = null;
             var nearestCell: Cell;
-            this.board.cells.forEach(cell => {
+            this.currentTurn.cells.forEach(cell => {
                 var dist = cell.hex.pos.distance(pos);
                 if (dist < minDist || minDist === null) {
                     minDist = dist;

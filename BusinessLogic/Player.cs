@@ -39,11 +39,5 @@ namespace CocaineCartels.BusinessLogic
             bool areEqual = Color == other.Color;
             return areEqual;
         }
-
-        public int NumberOfCells()
-        {
-            int numberOfCells = Game.Instance.CurrentTurn.Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(this)));
-            return numberOfCells;
-        }
     }
 }

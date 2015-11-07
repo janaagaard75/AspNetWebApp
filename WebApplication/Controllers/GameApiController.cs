@@ -36,7 +36,8 @@ namespace CocaineCartels.WebApplication.Controllers
             IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
             string userAgent = HttpContext.Current.Request.UserAgent;
             Player currentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
-            GameState state = new GameState(currentPlayer.Color, Game.Instance);
+            Board currentTurn = Game.Instance.GetCurrentTurn(currentPlayer);
+            GameState state = new GameState(currentPlayer.Color, currentTurn, Game.Instance);
             return state;
         }
 

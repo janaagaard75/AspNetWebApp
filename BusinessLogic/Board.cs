@@ -16,6 +16,15 @@ namespace CocaineCartels.BusinessLogic
         public readonly int GridSize;
         public List<Unit> NewUnits { get; private set; }
 
+        internal void AddNewUnitsToPlayer(Player player, int numberOfNewUnits)
+        {
+            for (int i = 0; i < numberOfNewUnits; i++)
+            {
+                var unit = new Unit(player);
+                NewUnits.Add(unit);
+            }
+        }
+
         internal Cell GetCell(Hex hex)
         {
             Cell cell = Cells.First(c => c.Hex.Equals(hex));
@@ -56,6 +65,12 @@ namespace CocaineCartels.BusinessLogic
             }
 
             return cells;
+        }
+
+        public int NumberOfControlledCells(Player player)
+        {
+            int numberOfCells = Cells.Count(cell => cell.Units.Any(unit => unit.Player.Equals(player)));
+            return numberOfCells;
         }
 
         internal void ResetNewUnits()
