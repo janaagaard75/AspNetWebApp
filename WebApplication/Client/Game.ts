@@ -39,11 +39,6 @@ module CocaineCartels {
         public previousTurnWithMoveCommands: Board;
         public started: boolean;
 
-        public getCell(hex: IHex): Cell {
-            const cell = this.currentTurn.cells.filter(c => { return c.hex.equals(hex); })[0];
-            return cell;
-        }
-
         /** Returns the player with the specified color. Returns null if the player wasn't found. */
         public getPlayer(playerColor: string): Player {
             const players = this.players.filter(p => p.color === playerColor);

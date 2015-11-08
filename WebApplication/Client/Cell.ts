@@ -3,15 +3,18 @@ module CocaineCartels {
 
     export class Cell {
         constructor(
-            cellData: ICell
+            cellData: ICell,
+            board: Board
         ) {
             this._cellData = cellData;
+            this.board = board;
             this.hex = new Hex(cellData.hex.r, cellData.hex.s, cellData.hex.t);
         }
 
         private _cellData: ICell;
         private _units: Array<Unit> = undefined;
 
+        public board: Board;
         public dropAllowed = false;
         public hex: Hex;
         public hexagon: Konva.Shape;

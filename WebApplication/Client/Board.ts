@@ -9,7 +9,7 @@
             // No units and commands initialized yet.
             this.cells = [];
             boardData.cells.forEach(cellData => {
-                const cell = new Cell(cellData);
+                const cell = new Cell(cellData, this);
                 this.cells.push(cell);
             });
 
@@ -69,6 +69,11 @@
 
             const allowedCells = Utilities.union(cellsWithUnits, moveFromCells);
             return allowedCells;
+        }
+
+        public getCell(hex: IHex): Cell {
+            const cell = this.cells.filter(c => { return c.hex.equals(hex); })[0];
+            return cell;
         }
 
         public getMoveCommands(from: Cell, to: Cell): Array<MoveCommand> {

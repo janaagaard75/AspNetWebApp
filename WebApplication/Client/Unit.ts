@@ -40,7 +40,7 @@ module CocaineCartels {
                 //if (this._unitData.moveCommand === null) {
                 //    this.moveCommand = null;
                 //} else {
-                //    const from = Main.game.getCell(this._unitData.moveCommand.fromHex);
+                //    const from = this.cell.board.getCell(this._unitData.moveCommand.fromHex);
                 //    this.setMoveCommand(from, this.cell);
                 //}
             }
@@ -70,7 +70,7 @@ module CocaineCartels {
                 if (this._unitData.placeCommand === null) {
                     this.placeCommand = null;
                 } else {
-                    const on = Main.game.getCell(this._unitData.placeCommand.onHex);
+                    const on = this.cell.board.getCell(this._unitData.placeCommand.onHex);
                     this.setPlaceCommand(on);
                 }
             }
