@@ -7,7 +7,7 @@ module CocaineCartels {
         public static arrowPointerWidth = 5;
         public static arrowShadowBlurRadius = 10;
         public static arrowWidth: number;
-        public static canvasId = "canvas";
+        public static canvasIdTemplate = "canvas";
         public static cellRadius: number;
         public static height: number;
         public static lineWidth: number;

@@ -26,7 +26,7 @@ module CocaineCartels {
         }
 
         public get moveCommandsToCell(): Array<MoveCommand> {
-            const commands = Main.game.moveCommands.filter(moveCommand => moveCommand.to === this);
+            const commands = Main.game.currentTurn.moveCommands.filter(moveCommand => moveCommand.to === this);
             return commands;
         }
 

@@ -4,7 +4,10 @@ module CocaineCartels {
     export class Main {
         constructor() {
             this.updateGameState().then(() => {
-                this.canvas = new Canvas(Main.game);
+                this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
+                this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
+                this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
+                this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
                 const playerColor = document.getElementById("playerColor");
                 playerColor.setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
@@ -38,7 +41,10 @@ module CocaineCartels {
             });
         }
 
-        private canvas: Canvas;
+        private canvas1: Canvas;
+        private canvas2: Canvas;
+        private canvas3: Canvas;
+        private canvas4: Canvas;
 
         public activeBoard: number;
 
@@ -106,6 +112,10 @@ module CocaineCartels {
             });
         }
 
+        private getCanvasId(canvasNumber: number) {
+            const canvasId = `${CanvasSettings.canvasIdTemplate}${canvasNumber}`;
+            return canvasId;
+        }
 
         private printPlayersPoints() {
             var playersPoints = "";
@@ -140,7 +150,7 @@ module CocaineCartels {
         public sendCommands() {
             const exceeding = Main.currentPlayer.numberOfMoveCommands - Settings.movesPerTurn;
             if (exceeding > 0) {
-                var commandText = "command";
+                let commandText = "command";
                 if (exceeding >= 2) {
                     commandText += "s";
                 }
@@ -148,7 +158,7 @@ module CocaineCartels {
                 return;
             }
 
-            const units = Main.game.unitsOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
+            const units = Main.game.currentTurn.unitsOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
             const moveCommands = units
                 .filter(unit => unit.moveCommand !== null)
@@ -173,11 +183,16 @@ module CocaineCartels {
 
         public setActiveBoard(activeBoard: number) {
             this.activeBoard = activeBoard;
+
             for (let i = 1; i <= 4; i++) {
+                const canvasElement = document.getElementById(this.getCanvasId(i));
                 const buttonElement = document.getElementById(`boardButton${i}`);
+
                 if (i === this.activeBoard) {
+                    canvasElement.classList.remove("hidden");
                     buttonElement.classList.add("active");
                 } else {
+                    canvasElement.classList.add("hidden");
                     buttonElement.classList.remove("active");
                 }
             }
@@ -200,7 +215,10 @@ module CocaineCartels {
         private updateGameState(): Promise<void> {
             return GameService.getGameState().then(gameState => {
                 Main.game = gameState.gameInstance;
-                Main.game.initializeGame();
+                Main.game.initializeBoard(Main.game.previousTurn);
+                Main.game.initializeBoard(Main.game.previousTurnWithPlaceCommands);
+                Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
+                Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
             });
         }

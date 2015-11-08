@@ -3,20 +3,29 @@
 
     export class Canvas {
         constructor(
-            game: Game
+            board: Board,
+            canvasId: string,
+            interactive: boolean
         ) {
-            Canvas.game = game;
-            CanvasSettings.initialize(game.currentTurn.gridSize);
+            //Canvas.game = game;
+            Canvas.board = board;
+            this.canvasId = canvasId;
+            this.interactive = interactive;
+            //CanvasSettings.initialize(game.currentTurn.gridSize);
+            CanvasSettings.initialize(board.gridSize);
             this.drawGame();
         }
 
-        private static game: Game; // Has be to static to be accessible inside unitDragBound function.
+        private static board: Board; // Has be to static to be accessible inside unitDragBound function.
+        //private static game: Game; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
         private backgroundLayer: Konva.Layer;
         private boardLayer: Konva.Layer;
+        private canvasId: string;
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
+        private interactive: boolean;
         private unitsLayer: Konva.Layer;
 
         private addLayers() {
@@ -46,7 +55,7 @@
             });
             this.backgroundLayer.add(background);
 
-            Canvas.game.currentTurn.cells.forEach(cell => {
+            Canvas.board.cells.forEach(cell => {
                 this.drawCell(cell);
             });
         }
@@ -83,10 +92,10 @@
                 return command.to.hex.toString();
             }
 
-            Canvas.game.currentTurn.cells.forEach(cell => {
+            Canvas.board.cells.forEach(cell => {
                 var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByTo);
                 groups.forEach(commands => {
-                    const oppositeCommands = Canvas.game.getMoveCommands(commands[0].to, commands[0].from);
+                    const oppositeCommands = Canvas.board.getMoveCommands(commands[0].to, commands[0].from);
                     const totalCommands = commands.length + oppositeCommands.length;
                     commands.forEach((command, index) => {
                         this.drawMoveCommand(command, index, totalCommands);
@@ -98,7 +107,7 @@
         /** Currently redraws the game from scratch each time, re-adding all units and commands. */
         public drawGame() {
             this.stage = new Konva.Stage({
-                container: CanvasSettings.canvasId,
+                container: this.canvasId,
                 height: CanvasSettings.height,
                 width: CanvasSettings.width
             });
@@ -151,7 +160,7 @@
                 CanvasSettings.width + CanvasSettings.spaceToNewUnits
             );
 
-            player.newUnits.forEach((unit, unitIndex, units) => {
+            Canvas.board.newUnitsForPlayer(player).forEach((unit, unitIndex, units) => {
                 this.drawUnit(unit, pos, unitIndex, units.length, false);
             });
         }
@@ -202,9 +211,9 @@
 
                 var allowedCells: Array<Cell>;
                 if (unit.cell === null) {
-                    allowedCells = Canvas.game.allowedCellsForPlace(unit);
+                    allowedCells = Canvas.board.allowedCellsForPlace(unit);
                 } else {
-                    allowedCells = Canvas.game.allowedCellsForMove(unit);
+                    allowedCells = Canvas.board.allowedCellsForMove(unit);
                 }
 
                 allowedCells.forEach(cell => {
@@ -249,12 +258,12 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const currentCell = Canvas.game.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+                    const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
                             unit.setPlaceCommand(currentCell);
-                            Canvas.game.placeUnit(unit, currentCell);
+                            Canvas.board.placeUnit(unit, currentCell);
                         } else {
                             unit.setMoveCommand(unit.cell, currentCell);
                         }
@@ -275,13 +284,13 @@
                 currentHexagon = null;
                 previousHexagon = null;
 
-                Canvas.game.currentTurn.cells.forEach(cell => {
+                Canvas.board.cells.forEach(cell => {
                     cell.dropAllowed = false;
                 });
 
                 // TODO j: Why is it not necessary to call updateCellColor here?
 
-                this.drawGame();
+                this.drawBoard();
             });
 
             if (ownedByThisPlayer) {
@@ -298,11 +307,11 @@
         }
 
         private drawUnits() {
-            Canvas.game.currentTurn.cells.forEach(cell => {
+            Canvas.board.cells.forEach(cell => {
                 this.drawUnitsOnCell(cell);
             });
 
-            Canvas.game.players.forEach((player, index, players) => {
+            Main.game.players.forEach((player, index, players) => {
                 this.drawNewUnitsForPlayer(player, index, players.length);
             });
         }

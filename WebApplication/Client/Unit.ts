@@ -2,6 +2,7 @@ module CocaineCartels {
     "use strict";
 
     export class Unit {
+        /** Set cell to null if this is a new unit. */
         constructor(
             unitData: IUnit,
             cell: Cell
@@ -93,10 +94,6 @@ module CocaineCartels {
         public get player(): Player {
             if (this._player === undefined) {
                 this._player = Main.game.getPlayer(this._unitData.player.color);
-                // New units not on the board are already associated with the player.
-                if (this._player.units.filter(u => u === this).length === 0) {
-                    this._player.addUnit(this);
-                }
             }
 
             return this._player;
