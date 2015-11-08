@@ -100,11 +100,12 @@ module CocaineCartels {
             return moveCommands;
         }
 
+        /** Returns the player with the specified color. Returns null if the player wasn't found. */
         public getPlayer(playerColor: string): Player {
             const players = this.players.filter(p => p.color === playerColor);
 
             if (players.length === 0) {
-                throw `Player with color ${playerColor} not found.`;
+                return null;
             }
 
             return players[0];

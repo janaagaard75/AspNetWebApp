@@ -19,7 +19,6 @@ module CocaineCartels {
                     document.getElementById("startGameButton").setAttribute("disabled", "disabled");
                 } else {
                     document.getElementById("sendButton").setAttribute("disabled", "disabled");
-                    document.getElementById("resetGameButton").setAttribute("disabled", "disabled");
                 }
 
                 this.updatePlayersStatus();
@@ -31,7 +30,7 @@ module CocaineCartels {
                     document.getElementById("administratorCommands").classList.add("hidden");
                 }
 
-
+                window.setInterval(() => this.tick(), 1000);
             });
         }
 
@@ -53,7 +52,30 @@ module CocaineCartels {
             return inDemoMode;
         }
 
-        public fetchPlayersStatus(): Promise<void> {
+        private fetchAndUpdatePlayers(): Promise<void> {
+            if (Main.game.started) {
+                throw "Cannot update the players once the game has been started.";
+            }
+
+            return GameService.getPlayers().then(playersData => {
+                if (playersData.length > Main.game.players.length) {
+                    playersData.forEach(playerData => {
+                        if (Main.game.getPlayer(playerData.color) === null) {
+                            const player = new Player(playerData);
+                            Main.game.players.push(player);
+                        }
+                    });
+                    this.updatePlayersStatus();
+                    this.updatePlayersPoints();
+                }
+            });
+        }
+
+        private fetchAndUpdatePlayersStatus(): Promise<void> {
+            if (!Main.game.started) {
+                throw "It does not make sense to update the player's status when the game hasn't been started.";
+            }
+
             return GameService.getPlayers().then(playersData => {
                 playersData.forEach(playerData => {
                     Main.game.getPlayer(playerData.color).ready = playerData.ready;
@@ -63,8 +85,8 @@ module CocaineCartels {
         }
 
         public performTurn() {
-            // TODO j: If all players are ready there is no need to start out making the server side call.
-            this.fetchPlayersStatus().then(() => {
+            // Start by double checking that all players are ready. We still have a race condition issue, though.
+            this.fetchAndUpdatePlayersStatus().then(() => {
                 if (!this.allPlayersAreReady()) {
                     if (!confirm("Not all players are ready. Continue anyways?")) {
                         return;
@@ -75,6 +97,16 @@ module CocaineCartels {
                     // TODO j: Use the returned game state instead of reloading the page.
                     this.reloadPage();
                 });
+            });
+        }
+
+        private reloadPage() {
+            window.location.reload();
+        }
+
+        public resetGame() {
+            GameService.resetGame().then(() => {
+                this.reloadPage();
             });
         }
 
@@ -112,20 +144,18 @@ module CocaineCartels {
                 });
         }
 
-        private reloadPage() {
-            window.location.reload();
-        }
-
-        public resetGame() {
-            GameService.resetGame().then(() => {
-                this.reloadPage();
-            });
-        }
-
         public startGame() {
             GameService.startGame().then(() => {
                 this.reloadPage();
             });
+        }
+
+        public tick() {
+            if (Main.game.started) {
+                this.fetchAndUpdatePlayersStatus();
+            } else {
+                this.fetchAndUpdatePlayers();
+            }
         }
 
         private updateGameState(): Promise<void> {
