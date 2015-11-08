@@ -30,11 +30,17 @@ module CocaineCartels {
                     document.getElementById("administratorCommands").classList.add("hidden");
                 }
 
+                this.setActiveBoard(4);
+
+                document.getElementById("playerCommands").style.width = `${CanvasSettings.width}px`;
+
                 window.setInterval(() => this.tick(), 1000);
             });
         }
 
         private canvas: Canvas;
+
+        public activeBoard: number;
 
         // Static to make them available in other classes.
         public static currentPlayer: Player;
@@ -163,6 +169,18 @@ module CocaineCartels {
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
                 });
+        }
+
+        public setActiveBoard(activeBoard: number) {
+            this.activeBoard = activeBoard;
+            for (let i = 1; i <= 4; i++) {
+                const buttonElement = document.getElementById(`boardButton${i}`);
+                if (i === this.activeBoard) {
+                    buttonElement.classList.add("active");
+                } else {
+                    buttonElement.classList.remove("active");
+                }
+            }
         }
 
         public startGame() {

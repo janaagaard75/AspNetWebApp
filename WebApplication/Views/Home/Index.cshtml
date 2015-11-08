@@ -1,25 +1,37 @@
 ﻿<div id="canvas"></div>
 
-<div class="container-fluid player-commands">
+<div id="playerCommands" class="container-fluid player-commands">
     <div class="row">
         <div class="col-xs-4">
-            <button id="sendButton" class="btn btn-xs btn-primary" onclick="cocaineCartels.sendCommands();">Send Moves</button>
+            <p><button id="sendButton" class="btn btn-xs btn-primary" onclick="cocaineCartels.sendCommands();">Send Moves</button></p>
         </div>
         <div class="col-xs-4 text-center">
-            Moves: <span id="numberOfMoves">0</span>
+            <p id="moves">Moves: <span id="numberOfMoves">0</span></p>
         </div>
         <div class="col-xs-4 text-right">
-            Color: <span id="playerColor" class="label">&nbsp;</span>
+            <p>Color: <span id="playerColor" class="label">&nbsp;</span></p>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-6">
-            Ready:
-            <span id="playersStatus"></span>
+            <p>Ready: <span id="playersStatus"></span></p>
         </div>
         <div class="col-xs-6">
-            Points:
-            <span id="playersPoints"></span>
+            <p>Points: <span id="playersPoints"></span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3 text-center">
+            <button id="boardButton1" onclick="cocaineCartels.setActiveBoard(1);" class="btn btn-default">1</button>
+        </div>
+        <div class="col-xs-3 text-center">
+            <button id="boardButton2" onclick="cocaineCartels.setActiveBoard(2);" class="btn btn-default">2</button>
+        </div>
+        <div class="col-xs-3 text-center">
+            <button id="boardButton3" onclick="cocaineCartels.setActiveBoard(3);" class="btn btn-default">3</button>
+        </div>
+        <div class="col-xs-3 text-center">
+            <button id="boardButton4" onclick="cocaineCartels.setActiveBoard(4);" class="btn btn-default">4</button>
         </div>
     </div>
 </div>

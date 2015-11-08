@@ -265,11 +265,11 @@
 
                 const numberOfMoveCommands = Main.currentPlayer.numberOfMoveCommands;
                 document.getElementById("numberOfMoves").innerHTML = numberOfMoveCommands.toString();
-                const movesElement = document.getElementsByClassName("moves")[0];
+                const movesElement = document.getElementById("moves");
                 if (numberOfMoveCommands > Settings.movesPerTurn) {
-                    movesElement.setAttribute("style", "color: red");
+                    movesElement.classList.add("label", "label-danger");
                 } else {
-                    movesElement.removeAttribute("style");
+                    movesElement.classList.remove("label", "label-danger");
                 }
 
                 currentHexagon = null;

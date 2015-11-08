@@ -2683,6 +2683,7 @@ body {
   width: 30px; }
 
 .player-commands {
+  margin: 0;
   background-color: #fff;
   height: 105px; }
 
