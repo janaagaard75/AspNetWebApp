@@ -1,0 +1,70 @@
+﻿@import "bootstrap";
+
+body
+{
+    // Background color for the administrator commands.
+    background-color: #bbb;
+}
+
+.administrator-commands
+{
+    margin-top: 10px;
+}
+
+.grab-cursor
+{
+    cursor: move;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    /* ReSharper disable once InvalidValue */
+    cursor: grab;
+}
+
+.grabbing-cursor
+{
+    cursor: move;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+    /* ReSharper disable once InvalidValue */
+    cursor: grabbing;
+}
+
+.hidden {
+    display: none;
+}
+
+.moves
+{
+    text-align: center;
+}
+
+.no-wrap
+{
+    white-space: nowrap;
+}
+
+.points
+{
+    border-style: solid;
+    border-width: 1px;
+    display: inline-block;
+    height: 20px;
+    vertical-align: bottom;
+    width: 30px;
+}
+
+.player-commands
+{
+    background-color: $body-bg;
+    height: 105px;
+}
+
+.points
+{
+    text-align: center;
+}
+
+.your-color
+{
+    text-align: right;
+}

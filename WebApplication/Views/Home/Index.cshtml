@@ -1,30 +1,36 @@
 ﻿<div id="canvas"></div>
-<div class="commands player-commands">
-    <table class="player-commands-table">
-        <tr>
-            <td><button id="sendButton" class="send-button" onclick="cocaineCartels.sendCommands();">Send Moves</button></td>
-            <td class="moves">Moves: <span id="numberOfMoves">0</span></td>
-            <td class="your-color">Your color: <span id="playerColor" class="color"></span></td>
-        </tr>
-    </table>
-    <div class="player-commands-row">
-        <table>
-            <tr>
-                <td>Ready:</td>
-                <td><span style="padding-left: 1em" id="playersStatus"></span></td>
-            </tr>
-            <tr>
-                <td>Points:</td>
-                <td><span style="padding-left: 1em" id="playersPoints"></span></td>
-            </tr>
-        </table>
+
+<div class="container-fluid player-commands">
+    <div class="row">
+        <div class="col-xs-4">
+            <button id="sendButton" class="btn btn-xs btn-primary" onclick="cocaineCartels.sendCommands();">Send Moves</button>
+        </div>
+        <div class="col-xs-4 text-center">
+            Moves: <span id="numberOfMoves">0</span>
+        </div>
+        <div class="col-xs-4 text-right">
+            Color: <span id="playerColor" class="label">&nbsp;</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            Ready:
+            <span id="playersStatus"></span>
+        </div>
+        <div class="col-xs-6">
+            Points:
+            <span id="playersPoints"></span>
+        </div>
     </div>
 </div>
-<div id="administratorCommands" class="commands administrator-commands" style="">
-    <button onclick="cocaineCartels.performTurn();">Next Turn</button> &middot;
-    <button id="startGameButton" onclick="cocaineCartels.startGame();">Start Game</button>
-    <button onclick="cocaineCartels.resetGame();">Reset Game</button>
+<div id="administratorCommands" class="container-fluid administrator-commands">
+    <button onclick="cocaineCartels.performTurn();" class="btn btn-default">Next Turn</button>
+    <div class="btn-group">
+        <button id="startGameButton" onclick="cocaineCartels.startGame();" class="btn btn-default">Start Game</button>
+        <button onclick="cocaineCartels.resetGame();" class="btn btn-default">Reset Game</button>
+    </div>
 </div>
+
 @section scripts
 {
     <script>

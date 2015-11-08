@@ -21,8 +21,8 @@ module CocaineCartels {
                     document.getElementById("sendButton").setAttribute("disabled", "disabled");
                 }
 
-                this.updatePlayersStatus();
-                this.updatePlayersPoints();
+                this.printPlayersStatus();
+                this.printPlayersPoints();
 
                 if (Main.currentPlayer.administrator) {
                     document.getElementById("administratorCommands").classList.remove("hidden");
@@ -65,8 +65,8 @@ module CocaineCartels {
                             Main.game.players.push(player);
                         }
                     });
-                    this.updatePlayersStatus();
-                    this.updatePlayersPoints();
+                    this.printPlayersStatus();
+                    this.printPlayersPoints();
                 }
             });
         }
@@ -80,7 +80,7 @@ module CocaineCartels {
                 playersData.forEach(playerData => {
                     Main.game.getPlayer(playerData.color).ready = playerData.ready;
                 });
-                this.updatePlayersStatus();
+                this.printPlayersStatus();
             });
         }
 
@@ -98,6 +98,27 @@ module CocaineCartels {
                     this.reloadPage();
                 });
             });
+        }
+
+
+        private printPlayersPoints() {
+            var playersPoints = "";
+            Main.game.players.forEach(player => {
+                playersPoints += `<span class="label" style="background-color: ${player.color}">${player.points}</span> `;
+            });
+            document.getElementById("playersPoints").innerHTML = playersPoints;
+        }
+
+        private printPlayersStatus() {
+            var playersStatus = "";
+            Main.game.players.forEach(player => {
+                if (player.ready) {
+                    playersStatus += `<span class="label" style="background-color: ${player.color}">&nbsp;</span> `;
+                } else {
+                    playersStatus += `<span class="label label-default">&nbsp;</span> `;
+                }
+            });
+            document.getElementById("playersStatus").innerHTML = playersStatus;
         }
 
         private reloadPage() {
@@ -136,8 +157,8 @@ module CocaineCartels {
             GameService.sendCommands(commands)
                 .then(() => {
                     Main.game.getPlayer(Main.currentPlayer.color).ready = true;
-                    this.updatePlayersStatus();
-                    this.updatePlayersPoints();
+                    this.printPlayersStatus();
+                    this.printPlayersPoints();
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
@@ -164,26 +185,6 @@ module CocaineCartels {
                 Main.game.initializeGame();
                 Main.currentPlayer = gameState.currentPlayer;
             });
-        }
-
-        private updatePlayersPoints() {
-            var playersPoints = "";
-            Main.game.players.forEach(player => {
-                playersPoints += `<span class="points" style="border-color: ${player.color}">${player.points}</span> `;
-            });
-            document.getElementById("playersPoints").innerHTML = playersPoints;
-        }
-
-        private updatePlayersStatus() {
-            var playersStatus = "";
-            Main.game.players.forEach(player => {
-                if (player.ready) {
-                    playersStatus += `<span class="color" style="background-color: ${player.color}"></span> `;
-                } else {
-                    playersStatus += `<span class="color"></span> `;
-                }
-            });
-            document.getElementById("playersStatus").innerHTML = playersStatus;
         }
     }
 }
