@@ -7,17 +7,14 @@
             canvasId: string,
             interactive: boolean
         ) {
-            //Canvas.game = game;
             Canvas.board = board;
             this.canvasId = canvasId;
             this.interactive = interactive;
-            //CanvasSettings.initialize(game.currentTurn.gridSize);
             CanvasSettings.initialize(board.gridSize);
-            this.drawGame();
+            this.drawBoard();
         }
 
         private static board: Board; // Has be to static to be accessible inside unitDragBound function.
-        //private static game: Game; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
         private backgroundLayer: Konva.Layer;
@@ -45,19 +42,22 @@
             this.stage.add(this.dragLayer);
         }
 
-        private drawBoard() {
-            const background = new Konva.Rect({
-                x: 0,
-                y: 0,
-                width: CanvasSettings.width,
+        /** Currently redraws the board from scratch each time, re-adding all units and commands. */
+        public drawBoard() {
+            this.stage = new Konva.Stage({
+                container: this.canvasId,
                 height: CanvasSettings.height,
-                fill: "#fff"
+                width: CanvasSettings.width
             });
-            this.backgroundLayer.add(background);
 
-            Canvas.board.cells.forEach(cell => {
-                this.drawCell(cell);
-            });
+            this.addLayers();
+
+            // Draw methods are separated this way to match the layers in the game.
+            this.drawCells();
+            this.drawUnits();
+            this.drawCommands();
+
+            this.stage.draw();
         }
 
         private drawCell(cell: Cell) {
@@ -87,6 +87,21 @@
             this.boardLayer.add(hexagon);
         }
 
+        private drawCells() {
+            const background = new Konva.Rect({
+                x: 0,
+                y: 0,
+                width: CanvasSettings.width,
+                height: CanvasSettings.height,
+                fill: "#fff"
+            });
+            this.backgroundLayer.add(background);
+
+            Canvas.board.cells.forEach(cell => {
+                this.drawCell(cell);
+            });
+        }
+
         private drawCommands() {
             var groupByTo: IGroupByFunc<MoveCommand> = command => {
                 return command.to.hex.toString();
@@ -102,24 +117,6 @@
                     });
                 });
             });
-        }
-
-        /** Currently redraws the game from scratch each time, re-adding all units and commands. */
-        public drawGame() {
-            this.stage = new Konva.Stage({
-                container: this.canvasId,
-                height: CanvasSettings.height,
-                width: CanvasSettings.width
-            });
-
-            this.addLayers();
-
-            // Draw methods are separated this way to match the layers in the game.
-            this.drawBoard();
-            this.drawUnits();
-            this.drawCommands();
-
-            this.stage.draw();
         }
 
         private drawMoveCommand(command: MoveCommand, index: number, numberOfCommands: number) {
@@ -184,7 +181,7 @@
 
 
             const circle = new Konva.Circle({
-                draggable: ownedByThisPlayer,
+                draggable: ownedByThisPlayer && this.interactive,
                 fill: color,
                 radius: CanvasSettings.unitRadius,
                 shadowBlur: 20,
@@ -287,8 +284,6 @@
                 Canvas.board.cells.forEach(cell => {
                     cell.dropAllowed = false;
                 });
-
-                // TODO j: Why is it not necessary to call updateCellColor here?
 
                 this.drawBoard();
             });
