@@ -57,6 +57,16 @@ module CocaineCartels {
             return playersWhoAreNotReady === 0;
         }
 
+        public confirmResetGame() {
+            if (Main.game.started) {
+                if (!window.confirm("Sure you want to reset the game?")) {
+                    return;
+                }
+            }
+
+            this.resetGame();
+        }
+
         private isInDemoMode(): boolean {
             const paramters = Utilities.getUrlParameters();
             const mode = paramters["mode"];
@@ -141,7 +151,7 @@ module CocaineCartels {
             window.location.reload();
         }
 
-        public resetGame() {
+        private resetGame() {
             GameService.resetGame().then(() => {
                 this.reloadPage();
             });

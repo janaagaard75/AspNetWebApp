@@ -52,6 +52,10 @@ module CocaineCartels {
 
         /** Hacky solution for initializing the boards. */
         public initializeBoard(board: Board) {
+            if (board === null) {
+                return;
+            }
+
             // Initialize the units on the board.
             board.cells.forEach(cell => {
                 cell.units.forEach(unit => {

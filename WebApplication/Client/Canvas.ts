@@ -10,8 +10,10 @@
             Canvas.board = board;
             this.canvasId = canvasId;
             this.interactive = interactive;
-            CanvasSettings.initialize(board.gridSize);
-            this.drawBoard();
+            if (board !== null) {
+                CanvasSettings.initialize(board.gridSize);
+                this.drawBoard();
+            }
         }
 
         private static board: Board; // Has be to static to be accessible inside unitDragBound function.
@@ -261,6 +263,7 @@
                         if (unit.cell === null) {
                             unit.setPlaceCommand(currentCell);
                             Canvas.board.placeUnit(unit, currentCell);
+                            Canvas.board.newUnits = Canvas.board.newUnits.filter(u => u !== unit);
                         } else {
                             unit.setMoveCommand(unit.cell, currentCell);
                         }
