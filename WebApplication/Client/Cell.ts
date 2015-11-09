@@ -46,6 +46,11 @@ module CocaineCartels {
             return this._units;
         }
 
+        public get unitsMovedHere(): Array<Unit> {
+            const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
+            return unitsMovedHere;
+        }
+
         public get unitsMovingHere(): Array<Unit> {
             const unitsMovingHere = this.moveCommandsToCell.map(command => command.unit);
             return unitsMovingHere;

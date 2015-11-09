@@ -308,14 +308,20 @@
         }
 
         private drawUnitsOnCell(cell: Cell) {
-            const total = cell.unitsStaying.length + cell.unitsMovingHere.length;
+            const total = cell.unitsStaying.length + cell.unitsMovedHere.length + cell.unitsMovingHere.length;
 
             cell.unitsStaying.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, index, total, false);
             });
 
+            const movedHereStartIndex = cell.unitsStaying.length;
+            cell.unitsMovedHere.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total, false);
+            });
+
+            const movingHereStartIndex = movedHereStartIndex + cell.unitsMovedHere.length;
             cell.unitsMovingHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, cell.unitsStaying.length + index, total, true);
+                this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total, true);
             });
         }
 
