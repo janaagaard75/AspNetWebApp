@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
-    public class Cell
+    public class Cell : IEquatable<Cell>
     {
         public Cell(int r, int s, int t)
         {
@@ -64,6 +64,11 @@ namespace CocaineCartels.BusinessLogic
 
             unit.Cell = null;
             UnitsList.Remove(unit);
+        }
+
+        public bool Equals(Cell other)
+        {
+            return Hex.Equals(other.Hex);
         }
     }
 }

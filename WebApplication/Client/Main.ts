@@ -117,7 +117,6 @@ module CocaineCartels {
                 }
 
                 GameService.performTurn().then(() => {
-                    // TODO j: Use the returned game state instead of reloading the page.
                     this.reloadPage();
                 });
             });

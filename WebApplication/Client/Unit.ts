@@ -34,15 +34,13 @@ module CocaineCartels {
 
         public get moveCommand(): MoveCommand {
             if (this._moveCommand === undefined) {
-                this._moveCommand = null;
-
-                // TODO j: Show the move commands received from the server.
-                //if (this._unitData.moveCommand === null) {
-                //    this.moveCommand = null;
-                //} else {
-                //    const from = this.cell.board.getCell(this._unitData.moveCommand.fromHex);
-                //    this.setMoveCommand(from, this.cell);
-                //}
+                if (this._unitData.moveCommand === null) {
+                    this.moveCommand = null;
+                } else {
+                    const from = this.cell.board.getCell(this._unitData.moveCommand.fromHex);
+                    const to = this.cell.board.getCell(this._unitData.moveCommand.toHex);
+                    this.setMoveCommand(from, to);
+                }
             }
 
             return this._moveCommand;
@@ -55,7 +53,7 @@ module CocaineCartels {
             }
 
             if (this.cell === null && this.placeCommand === null) {
-                throw "Cannot assign a move command to a unit that isn't positioned on a cell or doesn't have a place command.";
+                throw "Cannot only assign a move command to a unit that is positioned on a cell or has a place command.";
             }
 
             this._moveCommand = newMoveCommand;
