@@ -4,8 +4,7 @@
     export class ClientCommands {
         constructor(
             public moveCommands: Array<ClientMoveCommand>,
-            public placeCommands: Array<ClientPlaceCommand>,
-            public playerColor: string
+            public placeCommands: Array<ClientPlaceCommand>
         ) { }
     }
 }

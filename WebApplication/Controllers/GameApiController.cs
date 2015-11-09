@@ -51,20 +51,21 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpPost, Route("api/commands")]
         public void PostCommands(ClientCommands commands)
         {
-            // TODO j: Should not take the player color for granted.
-            Game.Instance.DeleteNextTurnCommands(commands.PlayerColor);
+            string currentPlayerColor = GetCurrentPlayerColor();
+
+            Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
 
             commands.PlaceCommands.ForEach(placeCommand =>
             {
-                Game.Instance.AddPlaceCommand(commands.PlayerColor, placeCommand.On.ToHex());
+                Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
             });
 
             commands.MoveCommands.ForEach(moveCommand =>
             {
-                Game.Instance.AddMoveCommand(commands.PlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
+                Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
             });
 
-            Game.Instance.SetPlayerReadyStatus(commands.PlayerColor, true);
+            Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);
         }
 
         [HttpGet, Route("api/performturn")]

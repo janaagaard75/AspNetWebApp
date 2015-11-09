@@ -195,7 +195,7 @@ module CocaineCartels {
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new ClientCommands(moveCommands, placeCommands, Main.currentPlayer.color);
+            const commands = new ClientCommands(moveCommands, placeCommands);
 
             GameService.sendCommands(commands)
                 .then(() => {
