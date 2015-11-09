@@ -176,7 +176,7 @@
             const strokeColor = "#999";
 
             const circle = new Konva.Circle({
-                draggable: ownedByThisPlayer && this.interactive,
+                draggable: this.interactive && ownedByThisPlayer,
                 fill: color,
                 radius: CanvasSettings.unitRadius,
                 shadowBlur: 20,
@@ -284,7 +284,7 @@
                 this.drawBoard();
             });
 
-            if (ownedByThisPlayer) {
+            if (this.interactive && ownedByThisPlayer) {
                 circle.on("mouseover", () => {
                     document.body.classList.add("grab-cursor");
                 });
