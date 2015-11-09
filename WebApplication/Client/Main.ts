@@ -20,6 +20,7 @@ module CocaineCartels {
                 if (Main.game.started) {
                     document.getElementById("readyButton").removeAttribute("disabled");
                     document.getElementById("startGameButton").setAttribute("disabled", "disabled");
+                    document.getElementById("startGameButton").setAttribute("title", "The game is already started.");
                 } else {
                     document.getElementById("readyButton").setAttribute("disabled", "disabled");
                 }
