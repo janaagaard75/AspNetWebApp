@@ -33,8 +33,13 @@ namespace CocaineCartels.BusinessLogic
             PlaceCommand = null;
         }
 
-        public void SetMoveCommand(Cell to)
+        public void SetMoveCommand(Cell from, Cell to)
         {
+            if (from == null)
+            {
+                throw new ArgumentNullException(nameof(from));
+            }
+
             if (to == null)
             {
                 throw new ArgumentNullException(nameof(to));
@@ -42,10 +47,10 @@ namespace CocaineCartels.BusinessLogic
 
             if (Cell == null && PlaceCommand == null)
             {
-                throw new ApplicationException("Cannot assign a move command to a unit that either isn't positioned on a cell or has a place command.");
+                throw new ApplicationException("Can only assign a move command to a unit is positioned on a cell or has a place command.");
             }
 
-            MoveCommand = new ServerMoveCommand(this, to);
+            MoveCommand = new ServerMoveCommand(from, to);
         }
 
         public void SetPlaceCommand(Cell on)
@@ -60,7 +65,7 @@ namespace CocaineCartels.BusinessLogic
                 throw new ApplicationException("Can only assign a place command to a unit that isn't positioned on a cell.");
             }
 
-            PlaceCommand = new ServerPlaceCommand(this, on);
+            PlaceCommand = new ServerPlaceCommand(on);
         }
     }
 }

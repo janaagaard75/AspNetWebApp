@@ -1,15 +1,17 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    public class ServerMoveCommand : ServerCommand
+    public class ServerMoveCommand
     {
-        public ServerMoveCommand(Unit unit, Cell to)
-            : base(unit)
+        public ServerMoveCommand(Cell from, Cell to)
         {
+            From = from;
             To = to;
         }
 
-        internal readonly Cell To;
+        internal Cell From { get; }
+        internal Cell To { get; }
 
+        public Hex FromHex => From.Hex;
         public Hex ToHex => To.Hex;
     }
 }

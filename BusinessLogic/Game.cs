@@ -70,7 +70,7 @@ namespace CocaineCartels.BusinessLogic
             }
 
             Cell toCell = NextTurn.GetCell(toHex);
-            unit.SetMoveCommand(toCell);
+            unit.SetMoveCommand(fromCell, toCell);
         }
 
         /// <summary>Assign a place command to a unit. The unit is not moved to the cell.</summary>

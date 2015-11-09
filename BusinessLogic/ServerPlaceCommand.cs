@@ -1,15 +1,13 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    /// <summary>A unit with a server place command is kept in the player's stack of new units.</summary>
-    public class ServerPlaceCommand : ServerCommand
+    public class ServerPlaceCommand
     {
-        public ServerPlaceCommand(Unit unit, Cell on)
-            : base(unit)
+        public ServerPlaceCommand(Cell on)
         {
             On = on;
         }
 
-        internal readonly Cell On;
+        internal Cell On { get; }
 
         public Hex OnHex => On.Hex;
     }

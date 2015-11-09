@@ -47,7 +47,6 @@
     <Compile Include="Board.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="PlayerColors.cs" />
-    <Compile Include="ServerCommand.cs" />
     <Compile Include="DemoSetup.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hex.cs" />
