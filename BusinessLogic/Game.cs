@@ -281,11 +281,11 @@ namespace CocaineCartels.BusinessLogic
             Started = false;
         }
 
-        public void SetPlayerReady(string playerColor)
+        public void SetPlayerReadyStatus(string playerColor, bool isReady)
         {
             Players.Where(player => player.Color == playerColor).ForEach(player =>
             {
-                player.Ready = true;
+                player.Ready = isReady;
             });
         }
 

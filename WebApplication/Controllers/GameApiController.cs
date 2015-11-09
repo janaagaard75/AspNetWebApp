@@ -41,9 +41,17 @@ namespace CocaineCartels.WebApplication.Controllers
             return state;
         }
 
+        [HttpGet, Route("api/notready")]
+        public void NotReady()
+        {
+            string currentPlayerColor = GetCurrentPlayerColor();
+            Game.Instance.SetPlayerReadyStatus(currentPlayerColor, false);
+        }
+
         [HttpPost, Route("api/commands")]
         public void PostCommands(ClientCommands commands)
         {
+            // TODO j: Should not take the player color for granted.
             Game.Instance.DeleteNextTurnCommands(commands.PlayerColor);
 
             commands.PlaceCommands.ForEach(placeCommand =>
@@ -56,7 +64,7 @@ namespace CocaineCartels.WebApplication.Controllers
                 Game.Instance.AddMoveCommand(commands.PlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
             });
 
-            Game.Instance.SetPlayerReady(commands.PlayerColor);
+            Game.Instance.SetPlayerReadyStatus(commands.PlayerColor, true);
         }
 
         [HttpGet, Route("api/performturn")]

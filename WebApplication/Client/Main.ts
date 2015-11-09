@@ -158,6 +158,22 @@ module CocaineCartels {
             });
         }
 
+        public readyButtonClick() {
+            const readyButtonElement = document.getElementById("readyButton");
+            if (Main.currentPlayer.ready) {
+                readyButtonElement.classList.remove("active");
+                readyButtonElement.blur();
+                GameService.notReady().then(() => {
+                    Main.currentPlayer.ready = false;
+                    this.printPlayersStatus();
+                });
+            } else {
+                readyButtonElement.classList.add("active");
+                readyButtonElement.blur();
+                this.sendCommands();
+            }
+        }
+
         public sendCommands() {
             const exceeding = Main.currentPlayer.numberOfMoveCommands - Settings.movesPerTurn;
             if (exceeding > 0) {
@@ -183,11 +199,9 @@ module CocaineCartels {
 
             GameService.sendCommands(commands)
                 .then(() => {
-                    Main.game.getPlayer(Main.currentPlayer.color).ready = true;
+                    // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
+                    Main.currentPlayer.ready = true;
                     this.printPlayersStatus();
-                    this.printPlayersPoints();
-
-                    //document.getElementById("readyButton").classList.add("active");
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
