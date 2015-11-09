@@ -18,10 +18,10 @@ module CocaineCartels {
                 }
 
                 if (Main.game.started) {
-                    document.getElementById("sendButton").removeAttribute("disabled");
+                    document.getElementById("readyButton").removeAttribute("disabled");
                     document.getElementById("startGameButton").setAttribute("disabled", "disabled");
                 } else {
-                    document.getElementById("sendButton").setAttribute("disabled", "disabled");
+                    document.getElementById("readyButton").setAttribute("disabled", "disabled");
                 }
 
                 this.printPlayersStatus();
@@ -185,6 +185,8 @@ module CocaineCartels {
                     Main.game.getPlayer(Main.currentPlayer.color).ready = true;
                     this.printPlayersStatus();
                     this.printPlayersPoints();
+
+                    document.getElementById("readyButton").classList.add("active");
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
