@@ -57,6 +57,7 @@ module CocaineCartels {
             }
 
             // Initialize the units on the board.
+            // ReSharper disable once QualifiedExpressionMaybeNull
             board.cells.forEach(cell => {
                 cell.units.forEach(unit => {
                     // ReSharper disable once WrongExpressionStatement

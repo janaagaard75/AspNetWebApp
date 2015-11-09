@@ -173,14 +173,7 @@
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-
-            let strokeColor: string;
-            if (/*unit.placeCommand === null*/true) {
-                strokeColor = "#888";
-            } else {
-                strokeColor = "#000";
-            }
-
+            const strokeColor = "#999";
 
             const circle = new Konva.Circle({
                 draggable: ownedByThisPlayer && this.interactive,
