@@ -15,9 +15,17 @@ namespace CocaineCartels.BusinessLogic
         private static readonly Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
         public static Game Instance => _GameInstance.Value;
 
-        private readonly string[] PlayerColors = { "#f00", "#ff0", "#0f0", "#0ff", "#00f", "#f0f" };
+        private readonly PlayerColors[] PlayersColors =
+        {
+            new PlayerColors("#f00", "#fff"),
+            new PlayerColors("#ff0", "#000"),
+            new PlayerColors("#0f0", "#000"),
+            new PlayerColors("#0ff", "#000"),
+            new PlayerColors("#00f", "#fff"),
+            new PlayerColors("#f0f", "#fff")
+        };
 
-        private int MaximumNumberOfPlayers => PlayerColors.Length;
+        private int MaximumNumberOfPlayers => PlayersColors.Length;
         private int NumberOfPlayers => Players.Count;
 
         /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
@@ -43,7 +51,7 @@ namespace CocaineCartels.BusinessLogic
             }
 
             bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
-            Player player = new Player(administrator, PlayerColors[NumberOfPlayers], ipAddress, userAgent);
+            Player player = new Player(administrator, PlayersColors[NumberOfPlayers], ipAddress, userAgent);
             Players.Add(player);
 
             return player;

@@ -7,5 +7,6 @@
         color: string;
         points: number;
         ready: boolean;
+        textColor: string;
     }
 }

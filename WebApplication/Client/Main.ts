@@ -131,7 +131,7 @@ module CocaineCartels {
         private printPlayersPoints() {
             var playersPoints = "";
             Main.game.players.forEach(player => {
-                playersPoints += `<span class="label" style="background-color: ${player.color}">${player.points}</span> `;
+                playersPoints += `<span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${player.points}</span> `;
             });
             document.getElementById("playersPoints").innerHTML = playersPoints;
         }
@@ -140,7 +140,7 @@ module CocaineCartels {
             var playersStatus = "";
             Main.game.players.forEach(player => {
                 if (player.ready) {
-                    playersStatus += `<span class="label" style="background-color: ${player.color}">&nbsp;</span> `;
+                    playersStatus += `<span class="label" style="background-color: ${player.color}; color: ${player.textColor}">&nbsp;</span> `;
                 } else {
                     playersStatus += `<span class="label label-default">&nbsp;</span> `;
                 }

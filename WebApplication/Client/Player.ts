@@ -9,12 +9,14 @@ module CocaineCartels {
             this.color = playerData.color;
             this.points = playerData.points;
             this.ready = playerData.ready;
+            this.textColor = playerData.textColor;
         }
 
         public administrator: boolean;
         public color: string;
         public points: number;
         public ready: boolean;
+        public textColor: string;
 
         /** Returns the number of move commands that the current has assigned. */
         public get numberOfMoveCommands(): number {
