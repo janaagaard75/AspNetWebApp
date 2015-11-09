@@ -2,7 +2,7 @@
 
 namespace CocaineCartels.BusinessLogic
 {
-    public class Hex
+    public class Hex : IEquatable<Hex>
     {
         public Hex(int r, int s, int t)
         {
@@ -17,9 +17,9 @@ namespace CocaineCartels.BusinessLogic
             T = t;
         }
 
-        public readonly int R;
-        public readonly int S;
-        public readonly int T;
+        public int R { get; }
+        public int S { get; }
+        public int T { get; }
 
         public bool Equals(Hex other)
         {
