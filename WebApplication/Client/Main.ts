@@ -187,7 +187,7 @@ module CocaineCartels {
                     this.printPlayersStatus();
                     this.printPlayersPoints();
 
-                    document.getElementById("readyButton").classList.add("active");
+                    //document.getElementById("readyButton").classList.add("active");
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
