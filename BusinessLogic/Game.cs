@@ -211,7 +211,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
-            IEnumerable<Unit> unitsOnBoard = NextTurn.GetUnits().Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> unitsOnBoard = NextTurn.Units.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> units = unitsOnBoard.Concat(newUnits);
             units.ForEach(unit =>
@@ -240,7 +240,13 @@ namespace CocaineCartels.BusinessLogic
             // NextTurn now becomes the previous turn.
             PreviousTurn = NextTurn.Clone();
 
-            // Place all new units.
+            // Remove all the commands on the previes turn board.
+            PreviousTurn.Units.ForEach(unit =>
+            {
+                unit.RemoveCommands();
+            });
+
+            // Place all new units, removing the place commands.
             var unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
             unitsToPlace.ForEach(unit =>
             {
@@ -250,15 +256,26 @@ namespace CocaineCartels.BusinessLogic
             });
             PreviousTurnShowingPlaceCommands = NextTurn.Clone();
 
-            // Move all the units.
-            var unitsToMove = NextTurn.GetUnits().Where(unit => unit.MoveCommand != null).ToList();
+            // Remove all the move commands on the board showing units placed.
+            PreviousTurnShowingPlaceCommands.Units.ForEach(unit =>
+            {
+                unit.RemoveMoveCommand();
+            });
+
+            // Move all the units, but keep the move commands.
+            var unitsToMove = NextTurn.Units.Where(unit => unit.MoveCommand != null).ToList();
             unitsToMove.ForEach(unit =>
             {
                 unit.Cell.RemoveUnit(unit);
                 unit.MoveCommand.To.AddUnit(unit);
-                unit.RemoveMoveCommand();
             });
             PreviousTurnShowingMoveCommands = NextTurn.Clone();
+
+            // Remove the move commands on the final board.
+            NextTurn.Units.ForEach(unit =>
+            {
+                unit.RemoveMoveCommand();
+            });
 
             NextTurn.Fight();
 

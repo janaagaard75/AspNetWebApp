@@ -16,6 +16,11 @@ namespace CocaineCartels.BusinessLogic
         public readonly int GridSize;
         public List<Unit> NewUnits { get; private set; }
 
+        internal IEnumerable<Unit> Units
+        {
+            get { return Cells.SelectMany(cell => cell.Units); }
+        }
+
         internal void AddNewUnitsToPlayer(Player player, int numberOfNewUnits)
         {
             for (int i = 0; i < numberOfNewUnits; i++)
@@ -29,11 +34,6 @@ namespace CocaineCartels.BusinessLogic
         {
             Cell cell = Cells.First(c => c.Hex.Equals(hex));
             return cell;
-        }
-
-        internal IEnumerable<Unit> GetUnits()
-        {
-            return Cells.SelectMany(cell => cell.Units);
         }
 
         /// <summary>Resolve combats on cells.</summary>
