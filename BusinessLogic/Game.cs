@@ -180,7 +180,7 @@ namespace CocaineCartels.BusinessLogic
             currentTurn.UnitsOnCells.ForEach(unit =>
             {
                 if (!unit.Player.Equals(player))
-                { 
+                {
                     unit.RemoveMoveCommand();
                 }
             });
@@ -323,6 +323,11 @@ namespace CocaineCartels.BusinessLogic
             }
 
             Started = true;
+        }
+
+        public void UpdateCommandsSentOn(string playerColor)
+        {
+            Players.Single(player => player.Color == playerColor).CommandsSentNow();
         }
     }
 }

@@ -65,6 +65,7 @@ namespace CocaineCartels.WebApplication.Controllers
                 Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
             });
 
+            Game.Instance.UpdateCommandsSentOn(currentPlayerColor);
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);
         }
 

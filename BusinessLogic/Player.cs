@@ -10,6 +10,7 @@ namespace CocaineCartels.BusinessLogic
         {
             Administrator = administrator;
             Color = colors.MainColor;
+            CommandsSentOn = null;
             IpAddress = ipAddress;
             TextColor = colors.TextColor;
             UserAgent = userAgent;
@@ -22,6 +23,8 @@ namespace CocaineCartels.BusinessLogic
 
         /// <summary>The main color also identifies a player, so use this property the player ID.</summary>
         public string Color { get; }
+
+        public DateTime? CommandsSentOn { get; private set; }
 
         [JsonIgnore]
         public IPAddress IpAddress { get; }
@@ -40,6 +43,11 @@ namespace CocaineCartels.BusinessLogic
         {
             bool areEqual = Color == other.Color;
             return areEqual;
+        }
+
+        public void CommandsSentNow()
+        {
+            CommandsSentOn = DateTime.UtcNow;
         }
     }
 }
