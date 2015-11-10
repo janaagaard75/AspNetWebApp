@@ -284,6 +284,7 @@ namespace CocaineCartels.BusinessLogic
             {
                 NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
                 AddPointsToPlayer(player);
+                player.CommandsSentOn = null;
                 player.Ready = false;
             });
 
@@ -327,7 +328,7 @@ namespace CocaineCartels.BusinessLogic
 
         public void UpdateCommandsSentOn(string playerColor)
         {
-            Players.Single(player => player.Color == playerColor).CommandsSentNow();
+            Players.Single(player => player.Color == playerColor).CommandsSentOn = DateTime.UtcNow;
         }
     }
 }
