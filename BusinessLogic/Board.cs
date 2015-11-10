@@ -16,7 +16,16 @@ namespace CocaineCartels.BusinessLogic
         public readonly int GridSize;
         public List<Unit> NewUnits { get; private set; }
 
-        internal IEnumerable<Unit> Units
+        internal IEnumerable<Unit> AllUnits
+        {
+            get
+            {
+                var allUnits = UnitsOnCells.Concat(NewUnits);
+                return allUnits;
+            }
+        } 
+
+        internal IEnumerable<Unit> UnitsOnCells
         {
             get { return Cells.SelectMany(cell => cell.Units); }
         }

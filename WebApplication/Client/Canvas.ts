@@ -163,17 +163,13 @@
 
             Canvas.board.newUnitsForPlayer(player).forEach((unit, unitIndex, units) => {
                 if (unit.placeCommand === null) {
-                    this.drawUnit(unit, pos, unitIndex, units.length, false);
+                    this.drawUnit(unit, pos, unitIndex, units.length);
                 }
             });
         }
 
-        private drawPlaceCommand(command: PlaceCommand) {
-            throw "drawPlaceCommand() is not yet implemented.";
-        }
-
-        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number, movedHere: boolean) {
-            const color = movedHere ? unit.movedColor : unit.color;
+        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
+            const fillColor = unit.placeCommand === null ? unit.color : unit.placedColor;
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
@@ -181,7 +177,7 @@
 
             const circle = new Konva.Circle({
                 draggable: this.interactive && ownedByThisPlayer,
-                fill: color,
+                fill: fillColor,
                 radius: CanvasSettings.unitRadius,
                 shadowBlur: 20,
                 shadowColor: "#000",
@@ -325,22 +321,22 @@
             const total = staying.length + movedHere.length + toBeMovedHere.length + toBePlacedHere.length;
 
             staying.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, index, total, false);
+                this.drawUnit(unit, cell.hex.pos, index, total);
             });
 
             const movedHereStartIndex = staying.length;
             movedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total, false);
+                this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total);
             });
 
             const movingHereStartIndex = movedHereStartIndex + movedHere.length;
             toBeMovedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total, true);
+                this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
             });
 
             const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
             toBePlacedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total, true);
+                this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
             });
         }
 
@@ -348,7 +344,7 @@
             var backgroundColor: string;
             if (cell.dropAllowed) {
                 if (cell.hovered) {
-                    backgroundColor = "#ddd";
+                    backgroundColor = "#afa";
                 } else {
                     backgroundColor = "#dfd";
                 }

@@ -176,7 +176,7 @@ namespace CocaineCartels.BusinessLogic
         {
             var currentTurn = NextTurn.Clone();
 
-            currentTurn.Units.ForEach(unit =>
+            currentTurn.UnitsOnCells.ForEach(unit =>
             {
                 if (!unit.Player.Equals(player))
                 { 
@@ -210,7 +210,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
         public void DeleteNextTurnCommands(string playerColor)
         {
-            IEnumerable<Unit> unitsOnBoard = NextTurn.Units.Where(unit => unit.Player.Color == playerColor);
+            IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> units = unitsOnBoard.Concat(newUnits);
             units.ForEach(unit =>
@@ -239,8 +239,8 @@ namespace CocaineCartels.BusinessLogic
             // NextTurn now becomes the previous turn.
             PreviousTurn = NextTurn.Clone();
 
-            // Remove all the commands on the previes turn board.
-            PreviousTurn.Units.ForEach(unit =>
+            // Remove all the commands on the previous turn board.
+            PreviousTurn.AllUnits.ForEach(unit =>
             {
                 unit.RemoveCommands();
             });
@@ -255,14 +255,14 @@ namespace CocaineCartels.BusinessLogic
             });
             PreviousTurnShowingPlaceCommands = NextTurn.Clone();
 
-            // Remove all the move commands on the board showing units placed.
-            PreviousTurnShowingPlaceCommands.Units.ForEach(unit =>
+            // Remove all the move commands on the board showing where the units have been placed.
+            PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit =>
             {
                 unit.RemoveMoveCommand();
             });
 
-            // Move all the units, but keep the move commands.
-            var unitsToMove = NextTurn.Units.Where(unit => unit.MoveCommand != null).ToList();
+            // Move all the units, keeping the move commands.
+            var unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
             unitsToMove.ForEach(unit =>
             {
                 unit.Cell.RemoveUnit(unit);
@@ -271,7 +271,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurnShowingMoveCommands = NextTurn.Clone();
 
             // Remove the move commands on the final board.
-            NextTurn.Units.ForEach(unit =>
+            NextTurn.UnitsOnCells.ForEach(unit =>
             {
                 unit.RemoveMoveCommand();
             });
