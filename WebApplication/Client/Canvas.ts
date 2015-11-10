@@ -57,7 +57,7 @@
             // Draw methods are separated this way to match the layers in the game.
             this.drawCells();
             this.drawUnits();
-            this.drawCommands();
+            this.drawMoveCommands();
 
             this.stage.draw();
         }
@@ -104,27 +104,12 @@
             });
         }
 
-        private drawCommands() {
-            var groupByTo: IGroupByFunc<MoveCommand> = command => {
-                return command.to.hex.toString();
-            }
-
-            Canvas.board.cells.forEach(cell => {
-                var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByTo);
-                groups.forEach(commands => {
-                    const oppositeCommands = Canvas.board.getMoveCommands(commands[0].to, commands[0].from);
-                    const totalCommands = commands.length + oppositeCommands.length;
-                    commands.forEach((command, index) => {
-                        this.drawMoveCommand(command, index, totalCommands);
-                    });
-                });
-            });
-        }
-
         private drawMoveCommand(command: MoveCommand, index: number, numberOfCommands: number) {
-            const midway = Utilities.midPoint(command.from.hex.pos, command.to.hex.pos);
-            const from = Utilities.midPoint(command.from.hex.pos, midway);
-            const to = Utilities.midPoint(command.to.hex.pos, midway);
+            const halfways = Utilities.midPoint(command.from.hex.pos, command.to.hex.pos);
+            const aFourth = Utilities.midPoint(command.from.hex.pos, halfways);
+            const threeFourths = Utilities.midPoint(command.to.hex.pos, halfways);
+            const from = Utilities.midPoint(command.from.hex.pos, threeFourths);
+            const to = Utilities.midPoint(command.to.hex.pos, aFourth);
 
             const d = new Pos(
                 to.x - from.x,
@@ -151,6 +136,23 @@
             });
 
             this.commandsLayer.add(arrow);
+        }
+
+        private drawMoveCommands() {
+            var groupByFromAndTo: IGroupByFunc<MoveCommand> = command => {
+                return command.from.hex.toString() + command.to.hex.toString();
+            }
+
+            Canvas.board.cells.forEach(cell => {
+                var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByFromAndTo);
+                groups.forEach(commands => {
+                    const oppositeCommands = Canvas.board.getMoveCommands(commands[0].to, commands[0].from);
+                    const totalCommands = commands.length + oppositeCommands.length;
+                    commands.forEach((command, index) => {
+                        this.drawMoveCommand(command, index, totalCommands);
+                    });
+                });
+            });
         }
 
         private drawNewUnitsForPlayer(player: Player, playerIndex: number, numberOfPlayers: number) {
