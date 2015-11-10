@@ -36,7 +36,9 @@ module CocaineCartels {
 
                 this.setActiveBoard(4);
 
-                document.getElementById("playerCommands").style.width = `${CanvasSettings.width}px`;
+                const widthInPixels = `${CanvasSettings.width}px`;
+                document.getElementById("playerCommands").style.width = widthInPixels;
+                document.getElementById("administratorCommands").style.width = widthInPixels;
 
                 window.setInterval(() => this.tick(), 1000);
             });

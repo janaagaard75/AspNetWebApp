@@ -2668,6 +2668,11 @@ body {
 .hidden {
   display: none; }
 
+.konvajs-content {
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
+
 .moves {
   text-align: center; }
 
@@ -2683,7 +2688,6 @@ body {
   width: 30px; }
 
 .player-commands {
-  margin: 0;
   background-color: #fff;
   height: 115px; }
 
