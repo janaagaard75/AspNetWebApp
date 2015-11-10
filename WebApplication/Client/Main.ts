@@ -25,6 +25,7 @@ module CocaineCartels {
                     document.getElementById("readyButton").setAttribute("disabled", "disabled");
                 }
 
+                Main.printNumberOfMovesLeft();
                 Main.printPlayersStatus();
                 Main.printPlayersPoints();
 
@@ -127,6 +128,17 @@ module CocaineCartels {
         private getCanvasId(canvasNumber: number) {
             const canvasId = `${CanvasSettings.canvasIdTemplate}${canvasNumber}`;
             return canvasId;
+        }
+
+        public static printNumberOfMovesLeft() {
+            const numberOfMovesLeft = Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
+            document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
+            const movesElement = document.getElementById("moves");
+            if (numberOfMovesLeft < 0) {
+                movesElement.classList.add("label", "label-danger");
+            } else {
+                movesElement.classList.remove("label", "label-danger");
+            }
         }
 
         private static printPlayersPoints() {

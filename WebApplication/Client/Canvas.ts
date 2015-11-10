@@ -272,14 +272,7 @@
                     currentCell.hovered = false;
                 }
 
-                const numberOfMoveCommands = Main.currentPlayer.numberOfMoveCommands;
-                document.getElementById("numberOfMoves").innerHTML = numberOfMoveCommands.toString();
-                const movesElement = document.getElementById("moves");
-                if (numberOfMoveCommands > Settings.movesPerTurn) {
-                    movesElement.classList.add("label", "label-danger");
-                } else {
-                    movesElement.classList.remove("label", "label-danger");
-                }
+                Main.printNumberOfMovesLeft();
 
                 currentHexagon = null;
                 previousHexagon = null;
