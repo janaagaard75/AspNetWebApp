@@ -42,12 +42,19 @@
         }
 
         public allowedCellsForMove(unit: Unit): Array<Cell> {
-            if (unit.cell == null) {
-                throw "It's not allowed to move a cell that is not already on the board.";
+            if (unit.cell === null && unit.placeCommand === null) {
+                throw "It's not allowed to move a cell that is not on the board or to be placed on the board.";
+            }
+
+            let fromCell: Cell;
+            if (unit.cell !== null) {
+                fromCell = unit.cell;
+            } else {
+                fromCell = unit.placeCommand.on;
             }
 
             const allowedCells = this.cells.filter(cell => {
-                const allowed = cell.distance(unit.cell) <= unit.maximumMoveDistance;
+                const allowed = cell.distance(fromCell) <= unit.maximumMoveDistance;
                 return allowed;
             });
 
