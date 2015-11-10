@@ -15,7 +15,7 @@
 
             this.newUnits = [];
             boardData.newUnits.forEach(unitData => {
-                const newUnit = new Unit(unitData, null);
+                const newUnit = new Unit(unitData, this, null);
                 this.newUnits.push(newUnit);
             });
 
@@ -34,6 +34,7 @@
             return moveCommands;
         }
 
+        /** Returns the list of units placed on the board, i.e. units to be placed on the board are not included. */
         public get unitsOnBoard(): Array<Unit> {
             const unitsDoubleArray = this.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);

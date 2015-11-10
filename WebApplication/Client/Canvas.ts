@@ -162,7 +162,9 @@
             );
 
             Canvas.board.newUnitsForPlayer(player).forEach((unit, unitIndex, units) => {
-                this.drawUnit(unit, pos, unitIndex, units.length, false);
+                if (unit.placeCommand === null) {
+                    this.drawUnit(unit, pos, unitIndex, units.length, false);
+                }
             });
         }
 
@@ -257,8 +259,8 @@
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
                             unit.setPlaceCommand(currentCell);
-                            Canvas.board.placeUnit(unit, currentCell);
-                            Canvas.board.newUnits = Canvas.board.newUnits.filter(u => u !== unit);
+                            //Canvas.board.placeUnit(unit, currentCell);
+                            //Canvas.board.newUnits = Canvas.board.newUnits.filter(u => u !== unit);
                         } else {
                             unit.setMoveCommand(unit.cell, currentCell);
                         }
@@ -310,20 +312,30 @@
         }
 
         private drawUnitsOnCell(cell: Cell) {
-            const total = cell.unitsStaying.length + cell.unitsMovedHere.length + cell.unitsMovingHere.length;
+            const staying = cell.unitsStaying;
+            const movedHere = cell.unitsMovedHere;
+            const movingHere = cell.unitsMovingHere;
+            const toBePlacedHere = cell.unitsToBePlacedHere;
 
-            cell.unitsStaying.forEach((unit, index) => {
+            const total = staying.length + movedHere.length + movingHere.length + toBePlacedHere.length;
+
+            staying.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, index, total, false);
             });
 
-            const movedHereStartIndex = cell.unitsStaying.length;
-            cell.unitsMovedHere.forEach((unit, index) => {
+            const movedHereStartIndex = staying.length;
+            movedHere.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total, false);
             });
 
-            const movingHereStartIndex = movedHereStartIndex + cell.unitsMovedHere.length;
-            cell.unitsMovingHere.forEach((unit, index) => {
+            const movingHereStartIndex = movedHereStartIndex + movedHere.length;
+            movingHere.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total, true);
+            });
+
+            const toBePlacedHereStartIndex = movingHereStartIndex + movingHere.length;
+            toBePlacedHere.forEach((unit, index) => {
+                this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total, true);
             });
         }
 

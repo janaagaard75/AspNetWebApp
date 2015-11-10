@@ -38,7 +38,7 @@ module CocaineCartels {
             if (this._units === undefined) {
                 this._units = [];
                 this._cellData.units.forEach(unitData => {
-                    const unit = new Unit(unitData, this);
+                    const unit = new Unit(unitData, this.board, this);
                     this.addUnit(unit);
                 });
             }
@@ -64,6 +64,13 @@ module CocaineCartels {
         public get unitsStaying(): Array<Unit> {
             const unitsStaying = this.units.filter(unit => unit.moveCommand === null);
             return unitsStaying;
+        }
+
+        public get unitsToBePlacedHere(): Array<Unit> {
+            const unitsToBeplacedHere = this.board.newUnits.filter(unit => {
+                return unit.placeCommand !== null && unit.placeCommand.on === this;
+            });
+            return unitsToBeplacedHere;
         }
 
         public addUnit(unit: Unit) {

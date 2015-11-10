@@ -176,10 +176,9 @@ namespace CocaineCartels.BusinessLogic
         {
             var currentTurn = NextTurn.Clone();
 
-            var units = currentTurn.Cells.SelectMany(cell => cell.Units);
-            units.ForEach(unit =>
+            currentTurn.Units.ForEach(unit =>
             {
-                if (unit.MoveCommand != null && unit.Player != player)
+                if (!unit.Player.Equals(player))
                 { 
                     unit.RemoveMoveCommand();
                 }
@@ -187,7 +186,7 @@ namespace CocaineCartels.BusinessLogic
 
             currentTurn.NewUnits.ForEach(unit =>
             {
-                if (unit.Player != player)
+                if (!unit.Player.Equals(player))
                 {
                     unit.RemovePlaceCommand();
                 }

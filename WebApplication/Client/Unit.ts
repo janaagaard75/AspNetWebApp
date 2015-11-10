@@ -5,9 +5,11 @@ module CocaineCartels {
         /** Set cell to null if this is a new unit. */
         constructor(
             unitData: IUnit,
+            board: Board,
             cell: Cell
         ) {
             this._unitData = unitData;
+            this.board = board;
             this.cell = cell;
             this._color = unitData.player.color;
             this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
@@ -19,6 +21,9 @@ module CocaineCartels {
         private _moveCommand: MoveCommand = undefined;
         private _movedColor: string;
         private _unitData: IUnit;
+
+        /** The board that this units is located on. Never null. */
+        public board: Board;
 
         /** The cell that the unit is located on. Null if this is a new unit that has not yet been placed on the board. */
         public cell: Cell;
@@ -37,8 +42,8 @@ module CocaineCartels {
                 if (this._unitData.moveCommand === null) {
                     this.moveCommand = null;
                 } else {
-                    const from = this.cell.board.getCell(this._unitData.moveCommand.fromHex);
-                    const to = this.cell.board.getCell(this._unitData.moveCommand.toHex);
+                    const from = this.board.getCell(this._unitData.moveCommand.fromHex);
+                    const to = this.board.getCell(this._unitData.moveCommand.toHex);
                     this.setMoveCommand(from, to);
                 }
             }
@@ -68,7 +73,7 @@ module CocaineCartels {
                 if (this._unitData.placeCommand === null) {
                     this.placeCommand = null;
                 } else {
-                    const on = this.cell.board.getCell(this._unitData.placeCommand.onHex);
+                    const on = this.board.getCell(this._unitData.placeCommand.onHex);
                     this.setPlaceCommand(on);
                 }
             }

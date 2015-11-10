@@ -184,13 +184,15 @@ module CocaineCartels {
                 return;
             }
 
-            const units = Main.game.currentTurn.unitsOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
+            const currentPlayersUnitsOnBoard = Main.game.currentTurn.unitsOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
-            const moveCommands = units
+            const moveCommands = currentPlayersUnitsOnBoard
                 .filter(unit => unit.moveCommand !== null)
                 .map(unit => new ClientMoveCommand(unit.moveCommand.from.hex, unit.moveCommand.to.hex));
 
-            const placeCommands = units
+            const currentPlayersNewUnits = Main.game.currentTurn.newUnits.filter(unit => unit.player.color === Main.currentPlayer.color);
+
+            const placeCommands = currentPlayersNewUnits
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
