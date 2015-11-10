@@ -255,6 +255,7 @@
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null && unit.placeCommand === null) {
                             unit.setPlaceCommand(currentCell);
+                            Main.setCurrentPlayerNotReadyIfNecessary();
                         } else {
                             let from: Cell;
                             if (unit.cell === null) {
@@ -264,6 +265,7 @@
                             }
 
                             unit.setMoveCommand(from, currentCell);
+                            Main.setCurrentPlayerNotReadyIfNecessary();
                         }
                     }
 

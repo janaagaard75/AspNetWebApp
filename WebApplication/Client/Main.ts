@@ -25,8 +25,8 @@ module CocaineCartels {
                     document.getElementById("readyButton").setAttribute("disabled", "disabled");
                 }
 
-                this.printPlayersStatus();
-                this.printPlayersPoints();
+                Main.printPlayersStatus();
+                Main.printPlayersPoints();
 
                 if (Main.currentPlayer.administrator) {
                     document.getElementById("administratorCommands").classList.remove("hidden");
@@ -90,8 +90,8 @@ module CocaineCartels {
                             Main.game.players.push(player);
                         }
                     });
-                    this.printPlayersStatus();
-                    this.printPlayersPoints();
+                    Main.printPlayersStatus();
+                    Main.printPlayersPoints();
                 }
             });
         }
@@ -105,7 +105,7 @@ module CocaineCartels {
                 playersData.forEach(playerData => {
                     Main.game.getPlayer(playerData.color).ready = playerData.ready;
                 });
-                this.printPlayersStatus();
+                Main.printPlayersStatus();
             });
         }
 
@@ -129,7 +129,7 @@ module CocaineCartels {
             return canvasId;
         }
 
-        private printPlayersPoints() {
+        private static printPlayersPoints() {
             var playersPoints = "";
             Main.game.players.forEach(player => {
                 playersPoints += `<span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${player.points}</span> `;
@@ -137,7 +137,7 @@ module CocaineCartels {
             document.getElementById("playersPoints").innerHTML = playersPoints;
         }
 
-        private printPlayersStatus() {
+        private static printPlayersStatus() {
             var playersStatus = "";
             Main.game.players.forEach(player => {
                 if (player.ready) {
@@ -160,15 +160,10 @@ module CocaineCartels {
         }
 
         public readyButtonClick() {
-            const readyButtonElement = document.getElementById("readyButton");
             if (Main.currentPlayer.ready) {
-                readyButtonElement.classList.remove("active");
-                readyButtonElement.blur();
-                GameService.notReady().then(() => {
-                    Main.currentPlayer.ready = false;
-                    this.printPlayersStatus();
-                });
+                Main.setCurrentPlayerNotReady();
             } else {
+                const readyButtonElement = document.getElementById("readyButton");
                 readyButtonElement.classList.add("active");
                 readyButtonElement.blur();
                 this.sendCommands();
@@ -204,7 +199,7 @@ module CocaineCartels {
                 .then(() => {
                     // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
                     Main.currentPlayer.ready = true;
-                    this.printPlayersStatus();
+                    Main.printPlayersStatus();
                 })
                 .catch(e => {
                     alert(`Error sending commands: ${e}.`);
@@ -225,6 +220,22 @@ module CocaineCartels {
                     canvasElement.classList.add("hidden");
                     buttonElement.classList.remove("active");
                 }
+            }
+        }
+
+        private static setCurrentPlayerNotReady() {
+            const readyButtonElement = document.getElementById("readyButton");
+            readyButtonElement.classList.remove("active");
+            readyButtonElement.blur();
+            GameService.notReady().then(() => {
+                Main.currentPlayer.ready = false;
+                Main.printPlayersStatus();
+            });
+        }
+
+        public static setCurrentPlayerNotReadyIfNecessary() {
+            if (Main.currentPlayer.ready) {
+                Main.setCurrentPlayerNotReady();
             }
         }
 
