@@ -14,5 +14,7 @@
         previousTurnShowingPlaceCommands: IBoard;
 
         started: boolean;
+
+        turnNumber: number;
     }
 }

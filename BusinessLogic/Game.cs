@@ -41,7 +41,8 @@ namespace CocaineCartels.BusinessLogic
         private Board NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
-        public bool Started;
+        public bool Started { get; private set; }
+        public int TurnNumber { get; private set; }
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -285,6 +286,8 @@ namespace CocaineCartels.BusinessLogic
                 AddPointsToPlayer(player);
                 player.Ready = false;
             });
+
+            TurnNumber++;
         }
 
         public void ResetGame()
@@ -295,6 +298,7 @@ namespace CocaineCartels.BusinessLogic
             NextTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
             Started = false;
+            TurnNumber = 1;
         }
 
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
