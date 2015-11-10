@@ -21,7 +21,7 @@ module CocaineCartels {
         public hovered = false;
 
         public get moveCommandsFromCell(): Array<MoveCommand> {
-            const moveCommands = this.units
+            const moveCommands = this.unitsAlreadyHereOrToBePlacedHere
                 .map(unit => unit.moveCommand)
                 .filter(moveCommand => moveCommand !== null);
 
@@ -33,7 +33,7 @@ module CocaineCartels {
             return commands;
         }
 
-        /** Units on this cell, not taking into account that some of them might have move commands to other cells. Units placed on this cell are included. */
+        /** Units on this cell, not taking into account that some of them might have move commands to other cells. Units to be placed on this cell are not included. */
         public get units(): Array<Unit> {
             if (this._units === undefined) {
                 this._units = [];
@@ -46,26 +46,31 @@ module CocaineCartels {
             return this._units;
         }
 
+        /** Returns the units that were already here or to be placed on this cell. Units might be moved to another cell. */
+        public get unitsAlreadyHereOrToBePlacedHere(): Array<Unit> {
+            const unitsAlreadyHereOrToBePlacedHere = this.units.concat(this.unitsToBePlacedHere);
+            return unitsAlreadyHereOrToBePlacedHere;
+        }
+
+        /** Units on this cell that were move here. This type of units is only shown on the third board. */
         public get unitsMovedHere(): Array<Unit> {
             const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
             return unitsMovedHere;
         }
 
-        public get unitsMovingHere(): Array<Unit> {
+        /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
+        public get unitsToBeMovedHere(): Array<Unit> {
             const unitsMovingHere = this.moveCommandsToCell.map(command => command.unit);
             return unitsMovingHere;
         }
 
-        public get unitsPlacedHere(): Array<Unit> {
-            const unitsPlacedHere = this.units.filter(unit => unit.placeCommand !== null);
-            return unitsPlacedHere;
-        }
-
+        /** Units already on the cell and not moved away. Does not include units that will be placed here. */
         public get unitsStaying(): Array<Unit> {
             const unitsStaying = this.units.filter(unit => unit.moveCommand === null);
             return unitsStaying;
         }
 
+        /** Returns the units to be placed on this cell. Units might be moved to another cell. */
         public get unitsToBePlacedHere(): Array<Unit> {
             const unitsToBeplacedHere = this.board.newUnits.filter(unit => {
                 return unit.placeCommand !== null && unit.placeCommand.on === this;
@@ -73,6 +78,11 @@ module CocaineCartels {
             return unitsToBeplacedHere;
         }
 
+        public get unitsToBePlacedHereAndNotMovedAway(): Array<Unit> {
+            const unitsToBePlacedHereAndNotMovedAway = this.unitsToBePlacedHere.filter(unit => unit.moveCommand === null);
+            return unitsToBePlacedHereAndNotMovedAway;
+        }
+        
         public addUnit(unit: Unit) {
             if (unit.cell !== null && unit.cell !== this) {
                 throw "The unit is already placed on another cell.";

@@ -257,10 +257,17 @@
                     const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
                     if (currentCell.dropAllowed) {
-                        if (unit.cell === null) {
+                        if (unit.cell === null && unit.placeCommand === null) {
                             unit.setPlaceCommand(currentCell);
                         } else {
-                            unit.setMoveCommand(unit.cell, currentCell);
+                            let from: Cell;
+                            if (unit.cell === null) {
+                                from = unit.placeCommand.on;
+                            } else {
+                                from = unit.cell;
+                            }
+
+                            unit.setMoveCommand(from, currentCell);
                         }
                     }
 
@@ -312,10 +319,10 @@
         private drawUnitsOnCell(cell: Cell) {
             const staying = cell.unitsStaying;
             const movedHere = cell.unitsMovedHere;
-            const movingHere = cell.unitsMovingHere;
-            const toBePlacedHere = cell.unitsToBePlacedHere;
+            const toBeMovedHere = cell.unitsToBeMovedHere;
+            const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
 
-            const total = staying.length + movedHere.length + movingHere.length + toBePlacedHere.length;
+            const total = staying.length + movedHere.length + toBeMovedHere.length + toBePlacedHere.length;
 
             staying.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, index, total, false);
@@ -327,11 +334,11 @@
             });
 
             const movingHereStartIndex = movedHereStartIndex + movedHere.length;
-            movingHere.forEach((unit, index) => {
+            toBeMovedHere.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total, true);
             });
 
-            const toBePlacedHereStartIndex = movingHereStartIndex + movingHere.length;
+            const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
             toBePlacedHere.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total, true);
             });

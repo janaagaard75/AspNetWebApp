@@ -9,8 +9,8 @@ module CocaineCartels {
         ) {
             super(CommandType.MoveCommand, unit);
 
-            if (unit.cell === null) {
-                throw "Can only assign move commands to units that are placed on a cell.";
+            if (unit.cell === null && unit.placeCommand === null) {
+                throw "Can only assign move commands to units that are placed on a cell or has a place command.";
             }
         }
 

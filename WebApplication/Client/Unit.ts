@@ -58,7 +58,7 @@ module CocaineCartels {
             }
 
             if (this.cell === null && this.placeCommand === null) {
-                throw "Cannot only assign a move command to a unit that is positioned on a cell or has a place command.";
+                throw "Can only assign a move command to a unit that is positioned on a cell or has a place command.";
             }
 
             this._moveCommand = newMoveCommand;

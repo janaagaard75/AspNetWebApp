@@ -27,7 +27,7 @@
         public gridSize: number;
 
         public get moveCommands(): Array<MoveCommand> {
-            const moveCommands = this.unitsOnBoard
+            const moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
                 .map(unit => unit.moveCommand)
                 .filter(moveCommand => moveCommand !== null);
 
@@ -39,6 +39,16 @@
             const unitsDoubleArray = this.cells.map(cell => cell.units);
             const units = Utilities.flatten(unitsDoubleArray);
             return units;
+        }
+
+        public get unitsOnBoardOrToBePlacedOnBoard(): Array<Unit> {
+            const unitsOnBoardOrToBePlacedOnBoard = this.unitsOnBoard.concat(this.unitsToBePlacedOnBoard);
+            return unitsOnBoardOrToBePlacedOnBoard;
+        }
+
+        public get unitsToBePlacedOnBoard(): Array<Unit> {
+            const unitsToBePlacedOnBoard = this.newUnits.filter(unit => unit.placeCommand !== null);
+            return unitsToBePlacedOnBoard;
         }
 
         public allowedCellsForMove(unit: Unit): Array<Cell> {
