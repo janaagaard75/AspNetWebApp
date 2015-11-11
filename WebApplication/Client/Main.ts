@@ -91,6 +91,8 @@ module CocaineCartels {
 
                 if (Main.game.started) {
                     Utilities.enableElement("readyButton");
+
+                    Utilities.disableElement("startGameButton");
                     Utilities.getElement("startGameButton").setAttribute("title", "The game is already started.");
 
                     if (Main.currentPlayer.ready) {
@@ -100,6 +102,9 @@ module CocaineCartels {
                     }
                 } else {
                     Utilities.disableElement("readyButton");
+
+                    Utilities.disableElement("startGameButton");
+                    Utilities.getElement("startGameButton").removeAttribute("title");
                 }
 
                 Main.printNumberOfMovesLeft();
