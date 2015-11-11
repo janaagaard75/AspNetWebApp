@@ -42,6 +42,8 @@ namespace CocaineCartels.BusinessLogic
 
         public List<Player> Players { get; private set; }
         public bool Started { get; private set; }
+
+        /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
@@ -299,7 +301,7 @@ namespace CocaineCartels.BusinessLogic
             NextTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
             Started = false;
-            TurnNumber = 1;
+            TurnNumber = 0;
         }
 
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
@@ -323,6 +325,7 @@ namespace CocaineCartels.BusinessLogic
                 AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
             }
 
+            TurnNumber = 1;
             Started = true;
         }
 
