@@ -17,11 +17,11 @@ namespace CocaineCartels.BusinessLogic
 
         private readonly PlayerColors[] PlayersColors =
         {
-            new PlayerColors("#f00", "#fff"),
-            new PlayerColors("#ff0", "#000"),
-            new PlayerColors("#0f0", "#000"),
-            new PlayerColors("#0ff", "#000"),
-            new PlayerColors("#00f", "#fff"),
+            new PlayerColors("#f22", "#fff"),
+            new PlayerColors("#cc0", "#fff"),
+            new PlayerColors("#0b0", "#fff"),
+            new PlayerColors("#07e", "#fff"),
+            new PlayerColors("#84f", "#fff"),
             new PlayerColors("#f0f", "#fff")
         };
 
