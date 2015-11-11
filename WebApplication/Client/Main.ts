@@ -225,9 +225,29 @@ module CocaineCartels {
 
         public tick() {
             if (Main.game.started) {
-                this.updateWhileGameStarted();
+                GameService.getStatus().then(status => {
+                    if (status.turnNumber !== Main.game.turnNumber) {
+                        this.reloadPage();
+                    }
+
+                    status.players.forEach(playerData => {
+                        Main.game.getPlayer(playerData.color).ready = playerData.ready;
+                    });
+                    Main.printPlayersStatus();
+                });
             } else {
-                this.updateWhileGameStopped();
+                GameService.getStatus().then(status => {
+                    if (status.players.length > Main.game.players.length) {
+                        status.players.forEach(playerData => {
+                            if (Main.game.getPlayer(playerData.color) === null) {
+                                const player = new Player(playerData);
+                                Main.game.players.push(player);
+                            }
+                        });
+                        Main.printPlayersStatus();
+                        Main.printPlayersPoints();
+                    }
+                });
             }
         }
 
@@ -239,42 +259,6 @@ module CocaineCartels {
                 Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
                 Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
-            });
-        }
-
-        private updateWhileGameStarted() {
-            if (!Main.game.started) {
-                throw "It does not make sense to update the player's status when the game hasn't been started.";
-            }
-
-            GameService.getStatus().then(status => {
-                if (status.turnNumber !== Main.game.turnNumber) {
-                    this.reloadPage();
-                }
-
-                status.players.forEach(playerData => {
-                    Main.game.getPlayer(playerData.color).ready = playerData.ready;
-                });
-                Main.printPlayersStatus();
-            });
-        }
-
-        private updateWhileGameStopped() {
-            if (Main.game.started) {
-                throw "Cannot update the players once the game has been started.";
-            }
-
-            GameService.getStatus().then(status => {
-                if (status.players.length > Main.game.players.length) {
-                    status.players.forEach(playerData => {
-                        if (Main.game.getPlayer(playerData.color) === null) {
-                            const player = new Player(playerData);
-                            Main.game.players.push(player);
-                        }
-                    });
-                    Main.printPlayersStatus();
-                    Main.printPlayersPoints();
-                }
             });
         }
     }
