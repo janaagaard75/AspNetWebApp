@@ -34,12 +34,8 @@ module CocaineCartels {
                 throw "CanvasSettings haven't been initialized.";
             }
 
-            const center = {
-                x: CanvasSettings.width / 2,
-                y: CanvasSettings.width / 2 - CanvasSettings.cellRadius / 2
-        };
-            const x = center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.t;
-            const y = center.y + 1.5 * CanvasSettings.cellRadius * hex.t;
+            const x = CanvasSettings.center.x + Math.sqrt(3) * CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CanvasSettings.cellRadius * hex.t;
+            const y = CanvasSettings.center.y + 1.5 * CanvasSettings.cellRadius * hex.t;
             const pos = new Pos(x, y);
             return pos;
         }

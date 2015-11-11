@@ -7,6 +7,7 @@ module CocaineCartels {
         public static arrowPointerWidth = 5;
         public static arrowShadowBlurRadius = 10;
         public static arrowWidth: number;
+        public static center: Pos;
         public static canvasIdTemplate = "canvas";
         public static cellRadius: number;
         public static height: number;
@@ -43,6 +44,10 @@ module CocaineCartels {
             this.spaceToNewUnits = 0;
 
             this.arrowWidth = 2 * this.lineWidth;
+            this.center = new Pos(
+                this.width / 2,
+                this.width / 2 - this.cellRadius / 3
+            );
             this.unitRadius = this.cellRadius / 2.5;
         }
     }
