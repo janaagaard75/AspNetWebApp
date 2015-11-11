@@ -150,23 +150,22 @@ module CocaineCartels {
                 Main.setCurrentPlayerNotReady();
             } else {
                 const readyButtonElement = document.getElementById("readyButton");
+
+                const exceeding = Main.currentPlayer.numberOfMoveCommands - Settings.movesPerTurn;
+                if (exceeding > 0) {
+                    alert(`Only up to ${Settings.movesPerTurn} moves are allowed. Please remove some moves and click the ready button again.`);
+                    readyButtonElement.blur();
+                    return;
+                }
+
                 readyButtonElement.classList.add("active");
                 readyButtonElement.blur();
+
                 this.sendCommands();
             }
         }
 
         public sendCommands() {
-            const exceeding = Main.currentPlayer.numberOfMoveCommands - Settings.movesPerTurn;
-            if (exceeding > 0) {
-                let commandText = "command";
-                if (exceeding >= 2) {
-                    commandText += "s";
-                }
-                alert(`Only up to ${Settings.movesPerTurn} moves are allowed. Please remove ${exceeding} ${commandText} and click Send Commands again.`);
-                return;
-            }
-
             const currentPlayersUnitsOnBoardOrToBePlacedOnBoard = Main.game.currentTurn.unitsOnBoardOrToBePlacedOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
             const moveCommands = currentPlayersUnitsOnBoardOrToBePlacedOnBoard
