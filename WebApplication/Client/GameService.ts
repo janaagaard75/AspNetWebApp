@@ -15,8 +15,8 @@
             });
         }
 
-        public static getPlayers(): Promise<Array<IPlayer>> {
-            return HttpClient.get<Array<IPlayer>>("/api/players");
+        public static getStatus(): Promise<IStatus> {
+            return HttpClient.get<IStatus>("/api/status");
         }
 
         public static notReady(): Promise<void> {

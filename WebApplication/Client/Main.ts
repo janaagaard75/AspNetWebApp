@@ -78,50 +78,16 @@ module CocaineCartels {
             return inDemoMode;
         }
 
-        private fetchAndUpdatePlayers(): Promise<void> {
-            if (Main.game.started) {
-                throw "Cannot update the players once the game has been started.";
-            }
-
-            return GameService.getPlayers().then(playersData => {
-                if (playersData.length > Main.game.players.length) {
-                    playersData.forEach(playerData => {
-                        if (Main.game.getPlayer(playerData.color) === null) {
-                            const player = new Player(playerData);
-                            Main.game.players.push(player);
-                        }
-                    });
-                    Main.printPlayersStatus();
-                    Main.printPlayersPoints();
-                }
-            });
-        }
-
-        private fetchAndUpdatePlayersStatus(): Promise<void> {
-            if (!Main.game.started) {
-                throw "It does not make sense to update the player's status when the game hasn't been started.";
-            }
-
-            return GameService.getPlayers().then(playersData => {
-                playersData.forEach(playerData => {
-                    Main.game.getPlayer(playerData.color).ready = playerData.ready;
-                });
-                Main.printPlayersStatus();
-            });
-        }
-
         public performTurn() {
-            // Start by double checking that all players are ready. We still have a race condition issue, though.
-            this.fetchAndUpdatePlayersStatus().then(() => {
-                if (!this.allPlayersAreReady()) {
-                    if (!confirm("Not all players are ready. Continue anyways?")) {
-                        return;
-                    }
+            // Start by double checking that all players are ready.
+            if (!this.allPlayersAreReady()) {
+                if (!confirm("Not all players are ready. Continue anyways?")) {
+                    return;
                 }
+            }
 
-                GameService.performTurn().then(() => {
-                    this.reloadPage();
-                });
+            GameService.performTurn().then(() => {
+                this.reloadPage();
             });
         }
 
@@ -259,9 +225,9 @@ module CocaineCartels {
 
         public tick() {
             if (Main.game.started) {
-                this.fetchAndUpdatePlayersStatus();
+                this.updateWhileGameStarted();
             } else {
-                this.fetchAndUpdatePlayers();
+                this.updateWhileGameStopped();
             }
         }
 
@@ -273,6 +239,42 @@ module CocaineCartels {
                 Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
                 Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
+            });
+        }
+
+        private updateWhileGameStarted() {
+            if (!Main.game.started) {
+                throw "It does not make sense to update the player's status when the game hasn't been started.";
+            }
+
+            GameService.getStatus().then(status => {
+                if (status.turnNumber !== Main.game.turnNumber) {
+                    this.reloadPage();
+                }
+
+                status.players.forEach(playerData => {
+                    Main.game.getPlayer(playerData.color).ready = playerData.ready;
+                });
+                Main.printPlayersStatus();
+            });
+        }
+
+        private updateWhileGameStopped() {
+            if (Main.game.started) {
+                throw "Cannot update the players once the game has been started.";
+            }
+
+            GameService.getStatus().then(status => {
+                if (status.players.length > Main.game.players.length) {
+                    status.players.forEach(playerData => {
+                        if (Main.game.getPlayer(playerData.color) === null) {
+                            const player = new Player(playerData);
+                            Main.game.players.push(player);
+                        }
+                    });
+                    Main.printPlayersStatus();
+                    Main.printPlayersPoints();
+                }
             });
         }
     }

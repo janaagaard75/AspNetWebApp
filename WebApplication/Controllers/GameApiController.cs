@@ -41,6 +41,13 @@ namespace CocaineCartels.WebApplication.Controllers
             return state;
         }
 
+        [HttpGet, Route("api/status")]
+        public Status GetStatus()
+        {
+            Status status = new Status(Game.Instance.Players, Game.Instance.TurnNumber);
+            return status;
+        }
+
         [HttpGet, Route("api/notready")]
         public void NotReady()
         {
@@ -74,12 +81,6 @@ namespace CocaineCartels.WebApplication.Controllers
         {
             Game.Instance.PerformTurn();
             return GetGameState();
-        }
-
-        [HttpGet, Route("api/players")]
-        public IEnumerable<Player> GetPlayers()
-        {
-            return Game.Instance.Players;
         }
 
         [HttpGet, Route("api/reset")]
