@@ -2,6 +2,23 @@
     "use strict";
 
     export class Utilities {
+        public static addClass(elementId: string, className: string) {
+            this.getElement(elementId).classList.add(className);
+        }
+
+        public static disableElement(elementId: string) {
+            this.getElement(elementId).setAttribute("disabled", "disabled");
+        }
+
+        public static enableElement(elementId: string) {
+            this.getElement(elementId).removeAttribute("disabled");
+        }
+
+        public static getElement(elementId: string): HTMLElement {
+            const element = document.getElementById(elementId);
+            return element;
+        }
+
         public static flatten<T>(doubleArray: Array<Array<T>>): Array<T> {
             const flattened = Array.prototype.concat.apply([], doubleArray);
             return flattened;
@@ -48,6 +65,10 @@
                 (a.y + b.y) / 2
             );
             return mid;
+        }
+
+        public static removeClass(elementId: string, className: string) {
+            this.getElement(elementId).classList.remove(className);
         }
 
         /** Treats a position as a 2D vector with (0,0) as origin and returns a new vector that is rotated 90 degrees counter clockwize. */

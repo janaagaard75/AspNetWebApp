@@ -95,8 +95,7 @@ module CocaineCartels {
                 this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
                 this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
-                const playerColor = document.getElementById("playerColor");
-                playerColor.setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
+                Utilities.getElement("playerColor").setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
 
                 const commandElements = document.getElementsByClassName("commands");
                 for (let i = 0; i < commandElements.length; i++) {
@@ -104,11 +103,16 @@ module CocaineCartels {
                 }
 
                 if (Main.game.started) {
-                    document.getElementById("readyButton").removeAttribute("disabled");
-                    document.getElementById("startGameButton").setAttribute("disabled", "disabled");
-                    document.getElementById("startGameButton").setAttribute("title", "The game is already started.");
+                    Utilities.enableElement("readyButton");
+                    Utilities.getElement("startGameButton").setAttribute("title", "The game is already started.");
+
+                    if (Main.currentPlayer.ready) {
+                        Utilities.addClass("readyButton", "active");
+                    } else {
+                        Utilities.removeClass("readyButton", "active");
+                    }
                 } else {
-                    document.getElementById("readyButton").setAttribute("disabled", "disabled");
+                    Utilities.disableElement("readyButton");
                 }
 
                 Main.printNumberOfMovesLeft();
@@ -116,16 +120,16 @@ module CocaineCartels {
                 Main.printPlayersPoints();
 
                 if (Main.currentPlayer.administrator) {
-                    document.getElementById("administratorCommands").classList.remove("hidden");
+                    Utilities.removeClass("administratorCommands", "hidden");
                 } else {
-                    document.getElementById("administratorCommands").classList.add("hidden");
+                    Utilities.addClass("administratorCommands", "hidden");
                 }
 
                 this.setActiveBoard(4);
 
                 const widthInPixels = `${CanvasSettings.width}px`;
-                document.getElementById("playerCommands").style.width = widthInPixels;
-                document.getElementById("administratorCommands").style.width = widthInPixels;
+                Utilities.getElement("playerCommands").style.width = widthInPixels;
+                Utilities.getElement("administratorCommands").style.width = widthInPixels;
 
                 window.setInterval(() => this.tick(), 1000);
             });
