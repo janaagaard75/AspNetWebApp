@@ -46,6 +46,8 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
+        private readonly object TurnLock = new object();
+
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
             if (NumberOfPlayers == MaximumNumberOfPlayers)
@@ -239,58 +241,69 @@ namespace CocaineCartels.BusinessLogic
         /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
         public void PerformTurn()
         {
-            // NextTurn now becomes the previous turn.
-            PreviousTurn = NextTurn.Clone();
-
-            // Remove all the commands on the previous turn board.
-            PreviousTurn.AllUnits.ForEach(unit =>
+            lock (TurnLock)
             {
-                unit.RemoveCommands();
-            });
+                // NextTurn now becomes the previous turn.
+                PreviousTurn = NextTurn.Clone();
 
-            // Place all new units, removing the place commands.
-            var unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
-            unitsToPlace.ForEach(unit =>
+                // Remove all the commands on the previous turn board.
+                PreviousTurn.AllUnits.ForEach(unit =>
+                {
+                    unit.RemoveCommands();
+                });
+
+                // Place all new units, removing the place commands.
+                var unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+                unitsToPlace.ForEach(unit =>
+                {
+                    NextTurn.NewUnits.Remove(unit);
+                    unit.PlaceCommand.On.AddUnit(unit);
+                    unit.RemovePlaceCommand();
+                });
+                PreviousTurnShowingPlaceCommands = NextTurn.Clone();
+
+                // Remove all the move commands on the board showing where the units have been placed.
+                PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit =>
+                {
+                    unit.RemoveMoveCommand();
+                });
+
+                // Move all the units, keeping the move commands.
+                var unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
+                unitsToMove.ForEach(unit =>
+                {
+                    unit.Cell.RemoveUnit(unit);
+                    unit.MoveCommand.To.AddUnit(unit);
+                });
+                PreviousTurnShowingMoveCommands = NextTurn.Clone();
+
+                // Remove the move commands on the final board.
+                NextTurn.UnitsOnCells.ForEach(unit =>
+                {
+                    unit.RemoveMoveCommand();
+                });
+
+                NextTurn.Fight();
+
+                // Assign new units to the players, add points to them and set their ready state to false.
+                Players.ForEach(player =>
+                {
+                    NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
+                    AddPointsToPlayer(player);
+                    player.CommandsSentOn = null;
+                    player.Ready = false;
+                });
+
+                TurnNumber++;
+            }
+        }
+
+        private void PerformTurnIfAllPlayersAreReady()
+        {
+            if (Players.All(player => player.Ready))
             {
-                NextTurn.NewUnits.Remove(unit);
-                unit.PlaceCommand.On.AddUnit(unit);
-                unit.RemovePlaceCommand();
-            });
-            PreviousTurnShowingPlaceCommands = NextTurn.Clone();
-
-            // Remove all the move commands on the board showing where the units have been placed.
-            PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit =>
-            {
-                unit.RemoveMoveCommand();
-            });
-
-            // Move all the units, keeping the move commands.
-            var unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
-            unitsToMove.ForEach(unit =>
-            {
-                unit.Cell.RemoveUnit(unit);
-                unit.MoveCommand.To.AddUnit(unit);
-            });
-            PreviousTurnShowingMoveCommands = NextTurn.Clone();
-
-            // Remove the move commands on the final board.
-            NextTurn.UnitsOnCells.ForEach(unit =>
-            {
-                unit.RemoveMoveCommand();
-            });
-
-            NextTurn.Fight();
-
-            // Assign new units to the players, add points to them and set their ready state to false.
-            Players.ForEach(player =>
-            {
-                NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
-                AddPointsToPlayer(player);
-                player.CommandsSentOn = null;
-                player.Ready = false;
-            });
-
-            TurnNumber++;
+                PerformTurn();
+            }
         }
 
         public void ResetGame()

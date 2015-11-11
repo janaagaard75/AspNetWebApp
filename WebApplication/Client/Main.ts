@@ -235,11 +235,13 @@ module CocaineCartels {
                 }
 
                 if (Main.game.started) {
+                    // If the game has been started, update the players' ready status.
                     status.players.forEach(playerData => {
                         const player = Main.game.getPlayer(playerData.color);
                         player.ready = playerData.ready;
                     });
                 } else {
+                    // If the game hasn't been started yet, update the list of players.
                     if (status.players.length > Main.game.players.length) {
                         status.players.forEach(playerData => {
                             if (Main.game.getPlayer(playerData.color) === null) {
