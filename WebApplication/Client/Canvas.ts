@@ -169,11 +169,13 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
-            const fillColor = unit.placeCommand === null ? unit.color : unit.placedColor;
-            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
+
+            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-            const strokeColor = "#999";
+
+            const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
+            const strokeColor = (unit.cell === null || unit.placeCommand !== null) ? "#000" : "#999";
 
             const circle = new Konva.Circle({
                 draggable: this.interactive && ownedByThisPlayer,

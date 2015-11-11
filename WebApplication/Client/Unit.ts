@@ -87,9 +87,10 @@ module CocaineCartels {
                 return;
             }
 
-            if (this.cell !== null) {
-                throw "Cannot assign a place command to a unit that already is placed on a cell.";
-            }
+            // This has been removed for now to allow new units to be highlighted on the second board.
+            //if (this.cell !== null) {
+            //    throw "Cannot assign a place command to a unit that already is placed on a cell.";
+            //}
 
             this._placeCommand = newPlaceCommand;
         }
