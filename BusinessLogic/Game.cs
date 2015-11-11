@@ -25,7 +25,10 @@ namespace CocaineCartels.BusinessLogic
             new PlayerColors("#f0f", "#fff")
         };
 
+        private readonly object AddPlayerLock = new object();
+
         private int MaximumNumberOfPlayers => PlayersColors.Length;
+
         private int NumberOfPlayers => Players.Count;
 
         /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
@@ -50,16 +53,24 @@ namespace CocaineCartels.BusinessLogic
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
-            if (NumberOfPlayers == MaximumNumberOfPlayers)
+            lock (AddPlayerLock)
             {
-                throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
+                if (NumberOfPlayers == MaximumNumberOfPlayers)
+                {
+                    throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
+                }
+
+                if (Started)
+                {
+                    throw new ApplicationException("Cannot add players to a game that has started.");
+                }
+
+                bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
+                Player player = new Player(administrator, PlayersColors[NumberOfPlayers], ipAddress, userAgent);
+                Players.Add(player);
+
+                return player;
             }
-
-            bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
-            Player player = new Player(administrator, PlayersColors[NumberOfPlayers], ipAddress, userAgent);
-            Players.Add(player);
-
-            return player;
         }
 
         /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
@@ -322,6 +333,8 @@ namespace CocaineCartels.BusinessLogic
             {
                 player.Ready = isReady;
             });
+
+            PerformTurnIfAllPlayersAreReady();
         }
 
         public void StartGame()
