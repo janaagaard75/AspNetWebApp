@@ -76,13 +76,6 @@ namespace CocaineCartels.WebApplication.Controllers
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);
         }
 
-        [HttpGet, Route("api/performturn")]
-        public GameState PerformTurn()
-        {
-            Game.Instance.PerformTurn();
-            return GetGameState();
-        }
-
         [HttpGet, Route("api/reset")]
         public void ResetGame()
         {

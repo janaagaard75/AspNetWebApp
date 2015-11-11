@@ -23,13 +23,6 @@
             return HttpClient.get<void>("/api/notready");
         }
 
-        public static performTurn(): Promise<GameState> {
-            return HttpClient.get<IGameState>("/api/performturn").then(gameStateData => {
-                const gameState = new GameState(gameStateData);
-                return gameState;
-            });
-        }
-
         public static resetGame(): Promise<void> {
             return HttpClient.get<void>("/api/reset");
         }

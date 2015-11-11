@@ -39,19 +39,6 @@ module CocaineCartels {
             return inDemoMode;
         }
 
-        public performTurn() {
-            // Start by double checking that all players are ready.
-            if (!this.allPlayersAreReady()) {
-                if (!confirm("Not all players are ready. Continue anyways?")) {
-                    return;
-                }
-            }
-
-            GameService.performTurn().then(() => {
-                this.reloadPage();
-            });
-        }
-
         private getCanvasId(canvasNumber: number) {
             const canvasId = `${CanvasSettings.canvasIdTemplate}${canvasNumber}`;
             return canvasId;

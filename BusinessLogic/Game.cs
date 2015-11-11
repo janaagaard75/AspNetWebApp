@@ -250,7 +250,7 @@ namespace CocaineCartels.BusinessLogic
 
         /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
         /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
-        public void PerformTurn()
+        private void PerformTurn()
         {
             lock (TurnLock)
             {
