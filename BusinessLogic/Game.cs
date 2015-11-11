@@ -41,7 +41,7 @@ namespace CocaineCartels.BusinessLogic
         private Board NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
-        public bool Started => TurnNumber == 0;
+        public bool Started => TurnNumber > 0;
 
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }

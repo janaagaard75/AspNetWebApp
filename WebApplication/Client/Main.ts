@@ -3,46 +3,7 @@ module CocaineCartels {
 
     export class Main {
         constructor() {
-            this.updateGameState().then(() => {
-                this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
-                this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
-                this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
-                this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
-
-                const playerColor = document.getElementById("playerColor");
-                playerColor.setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
-
-                const commandElements = document.getElementsByClassName("commands");
-                for (let i = 0; i < commandElements.length; i++) {
-                    commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
-                }
-
-                if (Main.game.started) {
-                    document.getElementById("readyButton").removeAttribute("disabled");
-                    document.getElementById("startGameButton").setAttribute("disabled", "disabled");
-                    document.getElementById("startGameButton").setAttribute("title", "The game is already started.");
-                } else {
-                    document.getElementById("readyButton").setAttribute("disabled", "disabled");
-                }
-
-                Main.printNumberOfMovesLeft();
-                Main.printPlayersStatus();
-                Main.printPlayersPoints();
-
-                if (Main.currentPlayer.administrator) {
-                    document.getElementById("administratorCommands").classList.remove("hidden");
-                } else {
-                    document.getElementById("administratorCommands").classList.add("hidden");
-                }
-
-                this.setActiveBoard(4);
-
-                const widthInPixels = `${CanvasSettings.width}px`;
-                document.getElementById("playerCommands").style.width = widthInPixels;
-                document.getElementById("administratorCommands").style.width = widthInPixels;
-
-                window.setInterval(() => this.tick(), 1000);
-            });
+            this.refreshGame();
         }
 
         private canvas1: Canvas;
@@ -125,6 +86,49 @@ module CocaineCartels {
                 }
             });
             document.getElementById("playersStatus").innerHTML = playersStatus;
+        }
+
+        private refreshGame() {
+            this.updateGameState().then(() => {
+                this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
+                this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
+                this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
+                this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
+
+                const playerColor = document.getElementById("playerColor");
+                playerColor.setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
+
+                const commandElements = document.getElementsByClassName("commands");
+                for (let i = 0; i < commandElements.length; i++) {
+                    commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
+                }
+
+                if (Main.game.started) {
+                    document.getElementById("readyButton").removeAttribute("disabled");
+                    document.getElementById("startGameButton").setAttribute("disabled", "disabled");
+                    document.getElementById("startGameButton").setAttribute("title", "The game is already started.");
+                } else {
+                    document.getElementById("readyButton").setAttribute("disabled", "disabled");
+                }
+
+                Main.printNumberOfMovesLeft();
+                Main.printPlayersStatus();
+                Main.printPlayersPoints();
+
+                if (Main.currentPlayer.administrator) {
+                    document.getElementById("administratorCommands").classList.remove("hidden");
+                } else {
+                    document.getElementById("administratorCommands").classList.add("hidden");
+                }
+
+                this.setActiveBoard(4);
+
+                const widthInPixels = `${CanvasSettings.width}px`;
+                document.getElementById("playerCommands").style.width = widthInPixels;
+                document.getElementById("administratorCommands").style.width = widthInPixels;
+
+                window.setInterval(() => this.tick(), 1000);
+            });
         }
 
         private reloadPage() {
@@ -219,24 +223,23 @@ module CocaineCartels {
 
         public startGame() {
             GameService.startGame().then(() => {
-                this.reloadPage();
+                this.refreshGame();
             });
         }
 
         public tick() {
-            if (Main.game.started) {
-                GameService.getStatus().then(status => {
-                    if (status.turnNumber !== Main.game.turnNumber) {
-                        this.reloadPage();
-                    }
+            GameService.getStatus().then(status => {
+                if (status.turnNumber !== Main.game.turnNumber) {
+                    this.refreshGame();
+                    return;
+                }
 
+                if (Main.game.started) {
                     status.players.forEach(playerData => {
-                        Main.game.getPlayer(playerData.color).ready = playerData.ready;
+                        const player = Main.game.getPlayer(playerData.color);
+                        player.ready = playerData.ready;
                     });
-                    Main.printPlayersStatus();
-                });
-            } else {
-                GameService.getStatus().then(status => {
+                } else {
                     if (status.players.length > Main.game.players.length) {
                         status.players.forEach(playerData => {
                             if (Main.game.getPlayer(playerData.color) === null) {
@@ -244,11 +247,12 @@ module CocaineCartels {
                                 Main.game.players.push(player);
                             }
                         });
-                        Main.printPlayersStatus();
                         Main.printPlayersPoints();
                     }
-                });
-            }
+                }
+
+                Main.printPlayersStatus();
+            });
         }
 
         private updateGameState(): Promise<void> {
