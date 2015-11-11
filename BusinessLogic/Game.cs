@@ -65,8 +65,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Cannot add players to a game that has started.");
                 }
 
-                bool administrator = NumberOfPlayers == 0; // The first player to join becomes the administrator.
-                Player player = new Player(administrator, PlayersColors[NumberOfPlayers], ipAddress, userAgent);
+                Player player = new Player(PlayersColors[NumberOfPlayers], ipAddress, userAgent);
                 Players.Add(player);
 
                 return player;

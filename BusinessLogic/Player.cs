@@ -6,9 +6,8 @@ namespace CocaineCartels.BusinessLogic
 {
     public class Player : IEquatable<Player>
     {
-        internal Player(bool administrator, PlayerColors colors, IPAddress ipAddress, string userAgent)
+        internal Player(PlayerColors colors, IPAddress ipAddress, string userAgent)
         {
-            Administrator = administrator;
             Color = colors.MainColor;
             CommandsSentOn = null;
             IpAddress = ipAddress;
@@ -18,8 +17,6 @@ namespace CocaineCartels.BusinessLogic
             Points = 0;
             Ready = false;
         }
-
-        public bool Administrator { get; }
 
         /// <summary>The main color also identifies a player, so use this property the player ID.</summary>
         public string Color { get; }

@@ -204,8 +204,12 @@
                 document.body.classList.add("grabbing-cursor");
 
                 var allowedCells: Array<Cell>;
-                if (unit.cell === null && unit.placeCommand === null) {
-                    allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                if (unit.cell === null) {
+                    if (unit.placeCommand === null) {
+                        allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                    } else {
+                        allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                    }
                 } else {
                     allowedCells = Canvas.board.allowedCellsForMove(unit);
                 }

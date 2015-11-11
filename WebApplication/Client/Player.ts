@@ -5,7 +5,6 @@ module CocaineCartels {
         constructor(
             playerData: IPlayer
         ) {
-            this.administrator = playerData.administrator;
             this.color = playerData.color;
             this.commandsSentOn = Player.parseDateString(playerData.commandsSentOn);
             this.points = playerData.points;
@@ -13,7 +12,6 @@ module CocaineCartels {
             this.textColor = playerData.textColor;
         }
 
-        public administrator: boolean;
         public color: string;
         public commandsSentOn: Date;
         public points: number;

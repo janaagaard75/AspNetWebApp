@@ -106,12 +106,6 @@ module CocaineCartels {
                 Main.printPlayersStatus();
                 Main.printPlayersPoints();
 
-                if (Main.currentPlayer.administrator) {
-                    Utilities.removeClass("administratorCommands", "hidden");
-                } else {
-                    Utilities.addClass("administratorCommands", "hidden");
-                }
-
                 this.setActiveBoard(4);
 
                 const widthInPixels = `${CanvasSettings.width}px`;
