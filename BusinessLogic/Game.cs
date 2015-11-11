@@ -41,7 +41,7 @@ namespace CocaineCartels.BusinessLogic
         private Board NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
-        public bool Started { get; private set; }
+        public bool Started => TurnNumber == 0;
 
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
@@ -300,7 +300,6 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurnShowingMoveCommands = null;
             NextTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
-            Started = false;
             TurnNumber = 0;
         }
 
@@ -326,7 +325,6 @@ namespace CocaineCartels.BusinessLogic
             }
 
             TurnNumber = 1;
-            Started = true;
         }
 
         public void UpdateCommandsSentOn(string playerColor)
