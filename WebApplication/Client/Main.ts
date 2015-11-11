@@ -23,7 +23,7 @@ module CocaineCartels {
         }
 
         public confirmResetGame() {
-            if (Main.game.started) {
+            if (Main.game !== undefined && Main.game.started) {
                 if (!window.confirm("Sure you want to reset the game?")) {
                     return;
                 }
