@@ -103,7 +103,7 @@ module CocaineCartels {
                 } else {
                     Utilities.disableElement("readyButton");
 
-                    Utilities.disableElement("startGameButton");
+                    Utilities.enableElement("startGameButton");
                     Utilities.getElement("startGameButton").removeAttribute("title");
                 }
 
