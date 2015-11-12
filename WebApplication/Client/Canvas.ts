@@ -128,7 +128,7 @@
                 pointerWidth: CanvasSettings.arrowPointerWidth,
                 points: [from.x, from.y, to.x, to.y],
                 shadowBlur: CanvasSettings.arrowShadowBlurRadius,
-                shadowColor: "#000",
+                shadowColor: "#999",
                 stroke: command.color,
                 strokeWidth: CanvasSettings.arrowWidth,
                 x: origin.x,
