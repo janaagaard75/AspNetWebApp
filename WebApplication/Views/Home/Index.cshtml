@@ -4,15 +4,15 @@
 <div id="gameStopped">
     <div id="gameStartLobby" class="container-fluid" style="background-color: white">
         <h1>Cocaine Cartels</h1>
-        <p>Waiting for players to join&hellip;</p>
-        <p>Your color: XXX</p>
-        <p>X players have joined so far.</p>
-        <p>Player colors: XXX XXX XXX XXX</p>
+        <p>Waiting for players to join. <span id="startNumberOfPlayers"></span> players have joined so far.</p>
+        <p>Your color: <span id="startPlayerColor" class="label">&nbsp;&nbsp;&nbsp;</span></p>
+        <p></p>
+        <p>Players joined: <span id="startPlayersColors"></span></p>
         <p><button class="btn btn-default btn-lg">All players seem to be here</button></p>
         <p>The game will start when all players have pressed the button above. Currently waiting for players XX and XX to do so.</p>
         <h4>Settings</h4>
         <p>Each turn all players get @Settings.NewUnitsPerTurn new units plus one extra unit for every @Settings.NewUnitPerCellsControlled cells controlled.</p>
-        <p>Up to X move commands allowed per turn.</p>
+        <p>Up to @Settings.MovesPerTurn move commands allowed per turn.</p>
         <p>The board size is @Settings.GridSize .</p>
         <p>There are X bonus points per turn for controlling the center cell.</p>
         <p>The first player to reaxh @Settings.PointsToWinTheGame points wins.</p>

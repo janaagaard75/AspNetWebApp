@@ -135,6 +135,7 @@ module CocaineCartels {
                     Utilities.removeClass("gameStopped", "hidden");
                 }
 
+                this.printStartPage();
 
                 window.setTimeout(() => this.tick(), 1000);
             });
@@ -248,6 +249,8 @@ module CocaineCartels {
                         const player = Main.game.getPlayer(playerData.color);
                         player.ready = playerData.ready;
                     });
+
+                    Main.printPlayersStatus();
                 } else {
                     // If the game hasn't been started yet, update the list of players.
                     if (status.players.length > Main.game.players.length) {
@@ -257,14 +260,22 @@ module CocaineCartels {
                                 Main.game.players.push(player);
                             }
                         });
-                        Main.printPlayersPoints();
+
+                        this.printStartPage();
                     }
                 }
-
-                Main.printPlayersStatus();
             });
 
             window.setTimeout(() => this.tick(), 1000);
+        }
+
+        private printStartPage() {
+            Utilities.getElement("startNumberOfPlayers").innerHTML = Main.game.players.length.toString();
+
+            Utilities.getElement("startPlayerColor").style.backgroundColor = Main.currentPlayer.color;
+
+            const playersColors = Main.game.players.map(player => `<span class="label" style="background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`).join(" ");
+            Utilities.getElement("startPlayersColors").innerHTML = playersColors;
         }
 
         private updateGameState(): Promise<void> {
