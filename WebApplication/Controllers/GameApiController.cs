@@ -9,34 +9,45 @@ namespace CocaineCartels.WebApplication.Controllers
 {
     public class GameApiController : ApiController
     {
+        private Player _CurrentPlayer;
+
+        private Player CurrentPlayer
+        {
+            get
+            {
+                if (_CurrentPlayer == null)
+                {
+                    if (HttpContext.Current == null || HttpContext.Current.Request.UserHostAddress == null)
+                    {
+                        throw new ApplicationException("HttpContext.Current or HttpContext.Current.Request.UserHostAddress is null.");
+                    }
+
+                    IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
+                    string userAgent = HttpContext.Current.Request.UserAgent;
+                    _CurrentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
+                }
+
+                return _CurrentPlayer;
+            }
+        }
+
+        [HttpGet, Route("api/allplayershere")]
+        public void AllPlayersSeemToBeHere()
+        {
+            Game.Instance.AllPlayersSeemToBeHere(CurrentPlayer);
+        }
+
         [HttpGet, Route("api/currentplayercolor")]
         public string GetCurrentPlayerColor()
         {
-            if (HttpContext.Current.Request.UserHostAddress == null)
-            {
-                throw new ApplicationException("HttpContext.Current.Request.UserHostAddress is null.");
-            }
-
-            IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
-            string userAgent = HttpContext.Current.Request.UserAgent;
-
-            Player currentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
-            return currentPlayer.Color;
+            return CurrentPlayer.Color;
         }
 
         [HttpGet, Route("api/gamestate")]
         public GameState GetGameState()
         {
-            if (HttpContext.Current.Request.UserHostAddress == null)
-            {
-                throw new ApplicationException("HttpContext.Current.Request.UserHostAddress is null.");
-            }
-
-            IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
-            string userAgent = HttpContext.Current.Request.UserAgent;
-            Player currentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
-            Board currentTurn = Game.Instance.GetCurrentTurn(currentPlayer);
-            GameState state = new GameState(currentPlayer.Color, currentTurn, Game.Instance);
+            Board currentTurn = Game.Instance.GetCurrentTurn(CurrentPlayer);
+            GameState state = new GameState(CurrentPlayer.Color, currentTurn, Game.Instance);
             return state;
         }
 

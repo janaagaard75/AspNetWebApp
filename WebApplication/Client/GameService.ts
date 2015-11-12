@@ -2,6 +2,10 @@
     "use strict";
 
     export class GameService {
+        public static allPlayersSeemToBehere(): Promise<void> {
+            return HttpClient.get<void>("/api/allplayershere");
+        }
+
         public static getCurrentPlayer(): Promise<string> {
             return HttpClient.get<string>("/api/currentplayercolor").then(color => {
                 return color;

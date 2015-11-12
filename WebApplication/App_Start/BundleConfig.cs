@@ -11,6 +11,7 @@ namespace CocaineCartels.WebApplication
 
             bundles.Add(new ScriptBundle("~/bundles/scripts")
                 .Include(
+                    "~/scripts/jquery-{version}.js",
                     "~/scripts/konva.js",
                     "~/scripts/tinycolor.js",
                     "~/scripts/combined.js"));

@@ -186,6 +186,11 @@ namespace CocaineCartels.BusinessLogic
             player.Points += pointsThisTurn;
         }
 
+        public void AllPlayersSeemToBeHere(Player player)
+        {
+            player.Ready = true;
+        }
+
         /// <summary>Returns the NextTurn board, but only with the specified player's commands.</summary>
         public Board GetCurrentTurn(Player player)
         {
