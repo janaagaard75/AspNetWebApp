@@ -117,7 +117,7 @@ module CocaineCartels {
                 Utilities.getElement("playerCommands").style.width = widthInPixels;
                 Utilities.getElement("administratorCommands").style.width = widthInPixels;
 
-                window.setInterval(() => this.tick(), 1000);
+                window.setTimeout(() => this.tick(), 1000);
             });
         }
 
@@ -244,6 +244,8 @@ module CocaineCartels {
 
                 Main.printPlayersStatus();
             });
+
+            window.setTimeout(() => this.tick(), 1000);
         }
 
         private updateGameState(): Promise<void> {
