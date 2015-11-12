@@ -259,10 +259,32 @@
                     const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
                     if (currentCell.dropAllowed) {
-                        if (unit.cell === null && unit.placeCommand === null) {
-                            unit.setPlaceCommand(currentCell);
-                            Main.setCurrentPlayerNotReadyIfNecessary();
+                        if (unit.cell === null) {
+                            if (unit.placeCommand === null) {
+                                // It's a place.
+                                unit.setPlaceCommand(currentCell);
+                                Main.setCurrentPlayerNotReadyIfNecessary();
+                            } else {
+                                // This might be a re-place of a new unit.
+                                const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
+                                if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
+                                    // It's a re-place.
+                                    unit.moveCommand = null;
+                                    unit.setPlaceCommand(currentCell);
+                                } else {
+                                    // It's a move.
+                                    let from: Cell;
+                                    if (unit.cell === null) {
+                                        from = unit.placeCommand.on;
+                                    } else {
+                                        from = unit.cell;
+                                    }
+
+                                    unit.setMoveCommand(from, currentCell);
+                                }
+                            }
                         } else {
+                            // It's a move.
                             let from: Cell;
                             if (unit.cell === null) {
                                 from = unit.placeCommand.on;
@@ -271,8 +293,9 @@
                             }
 
                             unit.setMoveCommand(from, currentCell);
-                            Main.setCurrentPlayerNotReadyIfNecessary();
                         }
+
+                        Main.setCurrentPlayerNotReadyIfNecessary();
                     }
 
                     currentCell.hovered = false;
