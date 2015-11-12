@@ -1,4 +1,7 @@
-﻿<div id="gameStopped">
+﻿@using CocaineCartels.BusinessLogic
+@using Newtonsoft.Json
+
+<div id="gameStopped">
     <div id="gameStartLobby" class="container-fluid" style="background-color: white">
         <h1>Cocaine Cartels</h1>
         <p>Waiting for players to join&hellip;</p>
@@ -7,13 +10,12 @@
         <p>Player colors: XXX XXX XXX XXX</p>
         <p><button class="btn btn-default btn-lg">All players seem to be here</button></p>
         <p>The game will start when all players have pressed the button above. Currently waiting for players XX and XX to do so.</p>
-        <h4>Rules</h4>
-        <p>Minimum X new units each turn to all players.</p>
-        <p>Number of extra new unit for each X cells controlled.</p>
+        <h4>Settings</h4>
+        <p>Each turn all players get @Settings.NewUnitsPerTurn new units plus one extra unit for every @Settings.NewUnitPerCellsControlled cells controlled.</p>
         <p>Up to X move commands allowed per turn.</p>
-        <p>The board size is X.</p>
-        <p>X bonus points for controlling the center cell.</p>
-        <p>The first player to reaxh X points wins.</p>
+        <p>The board size is @Settings.GridSize .</p>
+        <p>There are X bonus points per turn for controlling the center cell.</p>
+        <p>The first player to reaxh @Settings.PointsToWinTheGame points wins.</p>
     </div>
 </div>
 <div id="gameStarted">
@@ -21,7 +23,6 @@
     <div id="canvas2"></div>
     <div id="canvas3"></div>
     <div id="canvas4"></div>
-
     <div id="playerCommands" class="container-fluid player-commands">
         <div class="row">
             <div class="col-xs-4">
@@ -62,7 +63,14 @@
     </div>
 </div>
 
-@section scripts
+@section beforeScripts
+{
+    <script>
+        var serverSideSettings = @Html.Raw(JsonConvert.SerializeObject(new Settings()));
+    </script>
+}
+
+@section afterScripts
 {
     <script>
         var cocaineCartels = new CocaineCartels.Main();
