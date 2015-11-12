@@ -117,6 +117,16 @@ module CocaineCartels {
                 Utilities.getElement("playerCommands").style.width = widthInPixels;
                 Utilities.getElement("administratorCommands").style.width = widthInPixels;
 
+                const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
+                for (let i = 1; i <= 3; i++) {
+                    const boardButtonId = `boardButton${i}`;
+                    if (enableFirstThreeBoards) {
+                        Utilities.enableElement(boardButtonId);
+                    } else {
+                        Utilities.disableElement(boardButtonId);
+                    }
+                }
+
                 window.setTimeout(() => this.tick(), 1000);
             });
         }
