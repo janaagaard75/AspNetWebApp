@@ -83,29 +83,24 @@ module CocaineCartels {
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
                     this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
-                    Utilities.getElement("playerColor").setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
-
-                    const commandElements = document.getElementsByClassName("commands");
-                    for (let i = 0; i < commandElements.length; i++) {
-                        commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
-                    }
-
+                    $("#playerColor").css("background-color", Main.currentPlayer.color);
+                    $(".commands").css("width", `${CanvasSettings.width}px`);
                     if (Main.game.started) {
-                        Utilities.enableElement("readyButton");
+                        $("#readyButton").prop("disabled", false);
 
-                        Utilities.disableElement("startGameButton");
-                        Utilities.getElement("startGameButton").setAttribute("title", "The game is already started.");
+                        $("#startGameButton").prop("disabled", true);
+                        $("#startGameButton").attr("title", "The game is already started.");
 
                         if (Main.currentPlayer.ready) {
-                            Utilities.addClass("readyButton", "active");
+                            $("#readyButton").addClass("active");
                         } else {
-                            Utilities.removeClass("readyButton", "active");
+                            $("#readyButton").removeClass("active");
                         }
                     } else {
-                        Utilities.disableElement("readyButton");
+                        $("#readyButton").prop("disabled", true);
 
-                        Utilities.enableElement("startGameButton");
-                        Utilities.getElement("startGameButton").removeAttribute("title");
+                        $("#startGameButton").prop("disabled", false);
+                        $("#startGameButton").removeAttr("title");
                     }
 
                     Main.printNumberOfMovesLeft();
@@ -115,24 +110,21 @@ module CocaineCartels {
                     this.setActiveBoard(4);
 
                     const widthInPixels = `${CanvasSettings.width}px`;
-                    Utilities.getElement("playerCommands").style.width = widthInPixels;
-                    Utilities.getElement("administratorCommands").style.width = widthInPixels;
+                    $("#playerCommands").css("width", widthInPixels);
+                    $("administratorCommands").css("width", widthInPixels);
+                    $("#gameStartLobby").css("width", widthInPixels);
 
                     const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
-                        const boardButtonId = `boardButton${i}`;
-                        if (enableFirstThreeBoards) {
-                            Utilities.enableElement(boardButtonId);
-                        } else {
-                            Utilities.disableElement(boardButtonId);
-                        }
+                        const boardButtonId = `#boardButton${i}`;
+                        $(boardButtonId).prop("disabled", !enableFirstThreeBoards);
                     }
 
-                    Utilities.addClass("gameStopped", "hidden");
-                    Utilities.removeClass("gameStarted", "hidden");
+                    $("#gameStarted").removeClass("hidden");
+                    $("#gameStopped").addClass("hidden");
                 } else {
-                    Utilities.addClass("gameStarted", "hidden");
-                    Utilities.removeClass("gameStopped", "hidden");
+                    $("#gameStarted").addClass("hidden");
+                    $("#gameStopped").removeClass("hidden");
                 }
 
                 this.printStartPage();
@@ -270,12 +262,14 @@ module CocaineCartels {
         }
 
         private printStartPage() {
-            Utilities.getElement("startNumberOfPlayers").innerHTML = Main.game.players.length.toString();
+            $("#startNumberOfPlayers").val(Main.game.players.length.toString());
 
-            Utilities.getElement("startPlayerColor").style.backgroundColor = Main.currentPlayer.color;
+            $("#startPlayerColor").css("background-color", Main.currentPlayer.color);
 
-            const playersColors = Main.game.players.map(player => `<span class="label" style="background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`).join(" ");
-            Utilities.getElement("startPlayersColors").innerHTML = playersColors;
+            const playersColors = Main.game.players
+                .map(player => `<span class="label" style="background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`)
+                .join(" ");
+            $("#startPlayersColors").val(playersColors);
         }
 
         private updateGameState(): Promise<void> {
