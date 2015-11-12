@@ -77,55 +77,64 @@ module CocaineCartels {
 
         private refreshGame() {
             this.updateGameState().then(() => {
-                this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
-                this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
-                this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
-                this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
-
-                Utilities.getElement("playerColor").setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
-
-                const commandElements = document.getElementsByClassName("commands");
-                for (let i = 0; i < commandElements.length; i++) {
-                    commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
-                }
-
                 if (Main.game.started) {
-                    Utilities.enableElement("readyButton");
+                    this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
+                    this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
+                    this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
+                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
-                    Utilities.disableElement("startGameButton");
-                    Utilities.getElement("startGameButton").setAttribute("title", "The game is already started.");
+                    Utilities.getElement("playerColor").setAttribute("style", `background-color: ${Main.currentPlayer.color}`);
 
-                    if (Main.currentPlayer.ready) {
-                        Utilities.addClass("readyButton", "active");
-                    } else {
-                        Utilities.removeClass("readyButton", "active");
+                    const commandElements = document.getElementsByClassName("commands");
+                    for (let i = 0; i < commandElements.length; i++) {
+                        commandElements[i].setAttribute("style", `width: ${CanvasSettings.width}px`);
                     }
+
+                    if (Main.game.started) {
+                        Utilities.enableElement("readyButton");
+
+                        Utilities.disableElement("startGameButton");
+                        Utilities.getElement("startGameButton").setAttribute("title", "The game is already started.");
+
+                        if (Main.currentPlayer.ready) {
+                            Utilities.addClass("readyButton", "active");
+                        } else {
+                            Utilities.removeClass("readyButton", "active");
+                        }
+                    } else {
+                        Utilities.disableElement("readyButton");
+
+                        Utilities.enableElement("startGameButton");
+                        Utilities.getElement("startGameButton").removeAttribute("title");
+                    }
+
+                    Main.printNumberOfMovesLeft();
+                    Main.printPlayersStatus();
+                    Main.printPlayersPoints();
+
+                    this.setActiveBoard(4);
+
+                    const widthInPixels = `${CanvasSettings.width}px`;
+                    Utilities.getElement("playerCommands").style.width = widthInPixels;
+                    Utilities.getElement("administratorCommands").style.width = widthInPixels;
+
+                    const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
+                    for (let i = 1; i <= 3; i++) {
+                        const boardButtonId = `boardButton${i}`;
+                        if (enableFirstThreeBoards) {
+                            Utilities.enableElement(boardButtonId);
+                        } else {
+                            Utilities.disableElement(boardButtonId);
+                        }
+                    }
+
+                    Utilities.addClass("gameStopped", "hidden");
+                    Utilities.removeClass("gameStarted", "hidden");
                 } else {
-                    Utilities.disableElement("readyButton");
-
-                    Utilities.enableElement("startGameButton");
-                    Utilities.getElement("startGameButton").removeAttribute("title");
+                    Utilities.addClass("gameStarted", "hidden");
+                    Utilities.removeClass("gameStopped", "hidden");
                 }
 
-                Main.printNumberOfMovesLeft();
-                Main.printPlayersStatus();
-                Main.printPlayersPoints();
-
-                this.setActiveBoard(4);
-
-                const widthInPixels = `${CanvasSettings.width}px`;
-                Utilities.getElement("playerCommands").style.width = widthInPixels;
-                Utilities.getElement("administratorCommands").style.width = widthInPixels;
-
-                const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
-                for (let i = 1; i <= 3; i++) {
-                    const boardButtonId = `boardButton${i}`;
-                    if (enableFirstThreeBoards) {
-                        Utilities.enableElement(boardButtonId);
-                    } else {
-                        Utilities.disableElement(boardButtonId);
-                    }
-                }
 
                 window.setTimeout(() => this.tick(), 1000);
             });
