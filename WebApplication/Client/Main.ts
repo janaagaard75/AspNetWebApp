@@ -3,6 +3,7 @@ module CocaineCartels {
 
     export class Main {
         constructor() {
+            CanvasSettings.initialize(Settings.gridSize);
             this.refreshGame();
         }
 
@@ -77,6 +78,9 @@ module CocaineCartels {
 
         private refreshGame() {
             this.updateGameState().then(() => {
+                const widthInPixels = `${CanvasSettings.width}px`;
+                $("#administratorCommands").css("width", widthInPixels);
+
                 if (Main.game.started) {
                     this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
                     this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
@@ -84,7 +88,7 @@ module CocaineCartels {
                     this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
                     $("#playerColor").css("background-color", Main.currentPlayer.color);
-                    $(".commands").css("width", `${CanvasSettings.width}px`);
+                    $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);
 
@@ -109,10 +113,7 @@ module CocaineCartels {
 
                     this.setActiveBoard(4);
 
-                    const widthInPixels = `${CanvasSettings.width}px`;
                     $("#playerCommands").css("width", widthInPixels);
-                    $("administratorCommands").css("width", widthInPixels);
-                    $("#gameStartLobby").css("width", widthInPixels);
 
                     const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
@@ -123,6 +124,8 @@ module CocaineCartels {
                     $("#gameStarted").removeClass("hidden");
                     $("#gameStopped").addClass("hidden");
                 } else {
+                    $("#gameStartLobby").css("width", widthInPixels);
+
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
