@@ -98,12 +98,12 @@ namespace CocaineCartels.BusinessLogic
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits, int numberOfPlayers)
         {
-            Hex ne = new Hex(NextTurn.GridSize, 0, -NextTurn.GridSize);
-            Hex e = new Hex(NextTurn.GridSize, -NextTurn.GridSize, 0);
-            Hex se = new Hex(0, -NextTurn.GridSize, NextTurn.GridSize);
-            Hex sw = new Hex(-NextTurn.GridSize, 0, NextTurn.GridSize);
-            Hex w = new Hex(-NextTurn.GridSize, NextTurn.GridSize, 0);
-            Hex nw = new Hex(0, NextTurn.GridSize, -NextTurn.GridSize);
+            Hex ne = new Hex(Settings.GridSize, 0, -Settings.GridSize);
+            Hex e = new Hex(Settings.GridSize, -Settings.GridSize, 0);
+            Hex se = new Hex(0, -Settings.GridSize, Settings.GridSize);
+            Hex sw = new Hex(-Settings.GridSize, 0, Settings.GridSize);
+            Hex w = new Hex(-Settings.GridSize, Settings.GridSize, 0);
+            Hex nw = new Hex(0, Settings.GridSize, -Settings.GridSize);
 
             Hex startingHex;
             switch (playerNumber)

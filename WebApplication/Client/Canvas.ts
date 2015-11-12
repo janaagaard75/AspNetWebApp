@@ -11,7 +11,7 @@
             this.canvasId = canvasId;
             this.interactive = interactive;
             if (board !== null) {
-                CanvasSettings.initialize(board.gridSize);
+                CanvasSettings.initialize(Settings.gridSize);
                 this.drawBoard();
             }
         }

@@ -8,12 +8,10 @@ namespace CocaineCartels.BusinessLogic
         public Board(int gridSize)
         {
             Cells = InitializeCells(gridSize);
-            GridSize = gridSize;
             ResetNewUnits();
         }
 
         public readonly IEnumerable<Cell> Cells;
-        public readonly int GridSize;
         public List<Unit> NewUnits { get; private set; }
 
         internal IEnumerable<Unit> AllUnits

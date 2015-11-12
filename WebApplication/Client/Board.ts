@@ -18,13 +18,10 @@
                 const newUnit = new Unit(unitData, this, null);
                 this.newUnits.push(newUnit);
             });
-
-            this.gridSize = boardData.gridSize;
         }
 
         public cells: Array<Cell>;
         public newUnits: Array<Unit>;
-        public gridSize: number;
 
         public get moveCommands(): Array<MoveCommand> {
             const moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
