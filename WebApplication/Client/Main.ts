@@ -265,13 +265,11 @@ module CocaineCartels {
                         }
                     }
 
-                    // If the game hasn't been started yet, update the list of players.
                     if (update) {
+                        Main.game.players = [];
                         status.players.forEach(playerData => {
-                            if (Main.game.getPlayer(playerData.color) === null) {
-                                const player = new Player(playerData);
-                                Main.game.players.push(player);
-                            }
+                            const player = new Player(playerData);
+                            Main.game.players.push(player);
                         });
 
                         this.printStartPage();
