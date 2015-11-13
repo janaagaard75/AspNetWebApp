@@ -8,12 +8,12 @@
         <p>Your color: <span id="startPlayerColor" class="label">&nbsp;&nbsp;&nbsp;</span></p>
         <p></p>
         <p>Players joined: <span id="startPlayersColors"></span></p>
-        <p><button class="btn btn-default btn-lg">All players seem to be here</button></p>
-        <p>The game will start when all players have pressed the button above. Currently waiting for players XX and XX to do so.</p>
+        <p><button id="allPlayersSeemToBeHereButton" onclick="cocaineCartels.allPlayersSeemToBeHereClicked();" class="btn btn-default btn-lg">All players seem to be here</button></p>
+        <p>The game will start when all players have pressed the button above.</p>
         <h4>Settings</h4>
         <p>Each turn all players get @Settings.NewUnitsPerTurn new units plus one extra unit for every @Settings.NewUnitPerCellsControlled cells controlled.</p>
         <p>Up to @Settings.MovesPerTurn move commands allowed per turn.</p>
-        <p>The board size is @Settings.GridSize .</p>
+        <p>The board size is @Settings.GridSize.</p>
         <p>There are X bonus points per turn for controlling the center cell.</p>
         <p>The first player to reaxh @Settings.PointsToWinTheGame points wins.</p>
     </div>
@@ -57,20 +57,17 @@
     </div>
 </div>
 <div id="administratorCommands" class="container-fluid administrator-commands">
-    <div class="btn-group">
-        <button id="startGameButton" onclick="cocaineCartels.startGame();" class="btn btn-default">Start Game</button>
-        <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default">Reset Game</button>
-    </div>
+    <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default">Reset Game</button>
 </div>
 
-@section beforeScripts
+@section beforeBundledScripts
 {
     <script>
         var serverSideSettings = @Html.Raw(JsonConvert.SerializeObject(new Settings()));
     </script>
 }
 
-@section afterScripts
+@section afterBundledScripts
 {
     <script>
         var cocaineCartels = new CocaineCartels.Main();

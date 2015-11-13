@@ -8,8 +8,8 @@
 </head>
 <body>
     @RenderBody()
-    @RenderSection("beforeScripts", required: false)
+    @RenderSection("beforeBundledScripts", required: false)
     @Scripts.Render("~/bundles/scripts")
-    @RenderSection("afterScripts", required: false)
+    @RenderSection("afterBundledScripts", required: false)
 </body>
 </html>

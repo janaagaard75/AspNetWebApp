@@ -27,6 +27,8 @@ namespace CocaineCartels.BusinessLogic
 
         private readonly object AddPlayerLock = new object();
 
+        private readonly object SetAllPlayersSeemToBeHereLock = new object();
+
         private int MaximumNumberOfPlayers => PlayersColors.Length;
 
         private int NumberOfPlayers => Players.Count;
@@ -186,11 +188,6 @@ namespace CocaineCartels.BusinessLogic
             player.Points += pointsThisTurn;
         }
 
-        public void AllPlayersSeemToBeHere(Player player)
-        {
-            player.Ready = true;
-        }
-
         /// <summary>Returns the NextTurn board, but only with the specified player's commands.</summary>
         public Board GetCurrentTurn(Player player)
         {
@@ -334,6 +331,19 @@ namespace CocaineCartels.BusinessLogic
             TurnNumber = 0;
         }
 
+        public void SetAllPlayersSeemToBeHere(Player player, bool allSeemToBeHere)
+        {
+            lock (SetAllPlayersSeemToBeHereLock)
+            {
+                player.Ready = allSeemToBeHere;
+
+                if (Players.All(p => p.Ready))
+                {
+                    StartGame();
+                }
+            }
+        }
+
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
         {
             Players.Where(player => player.Color == playerColor).ForEach(player =>
@@ -344,7 +354,7 @@ namespace CocaineCartels.BusinessLogic
             PerformTurnIfAllPlayersAreReady();
         }
 
-        public void StartGame()
+        private void StartGame()
         {
             if (Started)
             {

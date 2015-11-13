@@ -31,12 +31,6 @@ namespace CocaineCartels.WebApplication.Controllers
             }
         }
 
-        [HttpGet, Route("api/allplayershere")]
-        public void AllPlayersSeemToBeHere()
-        {
-            Game.Instance.AllPlayersSeemToBeHere(CurrentPlayer);
-        }
-
         [HttpGet, Route("api/currentplayercolor")]
         public string GetCurrentPlayerColor()
         {
@@ -92,10 +86,10 @@ namespace CocaineCartels.WebApplication.Controllers
             Game.Instance.ResetGame();
         }
 
-        [HttpGet, Route("api/start")]
-        public void StartGame()
+        [HttpGet, Route("api/setallplayershere/{allSeemToBeHere:bool}")]
+        public void SetAllPlayersSeemToBeHere(bool allSeemToBeHere)
         {
-            Game.Instance.StartGame();
+            Game.Instance.SetAllPlayersSeemToBeHere(CurrentPlayer, allSeemToBeHere);
         }
     }
 }
