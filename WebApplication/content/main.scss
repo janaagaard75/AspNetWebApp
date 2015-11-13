@@ -38,6 +38,11 @@ body
     @include center-block;
 }
 
+.label-border {
+    border-style: solid;
+    border-width: 2px;
+}
+
 .moves
 {
     text-align: center;

@@ -19,15 +19,16 @@ module CocaineCartels {
         public static game: Game;
 
         public allPlayersSeemToBeHereClicked() {
-            const allSeemToBeHere = !Main.currentPlayer.ready;
+            Main.currentPlayer.ready = !Main.currentPlayer.ready;
+            GameService.setAllPlayersSeemToBeHere(Main.currentPlayer.ready);
 
-            if (allSeemToBeHere) {
+            if (Main.currentPlayer.ready) {
                 $("#allPlayersSeemToBeHereButton").addClass("active");
             } else {
                 $("#allPlayersSeemToBeHereButton").removeClass("active");
             }
 
-            GameService.setAllPlayersSeemToBeHere(allSeemToBeHere);
+            this.printStartPlayersReady();
         }
 
         private allPlayersAreReady(): boolean {
@@ -55,6 +56,14 @@ module CocaineCartels {
         private getCanvasId(canvasNumber: number) {
             const canvasId = `${CanvasSettings.canvasIdTemplate}${canvasNumber}`;
             return canvasId;
+        }
+
+        private playerLabel(player: Player, emptyIfNotReady: boolean): string {
+            if (emptyIfNotReady && !player.ready) {
+                return `<span class="label label-border" style="border-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`;
+            } else {
+                return `<span class="label label-border" style="border-color: ${player.color}; background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`;
+            }
         }
 
         public static printNumberOfMovesLeft() {
@@ -86,6 +95,17 @@ module CocaineCartels {
                 }
             });
             document.getElementById("playersStatus").innerHTML = playersStatus;
+        }
+
+        private printStartPage() {
+            $("#startNumberOfPlayers").val(Main.game.players.length.toString());
+            $("#startPlayerColor").html(this.playerLabel(Main.currentPlayer, false));
+            this.printStartPlayersReady();
+        }
+
+        private printStartPlayersReady() {
+            const playersColors = Main.game.players.map(player => this.playerLabel(player, true)).join(" ");
+            $("#startPlayersColors").html(playersColors);
         }
 
         private refreshGame() {
@@ -274,21 +294,12 @@ module CocaineCartels {
 
                         this.printStartPage();
                     }
+
+                    this.printStartPlayersReady();
                 }
             });
 
             window.setTimeout(() => this.tick(), 1000);
-        }
-
-        private printStartPage() {
-            $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-
-            $("#startPlayerColor").css("background-color", Main.currentPlayer.color);
-
-            const playersColors = Main.game.players
-                .map(player => `<span class="label" style="background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`)
-                .join(" ");
-            $("#startPlayersColors").html(playersColors);
         }
 
         private updateGameState(): Promise<void> {

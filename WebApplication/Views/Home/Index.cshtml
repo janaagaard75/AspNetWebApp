@@ -5,7 +5,7 @@
     <div id="gameStartLobby" class="container-fluid" style="background-color: white">
         <h1>Cocaine Cartels</h1>
         <p>Waiting for players to join. <span id="startNumberOfPlayers"></span> players have joined so far.</p>
-        <p>Your color: <span id="startPlayerColor" class="label">&nbsp;&nbsp;&nbsp;</span></p>
+        <p>Your color: <span id="startPlayerColor"></span></p>
         <p></p>
         <p>Players joined: <span id="startPlayersColors"></span></p>
         <p><button id="allPlayersSeemToBeHereButton" onclick="cocaineCartels.allPlayersSeemToBeHereClicked();" class="btn btn-default btn-lg">All players seem to be here</button></p>
@@ -26,7 +26,7 @@
     <div id="playerCommands" class="container-fluid player-commands">
         <div class="row">
             <div class="col-xs-4">
-                <p><button id="readyButton" class="btn btn-default" onclick="cocaineCartels.readyButtonClick();">I'm ready</button></p>
+                <p><button id="readyButton" class="btn btn-default" onclick="cocaineCartels.readyButtonClicked();">I'm ready</button></p>
             </div>
             <div class="col-xs-4 text-center">
                 <p id="moves">Moves: <span id="numberOfMovesLeft"></span></p>
