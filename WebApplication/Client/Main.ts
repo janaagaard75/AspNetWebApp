@@ -77,12 +77,22 @@ module CocaineCartels {
             }
         }
 
-        private static printPlayersPoints() {
-            var playersPoints = "";
-            Main.game.players.forEach(player => {
-                playersPoints += `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${player.points}</span></td></tr><tr><td>+${player.pointsLastTurn}</td></tr></table> `;
+        private static printPlayersPoints(showLastTurnsPoints: boolean) {
+            const playersPoints = Main.game.players.map(player => {
+                let points: number;
+                let addedPoints: string;
+                if (showLastTurnsPoints) {
+                    points = player.points - player.pointsLastTurn;
+                    addedPoints = "";
+                } else {
+                    points = player.points;
+                    addedPoints = `+${player.pointsLastTurn}`;
+                }
+
+                const playersPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
+                return playersPoints;
             });
-            $("#playersPoints").html(playersPoints);
+            $("#playersPoints").html(playersPoints.join(" "));
         }
 
         private static printPlayersStatus() {
@@ -141,7 +151,7 @@ module CocaineCartels {
 
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
-                    Main.printPlayersPoints();
+                    Main.printPlayersPoints(false);
 
                     this.setActiveBoard(4);
 
