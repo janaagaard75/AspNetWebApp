@@ -6,6 +6,7 @@
         color: string;
         commandsSentOn: string;
         points: number;
+        pointsLastTurn: number;
         ready: boolean;
         textColor: string;
     }

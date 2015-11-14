@@ -182,8 +182,8 @@ namespace CocaineCartels.BusinessLogic
 
         private void AddPointsToPlayer(Player player)
         {
-            int pointsThisTurn = NextTurn.NumberOfControlledCells(player);
-            player.Points += pointsThisTurn;
+            player.PointsLastTurn = NextTurn.NumberOfControlledCells(player);
+            player.Points += player.PointsLastTurn;
         }
 
         /// <summary>Returns the NextTurn board, but only with the specified player's commands.</summary>
