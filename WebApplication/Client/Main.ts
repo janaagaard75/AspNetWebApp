@@ -80,9 +80,9 @@ module CocaineCartels {
         private static printPlayersPoints() {
             var playersPoints = "";
             Main.game.players.forEach(player => {
-                playersPoints += `<span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${player.points}</span> `;
+                playersPoints += `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${player.points}</span></td></tr><tr><td>+${player.pointsLastTurn}</td></tr></table> `;
             });
-            document.getElementById("playersPoints").innerHTML = playersPoints;
+            $("#playersPoints").html(playersPoints);
         }
 
         private static printPlayersStatus() {
@@ -266,7 +266,7 @@ module CocaineCartels {
                 }
 
                 if (Main.game.started) {
-                    // If the game has been started, update the players' ready status.
+                    // If the game has been started, just update the players' ready status.
                     status.players.forEach(playerData => {
                         const player = Main.game.getPlayer(playerData.color);
                         player.ready = playerData.ready;
@@ -274,19 +274,19 @@ module CocaineCartels {
 
                     Main.printPlayersStatus();
                 } else {
-                    let update = false;
+                    let updateListOfPlayers = false;
                     if (status.players.length !== Main.game.players.length) {
-                        update = true;
+                        updateListOfPlayers = true;
                     } else {
                         for (let i = 0; i < Main.game.players.length; i++)
                         {
                             if (Main.game.players[i].color !== status.players[i].color) {
-                                update = true;
+                                updateListOfPlayers = true;
                             }
                         }
                     }
 
-                    if (update) {
+                    if (updateListOfPlayers) {
                         Main.game.players = [];
                         status.players.forEach(playerData => {
                             const player = new Player(playerData);
@@ -294,6 +294,12 @@ module CocaineCartels {
                         });
 
                         this.printStartPage();
+                    } else {
+                        // Just update each players' ready status.
+                        status.players.forEach(playerData => {
+                            const player = Main.game.getPlayer(playerData.color);
+                            player.ready = playerData.ready;
+                        });
                     }
 
                     this.printStartPlayersReady();
