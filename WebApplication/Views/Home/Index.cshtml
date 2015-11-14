@@ -21,7 +21,7 @@
 <div id="gameStarted">
     <div id="canvasCommands" class="container-fluid canvas-commands">
         <div class="row">
-            <div class="col-xs-9">
+            <div class="col-xs-7">
                 <p>
                     Step through last turn:
                     <button id="boardButton1" onclick="cocaineCartels.setActiveBoard(1);" class="btn btn-default">1</button>
@@ -31,6 +31,9 @@
                 </p>
             </div>
             <div class="col-xs-3 text-right">
+                <p>Your color: <span id="playerColor" class="label">&nbsp;</span></p>
+            </div>
+            <div class="col-xs-2 text-right">
                 <p id="moves">Moves: <span id="numberOfMovesLeft"></span></p>
             </div>
         </div>
@@ -49,7 +52,7 @@
             <div class="col-xs-4 text-center">
             </div>
             <div class="col-xs-4 text-right">
-                <p>Your color: <span id="playerColor" class="label">&nbsp;</span></p>
+                
             </div>
         </div>
         <div class="row">
