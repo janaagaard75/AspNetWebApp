@@ -26,12 +26,9 @@ namespace CocaineCartels.BusinessLogic
         };
 
         private readonly object AddPlayerLock = new object();
-
         private readonly object SetAllPlayersSeemToBeHereLock = new object();
-
-        private int MaximumNumberOfPlayers => PlayersColors.Length;
-
-        private int NumberOfPlayers => Players.Count;
+        private readonly object StartGameLock = new object();
+        private readonly object TurnLock = new object();
 
         /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
         public Board PreviousTurn { get; private set; }
@@ -46,12 +43,13 @@ namespace CocaineCartels.BusinessLogic
         private Board NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
-        public bool Started => TurnNumber > 0;
 
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
-        private readonly object TurnLock = new object();
+        private int MaximumNumberOfPlayers => PlayersColors.Length;
+        private int NumberOfPlayers => Players.Count;
+        public bool Started => TurnNumber > 0;
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -265,7 +263,7 @@ namespace CocaineCartels.BusinessLogic
                 });
 
                 // Place all new units.
-                var unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+                List<Unit> unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
                 unitsToPlace.ForEach(unit =>
                 {
                     NextTurn.NewUnits.Remove(unit);
@@ -284,7 +282,7 @@ namespace CocaineCartels.BusinessLogic
                 {
                     unit.RemovePlaceCommand();
                 });
-                var unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
+                List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
                 unitsToMove.ForEach(unit =>
                 {
                     unit.Cell.RemoveUnit(unit);
@@ -356,18 +354,22 @@ namespace CocaineCartels.BusinessLogic
 
         private void StartGame()
         {
-            if (Started)
+            lock (StartGameLock)
             {
-                throw new ApplicationException("The game is already started.");
-            }
+                if (Started)
+                {
+                    throw new ApplicationException("The game is already started.");
+                }
 
-            for (int i = 0; i < NumberOfPlayers; i++)
-            {
-                Player player = Players[i];
-                AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
-            }
+                for (int i = 0; i < NumberOfPlayers; i++)
+                {
+                    Player player = Players[i];
+                    AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
+                    player.Ready = false;
+                }
 
-            TurnNumber = 1;
+                TurnNumber = 1;
+            }
         }
 
         public void UpdateCommandsSentOn(string playerColor)
