@@ -11,6 +11,13 @@ body
     margin-top: 10px;
 }
 
+.canvas-commands
+{
+    background-color: $body-bg;
+    height: 50px;
+    padding-top: 10px;
+}
+
 .grab-cursor
 {
     cursor: move;

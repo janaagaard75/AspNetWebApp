@@ -2482,6 +2482,11 @@ body {
 .administrator-commands {
   margin-top: 10px; }
 
+.canvas-commands {
+  background-color: #fff;
+  height: 50px;
+  padding-top: 10px; }
+
 .grab-cursor {
   cursor: move;
   cursor: -moz-grab;

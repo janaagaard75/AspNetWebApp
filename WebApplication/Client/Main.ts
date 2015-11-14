@@ -145,6 +145,7 @@ module CocaineCartels {
 
                     this.setActiveBoard(4);
 
+                    $("#canvasCommands").css("width", widthInPixels);
                     $("#playerCommands").css("width", widthInPixels);
 
                     const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
