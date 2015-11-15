@@ -131,6 +131,7 @@
             const arrow = new Konva["Arrow"]({
                 fill: command.color,
                 listening: false,
+                perfectDrawEnabled: false,
                 pointerLength: CanvasSettings.arrowPointerLength,
                 pointerWidth: CanvasSettings.arrowPointerWidth,
                 points: [from.x, from.y, to.x, to.y],
@@ -138,6 +139,7 @@
                 shadowColor: "#999",
                 stroke: command.color,
                 strokeWidth: CanvasSettings.arrowWidth,
+                transformsEnabled: 'position',
                 x: origin.x,
                 y: origin.y
             });

@@ -140,10 +140,12 @@ module CocaineCartels {
                     $("#canvasCommands").css("width", widthInPixels);
                     $("#playerCommands").css("width", widthInPixels);
 
-                    this.canvas1.destroy();
-                    this.canvas2.destroy();
-                    this.canvas3.destroy();
-                    this.canvas4.destroy();
+                    if (this.canvas1 !== undefined) {
+                        this.canvas1.destroy();
+                        this.canvas2.destroy();
+                        this.canvas3.destroy();
+                        this.canvas4.destroy();
+                    }
 
                     this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
                     this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
