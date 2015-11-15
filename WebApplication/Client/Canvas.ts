@@ -206,123 +206,123 @@
             /** Previously hovered hexagon.*/
             var previousHexagon: Konva.Shape = null;
 
-            circle.on("dragstart", e => {
-                e.target.moveTo(this.dragLayer);
-                e.target.shadowEnabled(true);
-                document.body.classList.remove("grab-cursor");
-                document.body.classList.add("grabbing-cursor");
+            if (this.interactive && ownedByThisPlayer) {
+                circle.on("dragstart", e => {
+                    e.target.moveTo(this.dragLayer);
+                    e.target.shadowEnabled(true);
+                    document.body.classList.remove("grab-cursor");
+                    document.body.classList.add("grabbing-cursor");
 
-                var allowedCells: Array<Cell>;
-                if (unit.cell === null) {
-                    if (unit.placeCommand === null) {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                    var allowedCells: Array<Cell>;
+                    if (unit.cell === null) {
+                        if (unit.placeCommand === null) {
+                            allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                        } else {
+                            allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                        }
                     } else {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                        allowedCells = Canvas.board.allowedCellsForMove(unit);
                     }
-                } else {
-                    allowedCells = Canvas.board.allowedCellsForMove(unit);
-                }
 
-                allowedCells.forEach(cell => {
-                    cell.dropAllowed = true;
-                    this.updateCellColor(cell);
+                    allowedCells.forEach(cell => {
+                        cell.dropAllowed = true;
+                        this.updateCellColor(cell);
+                    });
+
+                    this.boardLayer.draw();
+                    this.unitsLayer.draw();
                 });
 
-                this.boardLayer.draw();
-                this.unitsLayer.draw();
-            });
-            
-            // Dragmove is called on every single pixel moved.
-            circle.on("dragmove", () => {
-                const pos = this.stage.getPointerPosition();
-                currentHexagon = this.boardLayer.getIntersection(pos);
+                // Dragmove is called on every single pixel moved.
+                circle.on("dragmove", () => {
+                    const pos = this.stage.getPointerPosition();
+                    currentHexagon = this.boardLayer.getIntersection(pos);
 
-                if (currentHexagon === previousHexagon) {
-                    // Current same as previous: Don't change anything.
-                    return;
-                }
-
-                if (currentHexagon === null) {
-                    // Only previous defined: Moving out of a cell.
-                    previousHexagon.fire(HexagonEvent.dragLeave);
-                } else {
-                    if (previousHexagon === null) {
-                        // Only current defined: Moving into a cell.
-                        currentHexagon.fire(HexagonEvent.dragEnter);
-                    } else {
-                        // Both cells defined and different: Moving from one cell to another.
-                        previousHexagon.fire(HexagonEvent.dragLeave);
-                        currentHexagon.fire(HexagonEvent.dragEnter);
+                    if (currentHexagon === previousHexagon) {
+                        // Current same as previous: Don't change anything.
+                        return;
                     }
-                }
 
-                previousHexagon = currentHexagon;
-            });
-
-            circle.on("dragend", e => {
-                e.target.moveTo(this.unitsLayer);
-                e.target.shadowEnabled(false);
-                document.body.classList.remove("grabbing-cursor");
-
-                if (currentHexagon !== null) {
-                    const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
-
-                    if (currentCell.dropAllowed) {
-                        if (unit.cell === null) {
-                            if (unit.placeCommand === null) {
-                                // It's a place.
-                                unit.setPlaceCommand(currentCell);
-                                Main.setCurrentPlayerNotReadyIfNecessary();
-                            } else {
-                                // This might be a re-place of a new unit.
-                                const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
-                                if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
-                                    // It's a re-place.
-                                    unit.moveCommand = null;
-                                    unit.setPlaceCommand(currentCell);
-                                } else {
-                                    // It's a move.
-                                    let from: Cell;
-                                    if (unit.cell === null) {
-                                        from = unit.placeCommand.on;
-                                    } else {
-                                        from = unit.cell;
-                                    }
-
-                                    unit.setMoveCommand(from, currentCell);
-                                }
-                            }
+                    if (currentHexagon === null) {
+                        // Only previous defined: Moving out of a cell.
+                        previousHexagon.fire(HexagonEvent.dragLeave);
+                    } else {
+                        if (previousHexagon === null) {
+                            // Only current defined: Moving into a cell.
+                            currentHexagon.fire(HexagonEvent.dragEnter);
                         } else {
-                            // It's a move.
-                            let from: Cell;
+                            // Both cells defined and different: Moving from one cell to another.
+                            previousHexagon.fire(HexagonEvent.dragLeave);
+                            currentHexagon.fire(HexagonEvent.dragEnter);
+                        }
+                    }
+
+                    previousHexagon = currentHexagon;
+                });
+
+                circle.on("dragend", e => {
+                    e.target.moveTo(this.unitsLayer);
+                    e.target.shadowEnabled(false);
+                    document.body.classList.remove("grabbing-cursor");
+
+                    if (currentHexagon !== null) {
+                        const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+
+                        if (currentCell.dropAllowed) {
                             if (unit.cell === null) {
-                                from = unit.placeCommand.on;
+                                if (unit.placeCommand === null) {
+                                    // It's a place.
+                                    unit.setPlaceCommand(currentCell);
+                                    Main.setCurrentPlayerNotReadyIfNecessary();
+                                } else {
+                                    // This might be a re-place of a new unit.
+                                    const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
+                                    if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
+                                        // It's a re-place.
+                                        unit.moveCommand = null;
+                                        unit.setPlaceCommand(currentCell);
+                                    } else {
+                                        // It's a move.
+                                        let from: Cell;
+                                        if (unit.cell === null) {
+                                            from = unit.placeCommand.on;
+                                        } else {
+                                            from = unit.cell;
+                                        }
+
+                                        unit.setMoveCommand(from, currentCell);
+                                    }
+                                }
                             } else {
-                                from = unit.cell;
+                                // It's a move.
+                                let from: Cell;
+                                if (unit.cell === null) {
+                                    from = unit.placeCommand.on;
+                                } else {
+                                    from = unit.cell;
+                                }
+
+                                unit.setMoveCommand(from, currentCell);
                             }
 
-                            unit.setMoveCommand(from, currentCell);
+                            Main.setCurrentPlayerNotReadyIfNecessary();
                         }
 
-                        Main.setCurrentPlayerNotReadyIfNecessary();
+                        currentCell.hovered = false;
                     }
 
-                    currentCell.hovered = false;
-                }
+                    Main.printNumberOfMovesLeft();
 
-                Main.printNumberOfMovesLeft();
+                    currentHexagon = null;
+                    previousHexagon = null;
 
-                currentHexagon = null;
-                previousHexagon = null;
+                    Canvas.board.cells.forEach(cell => {
+                        cell.dropAllowed = false;
+                    });
 
-                Canvas.board.cells.forEach(cell => {
-                    cell.dropAllowed = false;
+                    this.drawBoard();
                 });
 
-                this.drawBoard();
-            });
-
-            if (this.interactive && ownedByThisPlayer) {
                 circle.on("mouseover", () => {
                     document.body.classList.add("grab-cursor");
                 });
