@@ -66,6 +66,19 @@ module CocaineCartels {
             }
         }
 
+        private static printAlliancesInfo() {
+            const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
+
+            const allianceButtons = allOtherPlayers
+                .map(player => {
+                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith('${player.color}'); this.classList.add('active'); this.blur()" class="btn btn-default" style="font-weight: bold; color: ${player.textColor}; background-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
+                    return playerButton;
+                })
+                .join(" ");
+
+            $("#alliances").html(allianceButtons);
+        }
+
         public static printNumberOfMovesLeft() {
             const numberOfMovesLeft = Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
             document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
@@ -124,6 +137,9 @@ module CocaineCartels {
                 $("#administratorCommands").css("width", widthInPixels);
 
                 if (Main.game.started) {
+                    $("#canvasCommands").css("width", widthInPixels);
+                    $("#playerCommands").css("width", widthInPixels);
+
                     this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
                     this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
@@ -152,11 +168,9 @@ module CocaineCartels {
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
+                    Main.printAlliancesInfo();
 
                     this.setActiveBoard(4);
-
-                    $("#canvasCommands").css("width", widthInPixels);
-                    $("#playerCommands").css("width", widthInPixels);
 
                     const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
@@ -266,6 +280,10 @@ module CocaineCartels {
             if (Main.currentPlayer.ready) {
                 Main.setCurrentPlayerNotReady();
             }
+        }
+
+        public toggleProposeAllianceWith(otherPlayerColor: string) {
+            
         }
 
         public tick() {

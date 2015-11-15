@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 
@@ -70,6 +71,14 @@ namespace CocaineCartels.BusinessLogic
 
                 return player;
             }
+        }
+
+        public void AddAllianceProposal(string playerProposingColor, string playerProposedToColor)
+        {
+            var proposingPlayer = Players.Single(p => p.Color == playerProposingColor);
+            var proposedToPlayer = Players.Single(p => p.Color == playerProposedToColor);
+
+            proposedToPlayer.AllianceProposals.Add(proposedToPlayer);
         }
 
         /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
@@ -232,6 +241,7 @@ namespace CocaineCartels.BusinessLogic
             {
                 unit.RemoveCommands();
             });
+            Players.Single(p => p.Color == playerColor).AllianceProposals = new HashSet<Player>();
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>

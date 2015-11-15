@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
 
@@ -14,11 +15,14 @@ namespace CocaineCartels.BusinessLogic
             TextColor = colors.TextColor;
             UserAgent = userAgent;
 
+            AllianceProposals = new HashSet<Player>();
             Points = 0;
             PointsLastTurn = 0;
             Ready = false;
         }
 
+        public HashSet<Player> AllianceProposals { get; set; }
+        
         /// <summary>The main color also identifies a player, so use this property the player ID.</summary>
         public string Color { get; }
 
