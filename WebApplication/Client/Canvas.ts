@@ -43,6 +43,14 @@
             this.stage.add(this.dragLayer);
         }
 
+        public destroy() {
+            this.backgroundLayer.destroy();
+            this.boardLayer.destroy();
+            this.commandsLayer.destroy();
+            this.dragLayer.destroy();
+            this.unitsLayer.destroy();
+        }
+
         /** Currently redraws the board from scratch each time, re-adding all units and commands. */
         public drawBoard() {
             this.stage = new Konva.Stage({
