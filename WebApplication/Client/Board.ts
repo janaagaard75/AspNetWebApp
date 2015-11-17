@@ -23,6 +23,11 @@
         public cells: Array<Cell>;
         public newUnits: Array<Unit>;
 
+        public get allUnits(): Array<Unit> {
+            const allUnits = this.unitsOnBoard.concat(this.newUnits);
+            return allUnits;
+        }
+
         public get moveCommands(): Array<MoveCommand> {
             const moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
                 .map(unit => unit.moveCommand)

@@ -7,6 +7,7 @@
             canvasId: string,
             interactive: boolean
         ) {
+            this.shapesWithEvents = [];
             Canvas.board = board;
             this.canvasId = canvasId;
             this.interactive = interactive;
@@ -24,10 +25,14 @@
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
         private interactive: boolean;
+        private shapesWithEvents: Array<Konva.Shape>;
         private unitsLayer: Konva.Layer;
 
         private addLayers() {
+            this.destroy();
+
             this.backgroundLayer = new Konva.Layer();
+            this.backgroundLayer.hitGraphEnabled(false)
             this.stage.add(this.backgroundLayer);
 
             this.boardLayer = new Konva.Layer();
@@ -37,22 +42,50 @@
             this.stage.add(this.unitsLayer);
 
             this.commandsLayer = new Konva.Layer();
+            this.commandsLayer.hitGraphEnabled(false);
             this.stage.add(this.commandsLayer);
 
             this.dragLayer = new Konva.Layer();
+            this.dragLayer.hitGraphEnabled(false);
             this.stage.add(this.dragLayer);
         }
 
         public destroy() {
-            this.backgroundLayer.destroy();
-            this.boardLayer.destroy();
-            this.commandsLayer.destroy();
-            this.dragLayer.destroy();
-            this.unitsLayer.destroy();
+            this.shapesWithEvents.forEach(shape => {
+                shape.off("dragstart");
+                shape.off("dragmove");
+                shape.off("dragend");
+                shape.off("mouseover");
+                shape.off("mouseout");
+                shape.listening(false);
+                shape.destroy();
+            });
+            this.shapesWithEvents = [];
+
+            if (this.backgroundLayer !== undefined) {
+                this.backgroundLayer.getChildren().each(node => {
+                    node.destroy();
+                });
+                this.commandsLayer.getChildren().each(node => {
+                    node.destroy();
+                });
+                this.dragLayer.getChildren().each(node => {
+                    node.destroy();
+                });
+                this.unitsLayer.getChildren().each(node => {
+                    node.destroy();
+                });
+
+                this.backgroundLayer.destroy();
+                this.boardLayer.destroy();
+                this.commandsLayer.destroy();
+                this.dragLayer.destroy();
+                this.unitsLayer.destroy();
+            }
         }
 
         /** Currently redraws the board from scratch each time, re-adding all units and commands. */
-        public drawBoard() {
+        private drawBoard() {
             this.stage = new Konva.Stage({
                 container: this.canvasId,
                 height: CanvasSettings.height,
@@ -65,6 +98,7 @@
             this.drawCells();
             this.drawUnits();
             this.drawMoveCommands();
+            this.setUpUnitDragEvents();
 
             this.stage.draw();
         }
@@ -182,23 +216,32 @@
 
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-
+            const overlapPos = new Pos(x, pos.y);
             const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
             const strokeColor = (unit.cell === null || unit.placeCommand !== null) ? "#000" : "#999";
 
-            const circle = new Konva.Circle({
-                draggable: this.interactive && ownedByThisPlayer,
-                fill: fillColor,
-                radius: CanvasSettings.unitRadius,
-                shadowBlur: 20,
-                shadowColor: "#000",
-                shadowEnabled: false,
-                shadowOpacity: 0.7,
-                stroke: strokeColor,
-                strokeWidth: CanvasSettings.lineWidth,
-                x: x,
-                y: pos.y
-            });
+            if (unit.circle === null) {
+                const circle = new Konva.Circle({
+                    draggable: this.interactive && ownedByThisPlayer,
+                    fill: fillColor,
+                    radius: CanvasSettings.unitRadius,
+                    shadowBlur: 20,
+                    shadowColor: "#000",
+                    shadowEnabled: false,
+                    shadowOpacity: 0.7,
+                    stroke: strokeColor,
+                    strokeWidth: CanvasSettings.lineWidth,
+                    x: overlapPos.x,
+                    y: overlapPos.y
+                });
+
+                unit.circle = circle;
+            } else {
+                unit.circle.fill(fillColor);
+                unit.circle.stroke(strokeColor);
+                unit.circle.x(overlapPos.x);
+                unit.circle.y(overlapPos.y);
+            }
 
             /** Currently hovered hexagon. */
             var currentHexagon: Konva.Shape = null;
@@ -207,132 +250,18 @@
             var previousHexagon: Konva.Shape = null;
 
             if (this.interactive && ownedByThisPlayer) {
-                circle.on("dragstart", e => {
-                    e.target.moveTo(this.dragLayer);
-                    e.target.shadowEnabled(true);
-                    document.body.classList.remove("grab-cursor");
-                    document.body.classList.add("grabbing-cursor");
-
-                    var allowedCells: Array<Cell>;
-                    if (unit.cell === null) {
-                        if (unit.placeCommand === null) {
-                            allowedCells = Canvas.board.allowedCellsForPlace(unit);
-                        } else {
-                            allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
-                        }
-                    } else {
-                        allowedCells = Canvas.board.allowedCellsForMove(unit);
-                    }
-
-                    allowedCells.forEach(cell => {
-                        cell.dropAllowed = true;
-                        this.updateCellColor(cell);
-                    });
-
-                    this.boardLayer.draw();
-                    this.unitsLayer.draw();
-                });
-
-                // Dragmove is called on every single pixel moved.
-                circle.on("dragmove", () => {
-                    const pos = this.stage.getPointerPosition();
-                    currentHexagon = this.boardLayer.getIntersection(pos);
-
-                    if (currentHexagon === previousHexagon) {
-                        // Current same as previous: Don't change anything.
-                        return;
-                    }
-
-                    if (currentHexagon === null) {
-                        // Only previous defined: Moving out of a cell.
-                        previousHexagon.fire(HexagonEvent.dragLeave);
-                    } else {
-                        if (previousHexagon === null) {
-                            // Only current defined: Moving into a cell.
-                            currentHexagon.fire(HexagonEvent.dragEnter);
-                        } else {
-                            // Both cells defined and different: Moving from one cell to another.
-                            previousHexagon.fire(HexagonEvent.dragLeave);
-                            currentHexagon.fire(HexagonEvent.dragEnter);
-                        }
-                    }
-
-                    previousHexagon = currentHexagon;
-                });
-
-                circle.on("dragend", e => {
-                    e.target.moveTo(this.unitsLayer);
-                    e.target.shadowEnabled(false);
-                    document.body.classList.remove("grabbing-cursor");
-
-                    if (currentHexagon !== null) {
-                        const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
-
-                        if (currentCell.dropAllowed) {
-                            if (unit.cell === null) {
-                                if (unit.placeCommand === null) {
-                                    // It's a place.
-                                    unit.setPlaceCommand(currentCell);
-                                    Main.setCurrentPlayerNotReadyIfNecessary();
-                                } else {
-                                    // This might be a re-place of a new unit.
-                                    const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
-                                    if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
-                                        // It's a re-place.
-                                        unit.moveCommand = null;
-                                        unit.setPlaceCommand(currentCell);
-                                    } else {
-                                        // It's a move.
-                                        let from: Cell;
-                                        if (unit.cell === null) {
-                                            from = unit.placeCommand.on;
-                                        } else {
-                                            from = unit.cell;
-                                        }
-
-                                        unit.setMoveCommand(from, currentCell);
-                                    }
-                                }
-                            } else {
-                                // It's a move.
-                                let from: Cell;
-                                if (unit.cell === null) {
-                                    from = unit.placeCommand.on;
-                                } else {
-                                    from = unit.cell;
-                                }
-
-                                unit.setMoveCommand(from, currentCell);
-                            }
-
-                            Main.setCurrentPlayerNotReadyIfNecessary();
-                        }
-
-                        currentCell.hovered = false;
-                    }
-
-                    Main.printNumberOfMovesLeft();
-
-                    currentHexagon = null;
-                    previousHexagon = null;
-
-                    Canvas.board.cells.forEach(cell => {
-                        cell.dropAllowed = false;
-                    });
-
-                    this.drawBoard();
-                });
-
-                circle.on("mouseover", () => {
+                unit.circle.on("mouseover", () => {
                     document.body.classList.add("grab-cursor");
                 });
 
-                circle.on("mouseout", () => {
+                unit.circle.on("mouseout", () => {
                     document.body.classList.remove("grab-cursor");
                 });
+
+                this.shapesWithEvents.push(unit.circle);
             }
 
-            this.unitsLayer.add(circle);
+            this.unitsLayer.add(unit.circle);
         }
 
         private drawUnits() {
@@ -370,6 +299,138 @@
             const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
             toBePlacedHere.forEach((unit, index) => {
                 this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+            });
+        }
+
+        private redrawBoard() {
+            this.drawUnits();
+            this.commandsLayer.destroyChildren();
+            this.drawMoveCommands();
+            this.stage.draw();
+        }
+
+        private setUpUnitDragEvents() {
+            /** Currently hovered hexagon. */
+            var currentHexagon: Konva.Shape = null;
+            
+            /** Previously hovered hexagon.*/
+            var previousHexagon: Konva.Shape = null;
+
+            /** The unit being dragged. */
+            var unit: Unit = null;
+
+            this.stage.on("dragstart", e => {
+                e.target.moveTo(this.dragLayer);
+                e.target.shadowEnabled(true);
+                document.body.classList.remove("grab-cursor");
+                document.body.classList.add("grabbing-cursor");
+
+                unit = Canvas.board.allUnits.filter(u => u.circle === e.target)[0];
+
+                var allowedCells: Array<Cell>;
+                if (unit.cell === null) {
+                    if (unit.placeCommand === null) {
+                        allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                    } else {
+                        allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                    }
+                } else {
+                    allowedCells = Canvas.board.allowedCellsForMove(unit);
+                }
+
+                allowedCells.forEach(cell => {
+                    cell.dropAllowed = true;
+                    this.updateCellColor(cell);
+                });
+            });
+            
+            this.stage.on("dragmove", () => {
+                const pos = this.stage.getPointerPosition();
+                currentHexagon = this.boardLayer.getIntersection(pos);
+
+                if (currentHexagon === previousHexagon) {
+                    // Current same as previous: Don't change anything.
+                    return;
+                }
+
+                if (currentHexagon === null) {
+                    // Only previous defined: Moving out of a cell.
+                    previousHexagon.fire(HexagonEvent.dragLeave);
+                } else {
+                    if (previousHexagon === null) {
+                        // Only current defined: Moving into a cell.
+                        currentHexagon.fire(HexagonEvent.dragEnter);
+                    } else {
+                        // Both cells defined and different: Moving from one cell to another.
+                        previousHexagon.fire(HexagonEvent.dragLeave);
+                        currentHexagon.fire(HexagonEvent.dragEnter);
+                    }
+                }
+
+                previousHexagon = currentHexagon;
+            });
+
+            this.stage.on("dragend", e => {
+                e.target.moveTo(this.unitsLayer);
+                e.target.shadowEnabled(false);
+                document.body.classList.remove("grabbing-cursor");
+
+                if (currentHexagon !== null) {
+                    const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+
+                    if (currentCell.dropAllowed) {
+                        if (unit.cell === null) {
+                            if (unit.placeCommand === null) {
+                                // It's a place.
+                                unit.setPlaceCommand(currentCell);
+                                Main.setCurrentPlayerNotReadyIfNecessary();
+                            } else {
+                                // This might be a re-place of a new unit.
+                                const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
+                                if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
+                                    // It's a re-place.
+                                    unit.moveCommand = null;
+                                    unit.setPlaceCommand(currentCell);
+                                } else {
+                                    // It's a move.
+                                    let from: Cell;
+                                    if (unit.cell === null) {
+                                        from = unit.placeCommand.on;
+                                    } else {
+                                        from = unit.cell;
+                                    }
+
+                                    unit.setMoveCommand(from, currentCell);
+                                }
+                            }
+                        } else {
+                            // It's a move.
+                            let from: Cell;
+                            if (unit.cell === null) {
+                                from = unit.placeCommand.on;
+                            } else {
+                                from = unit.cell;
+                            }
+
+                            unit.setMoveCommand(from, currentCell);
+                        }
+
+                        Main.setCurrentPlayerNotReadyIfNecessary();
+                    }
+
+                    currentCell.hovered = false;
+                }
+
+                Main.printNumberOfMovesLeft();
+
+                currentHexagon = null;
+                previousHexagon = null;
+
+                Canvas.board.cells.forEach(cell => {
+                    cell.dropAllowed = false;
+                });
+
+                this.redrawBoard();
             });
         }
 
