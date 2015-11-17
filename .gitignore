@@ -212,7 +212,6 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # Generated files
-content/main.css
-content/main.min.css
+content/*.css
 scripts/combined.js
 scripts/combined.js.map
