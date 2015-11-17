@@ -2476,16 +2476,15 @@ a.label:hover, a.label:focus {
   .hidden-print {
     display: none !important; } }
 
-body {
-  background-color: #bbb; }
-
 .administrator-commands {
   margin-top: 10px; }
 
 .canvas-commands {
-  background-color: #fff;
   height: 50px;
   padding-top: 10px; }
+
+.container-fluid {
+  min-width: 575px; }
 
 .grab-cursor {
   cursor: move;
@@ -2528,7 +2527,6 @@ body {
   width: 30px; }
 
 .player-commands {
-  background-color: #fff;
   height: 115px; }
 
 .points {
