@@ -241,6 +241,7 @@
                 unit.circle.stroke(strokeColor);
                 unit.circle.x(overlapPos.x);
                 unit.circle.y(overlapPos.y);
+                unit.circle.moveToTop();
             }
 
             /** Currently hovered hexagon. */
