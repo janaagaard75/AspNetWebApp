@@ -213,7 +213,6 @@ ModelManifest.xml
 
 # Generated files
 WebApplication/content/*.css
-WebApplication/scripts/_references.js
 WebApplication/scripts/combined.js
 WebApplication/scripts/combined.js.map
 WebApplication/_references.js
