@@ -58,7 +58,7 @@ module CocaineCartels {
             return canvasId;
         }
 
-        private playerLabel(player: Player, emptyIfNotReady: boolean): string {
+        private static getPlayerLabel(player: Player, emptyIfNotReady: boolean): string {
             if (emptyIfNotReady && !player.ready) {
                 return `<span class="label label-border" style="border-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`;
             } else {
@@ -102,32 +102,29 @@ module CocaineCartels {
                     addedPoints = `+${player.pointsLastTurn}`;
                 }
 
-                const playersPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
-                return playersPoints;
+                const playerPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
+                return playerPoints;
             });
             $("#playersPoints").html(playersPoints.join(" "));
         }
 
         private static printPlayersStatus() {
-            var playersStatus = "";
-            Main.game.players.forEach(player => {
-                if (player.ready) {
-                    playersStatus += `<span class="label" style="background-color: ${player.color}; color: ${player.textColor}">&nbsp;</span> `;
-                } else {
-                    playersStatus += `<span class="label label-default">&nbsp;</span> `;
-                }
-            });
+            const playersStatus = Main.game.players
+                .map(player => {
+                    return Main.getPlayerLabel(player, true);
+                })
+                .join(" ");
             document.getElementById("playersStatus").innerHTML = playersStatus;
         }
 
         private printStartPage() {
             $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-            $("#startPlayerColor").html(this.playerLabel(Main.currentPlayer, false));
+            $("#startPlayerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
             this.printStartPlayersReady();
         }
 
         private printStartPlayersReady() {
-            const playersColors = Main.game.players.map(player => this.playerLabel(player, true)).join(" ");
+            const playersColors = Main.game.players.map(player => Main.getPlayerLabel(player, true)).join(" ");
             $("#startPlayersColors").html(playersColors);
         }
 
@@ -290,7 +287,7 @@ module CocaineCartels {
         }
 
         public toggleProposeAllianceWith(otherPlayerColor: string) {
-            
+
         }
 
         public tick() {
@@ -313,8 +310,7 @@ module CocaineCartels {
                     if (status.players.length !== Main.game.players.length) {
                         updateListOfPlayers = true;
                     } else {
-                        for (let i = 0; i < Main.game.players.length; i++)
-                        {
+                        for (let i = 0; i < Main.game.players.length; i++) {
                             if (Main.game.players[i].color !== status.players[i].color) {
                                 updateListOfPlayers = true;
                             }
