@@ -1077,7 +1077,7 @@ var CocaineCartels;
             var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
             var allianceButtons = allOtherPlayers
                 .map(function (player) {
-                var playerButton = "<button onclick=\"cocaineCartels.toggleProposeAllianceWith('" + player.color + "'); this.classList.add('active'); this.blur()\" class=\"btn btn-default\" style=\"font-weight: bold; color: " + player.textColor + "; background-color: " + player.color + "\" title=\"Propose alliance\">&nbsp;&nbsp;&nbsp;</button>";
+                var playerButton = "<button onclick=\"cocaineCartels.toggleProposeAllianceWith(this, '" + player.color + "');\" class=\"btn btn-default label-border\" style=\"border-color: " + player.color + "\" title=\"Propose alliance\">&nbsp;&nbsp;&nbsp;</button>";
                 return playerButton;
             })
                 .join(" ");
@@ -1261,7 +1261,8 @@ var CocaineCartels;
                 Main.setCurrentPlayerNotReady();
             }
         };
-        Main.prototype.toggleProposeAllianceWith = function (otherPlayerColor) {
+        Main.prototype.toggleProposeAllianceWith = function (button, otherPlayerColor) {
+            $(button).toggleClass("active").blur();
         };
         Main.prototype.tick = function () {
             var _this = this;

@@ -71,7 +71,7 @@ module CocaineCartels {
 
             const allianceButtons = allOtherPlayers
                 .map(player => {
-                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith('${player.color}'); this.classList.add('active'); this.blur()" class="btn btn-default" style="font-weight: bold; color: ${player.textColor}; background-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
+                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');" class="btn btn-default label-border" style="border-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
                     return playerButton;
                 })
                 .join(" ");
@@ -286,8 +286,8 @@ module CocaineCartels {
             }
         }
 
-        public toggleProposeAllianceWith(otherPlayerColor: string) {
-
+        public toggleProposeAllianceWith(button: HTMLButtonElement, otherPlayerColor: string) {
+            $(button).toggleClass("active").blur();
         }
 
         public tick() {
