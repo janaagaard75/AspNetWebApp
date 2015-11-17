@@ -213,6 +213,6 @@ ModelManifest.xml
 
 # Generated files
 content/main.css
-content/msin.min.css
+content/main.min.css
 scripts/combined.js
 scripts/combined.js.map
