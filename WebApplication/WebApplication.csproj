@@ -179,12 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
-    <Content Include="content\main.css">
-      <DependentUpon>main.scss</DependentUpon>
-    </Content>
-    <Content Include="content\main.min.css">
-      <DependentUpon>main.css</DependentUpon>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\bootstrap\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
