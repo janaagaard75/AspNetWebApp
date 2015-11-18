@@ -5,8 +5,9 @@ var CocaineCartels;
     (function (AlliancesSystem) {
         AlliancesSystem[AlliancesSystem["Undefined"] = 0] = "Undefined";
         AlliancesSystem[AlliancesSystem["AlliancesInSeparateTurns"] = 1] = "AlliancesInSeparateTurns";
-        AlliancesSystem[AlliancesSystem["AlliancesInSameTurn"] = 2] = "AlliancesInSameTurn";
-        AlliancesSystem[AlliancesSystem["NoAlliances"] = 3] = "NoAlliances";
+        AlliancesSystem[AlliancesSystem["AlliancesEveryTurn"] = 2] = "AlliancesEveryTurn";
+        AlliancesSystem[AlliancesSystem["AlliancesSeconndTurn"] = 3] = "AlliancesSeconndTurn";
+        AlliancesSystem[AlliancesSystem["NoAlliances"] = 4] = "NoAlliances";
     })(CocaineCartels.AlliancesSystem || (CocaineCartels.AlliancesSystem = {}));
     var AlliancesSystem = CocaineCartels.AlliancesSystem;
 })(CocaineCartels || (CocaineCartels = {}));
@@ -527,8 +528,9 @@ var CocaineCartels;
             if (gridSize == null) {
                 throw "gridSize must be defined.";
             }
+            var gridGutterWidth = 30; // Also defined in variables.scss.
             var availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
-            var availableWidth = $("#canvas1").width();
+            var availableWidth = $(document).width() / 2 - gridGutterWidth;
             var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
             var correspondingWidth = availableHeight * aspectRatio;
             if (correspondingWidth <= availableWidth) {

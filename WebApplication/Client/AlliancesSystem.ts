@@ -5,7 +5,8 @@
     export enum AlliancesSystem {
         Undefined,
         AlliancesInSeparateTurns,
-        AlliancesInSameTurn,
+        AlliancesEveryTurn,
+        AlliancesSeconndTurn,
         NoAlliances
     }
 }

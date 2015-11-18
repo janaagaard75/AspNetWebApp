@@ -21,8 +21,10 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
+            const gridGutterWidth = 30; // Also defined in variables.scss.
+
             const availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
-            const availableWidth = $("#canvas1").width();
+            const availableWidth = $(document).width() / 2 - gridGutterWidth;
             const aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
 
             const correspondingWidth = availableHeight * aspectRatio;
