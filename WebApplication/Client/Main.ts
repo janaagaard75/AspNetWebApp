@@ -131,12 +131,8 @@ module CocaineCartels {
         private refreshGame() {
             this.updateGameState().then(() => {
                 const widthInPixels = `${CanvasSettings.width}px`;
-                $("#administratorCommands").css("width", widthInPixels);
 
                 if (Main.game.started) {
-                    $("#canvasCommands").css("width", widthInPixels);
-                    $("#playerCommands").css("width", widthInPixels);
-
                     if (this.canvas1 !== undefined) {
                         this.canvas1.destroy();
                         this.canvas2.destroy();
@@ -149,7 +145,7 @@ module CocaineCartels {
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
                     this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
-                    $("#playerColor").css("background-color", Main.currentPlayer.color);
+                    $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);

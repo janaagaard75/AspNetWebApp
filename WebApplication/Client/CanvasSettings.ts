@@ -21,21 +21,11 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
-            const heightForButtons = $("#canvasCommands").height() + $("#playerCommands").height();
-            const availableHeigt = window.innerHeight - heightForButtons;
-            const availableWidth = window.innerWidth;
-            //const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
-            const aspectRatio = 10 / 11; // A more sto make space for buttons below.
+            const availableWidth = $("#canvas1").width();
+            const aspectRatio = 10 / 11; // A bit highter than wide to make space for the new units below the board.
 
-            const correspondingWidth = availableHeigt * aspectRatio;
-            if (correspondingWidth <= availableWidth) {
-                this.height = availableHeigt;
-                this.width = correspondingWidth;
-            } else {
-                const correspondingHeight = availableWidth / aspectRatio;
-                this.height = correspondingHeight;
-                this.width = availableWidth;
-            }
+            this.height = availableWidth / aspectRatio;
+            this.width = availableWidth;
 
             const boardSize = Math.min(this.height, this.width);
 
