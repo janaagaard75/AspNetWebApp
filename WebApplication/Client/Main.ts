@@ -66,6 +66,26 @@ module CocaineCartels {
             }
         }
 
+        private static getTurnModeString(turnMode: TurnMode): string {
+            switch (Main.game.turnMode) {
+                case TurnMode.PlanMoves:
+                    return "Plan moves";
+
+                case TurnMode.ProposeAlliances:
+                    return "Propose alliances";
+
+                case TurnMode.ReviewAllianceRequests:
+                    return "Respond to alliace requests";
+
+                case TurnMode.StartGame:
+                    return "Start game lobby";
+
+                default:
+                case TurnMode.Undefined:
+                    return "Unknown";
+            }
+        }
+
         private static printAlliancesInfo() {
             const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
 
@@ -128,6 +148,11 @@ module CocaineCartels {
             $("#startPlayersColors").html(playersColors);
         }
 
+        private printTurnMode() {
+            const turnMode = Main.getTurnModeString(Main.game.turnMode);
+            $("#turnMode").html(turnMode);
+        }
+
         private refreshGame() {
             this.updateGameState().then(() => {
                 const widthInPixels = `${CanvasSettings.width}px`;
@@ -186,6 +211,8 @@ module CocaineCartels {
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
+
+                this.printTurnMode();
                 $("#administratorCommands").removeClass("hidden");
 
                 this.printStartPage();

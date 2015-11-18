@@ -284,6 +284,7 @@
     <TypeScriptCompile Include="Client\Game.ts" />
     <TypeScriptCompile Include="Client\Hex.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IDragBoundFunc.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\TurnMode.ts" />
     <TypeScriptCompile Include="Client\Main.ts" />
     <TypeScriptCompile Include="Client\MoveCommand.ts" />
     <TypeScriptCompile Include="Client\PlaceCommand.ts" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 
@@ -45,6 +44,8 @@ namespace CocaineCartels.BusinessLogic
 
         public List<Player> Players { get; private set; }
 
+        public TurnMode TurnMode { get; private set; }
+        
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
@@ -318,6 +319,47 @@ namespace CocaineCartels.BusinessLogic
                 });
 
                 TurnNumber++;
+
+                switch (Settings.Alliances)
+                {
+                    case AlliancesSystem.NoAlliances:
+                        TurnMode = TurnMode.PlanMoves;
+                        break;
+
+                    case AlliancesSystem.AlliancesInSeparateTurns:
+                        if (TurnNumber == 2)
+                        {
+                            TurnMode = TurnMode.PlanMoves;
+                        }
+                        else if (TurnNumber >= 3)
+                        {
+                            switch (TurnNumber%3)
+                            {
+                                case 0:
+                                    TurnMode = TurnMode.ProposeAlliances;
+                                    break;
+
+                                case 1:
+                                    TurnMode = TurnMode.ReviewAllianceRequests;
+                                    break;
+
+                                case 2:
+                                    TurnMode = TurnMode.PlanMoves;
+                                    break;
+
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentOutOfRangeException();
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
         }
 
@@ -336,6 +378,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurnShowingMoveCommands = null;
             NextTurn = new Board(Settings.GridSize);
             Players = new List<Player>();
+            TurnMode = TurnMode.StartGame;
             TurnNumber = 0;
         }
 
@@ -378,6 +421,7 @@ namespace CocaineCartels.BusinessLogic
                     player.Ready = false;
                 }
 
+                TurnMode = TurnMode.PlanMoves;
                 TurnNumber = 1;
             }
         }

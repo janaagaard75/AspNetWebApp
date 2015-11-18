@@ -15,6 +15,8 @@
 
         started: boolean;
 
+        turnMode: TurnMode;
+
         turnNumber: number;
     }
 }
