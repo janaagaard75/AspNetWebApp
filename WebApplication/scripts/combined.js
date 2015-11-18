@@ -1,6 +1,19 @@
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    // Must match the enum in AlliancesSystem.cs.
+    (function (AlliancesSystem) {
+        AlliancesSystem[AlliancesSystem["Undefined"] = 0] = "Undefined";
+        AlliancesSystem[AlliancesSystem["AlliancesInSeparateTurns"] = 1] = "AlliancesInSeparateTurns";
+        AlliancesSystem[AlliancesSystem["AlliancesEveryTurn"] = 2] = "AlliancesEveryTurn";
+        AlliancesSystem[AlliancesSystem["AlliancesSeconndTurn"] = 3] = "AlliancesSeconndTurn";
+        AlliancesSystem[AlliancesSystem["NoAlliances"] = 4] = "NoAlliances";
+    })(CocaineCartels.AlliancesSystem || (CocaineCartels.AlliancesSystem = {}));
+    var AlliancesSystem = CocaineCartels.AlliancesSystem;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
     var Board = (function () {
         /** Call initializeUnits after the board has been initialized. */
         function Board(boardData) {
@@ -141,9 +154,6 @@ var CocaineCartels;
         }
         Canvas.prototype.addLayers = function () {
             this.destroy();
-            this.backgroundLayer = new Konva.Layer();
-            this.backgroundLayer.hitGraphEnabled(false);
-            this.stage.add(this.backgroundLayer);
             this.boardLayer = new Konva.Layer();
             this.stage.add(this.boardLayer);
             this.unitsLayer = new Konva.Layer();
@@ -166,10 +176,7 @@ var CocaineCartels;
                 shape.destroy();
             });
             this.shapesWithEvents = [];
-            if (this.backgroundLayer !== undefined) {
-                this.backgroundLayer.getChildren().each(function (node) {
-                    node.destroy();
-                });
+            if (this.boardLayer !== undefined) {
                 this.commandsLayer.getChildren().each(function (node) {
                     node.destroy();
                 });
@@ -179,7 +186,6 @@ var CocaineCartels;
                 this.unitsLayer.getChildren().each(function (node) {
                     node.destroy();
                 });
-                this.backgroundLayer.destroy();
                 this.boardLayer.destroy();
                 this.commandsLayer.destroy();
                 this.dragLayer.destroy();
@@ -226,14 +232,6 @@ var CocaineCartels;
         };
         Canvas.prototype.drawCells = function () {
             var _this = this;
-            var background = new Konva.Rect({
-                x: 0,
-                y: 0,
-                width: CocaineCartels.CanvasSettings.width,
-                height: CocaineCartels.CanvasSettings.height,
-                fill: "#fff"
-            });
-            this.backgroundLayer.add(background);
             Canvas.board.cells.forEach(function (cell) {
                 _this.drawCell(cell);
             });
@@ -515,14 +513,13 @@ var CocaineCartels;
             if (gridSize == null) {
                 throw "gridSize must be defined.";
             }
-            var heightForButtons = $("#canvasCommands").height() + $("#playerCommands").height();
-            var availableHeigt = window.innerHeight - heightForButtons;
-            var availableWidth = window.innerWidth;
-            //const aspectRatio = 2 / 3; // Aspect ratio of an iPhone 4.
-            var aspectRatio = 10 / 11; // A more sto make space for buttons below.
-            var correspondingWidth = availableHeigt * aspectRatio;
+            var gridGutterWidth = 30; // Also defined in variables.scss.
+            var availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
+            var availableWidth = $(document).width() / 2 - gridGutterWidth;
+            var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
+            var correspondingWidth = availableHeight * aspectRatio;
             if (correspondingWidth <= availableWidth) {
-                this.height = availableHeigt;
+                this.height = availableHeight;
                 this.width = correspondingWidth;
             }
             else {
@@ -1077,7 +1074,7 @@ var CocaineCartels;
             var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
             var allianceButtons = allOtherPlayers
                 .map(function (player) {
-                var playerButton = "<button onclick=\"cocaineCartels.toggleProposeAllianceWith('" + player.color + "'); this.classList.add('active'); this.blur()\" class=\"btn btn-default\" style=\"font-weight: bold; color: " + player.textColor + "; background-color: " + player.color + "\" title=\"Propose alliance\">&nbsp;&nbsp;&nbsp;</button>";
+                var playerButton = "<button onclick=\"cocaineCartels.toggleProposeAllianceWith(this, '" + player.color + "');\" class=\"btn btn-default label-border\" style=\"border-color: " + player.color + "\" title=\"Propose alliance\">&nbsp;&nbsp;&nbsp;</button>";
                 return playerButton;
             })
                 .join(" ");
@@ -1132,10 +1129,7 @@ var CocaineCartels;
             var _this = this;
             this.updateGameState().then(function () {
                 var widthInPixels = CocaineCartels.CanvasSettings.width + "px";
-                $("#administratorCommands").css("width", widthInPixels);
                 if (Main.game.started) {
-                    $("#canvasCommands").css("width", widthInPixels);
-                    $("#playerCommands").css("width", widthInPixels);
                     if (_this.canvas1 !== undefined) {
                         _this.canvas1.destroy();
                         _this.canvas2.destroy();
@@ -1146,7 +1140,7 @@ var CocaineCartels;
                     _this.canvas2 = new CocaineCartels.Canvas(Main.game.previousTurnWithPlaceCommands, _this.getCanvasId(2), false);
                     _this.canvas3 = new CocaineCartels.Canvas(Main.game.previousTurnWithMoveCommands, _this.getCanvasId(3), false);
                     _this.canvas4 = new CocaineCartels.Canvas(Main.game.currentTurn, _this.getCanvasId(4), true);
-                    $("#playerColor").css("background-color", Main.currentPlayer.color);
+                    $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);
@@ -1182,6 +1176,7 @@ var CocaineCartels;
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
+                $("#administratorCommands").removeClass("hidden");
                 _this.printStartPage();
                 window.setTimeout(function () { return _this.tick(); }, 1000);
             });
@@ -1261,7 +1256,8 @@ var CocaineCartels;
                 Main.setCurrentPlayerNotReady();
             }
         };
-        Main.prototype.toggleProposeAllianceWith = function (otherPlayerColor) {
+        Main.prototype.toggleProposeAllianceWith = function (button, otherPlayerColor) {
+            $(button).toggleClass("active").blur();
         };
         Main.prototype.tick = function () {
             var _this = this;
@@ -1445,6 +1441,7 @@ var CocaineCartels;
     var Settings = (function () {
         function Settings() {
         }
+        Settings.alliancesSystem = serverSideSettings.AlliancesSystem;
         Settings.gridSize = serverSideSettings.GridSize;
         Settings.movesPerTurn = serverSideSettings.MovesPerTurn;
         return Settings;

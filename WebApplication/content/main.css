@@ -2526,11 +2526,12 @@ a.label:hover, a.label:focus {
   vertical-align: bottom;
   width: 30px; }
 
-.player-commands {
-  height: 115px; }
-
 .points {
   text-align: center; }
+
+@media (min-width: 768px) {
+  .row-ready {
+    margin-top: 30em; } }
 
 .your-color {
   text-align: right; }

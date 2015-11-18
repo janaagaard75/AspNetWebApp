@@ -71,7 +71,7 @@ module CocaineCartels {
 
             const allianceButtons = allOtherPlayers
                 .map(player => {
-                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith('${player.color}'); this.classList.add('active'); this.blur()" class="btn btn-default" style="font-weight: bold; color: ${player.textColor}; background-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
+                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');" class="btn btn-default label-border" style="border-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
                     return playerButton;
                 })
                 .join(" ");
@@ -131,12 +131,8 @@ module CocaineCartels {
         private refreshGame() {
             this.updateGameState().then(() => {
                 const widthInPixels = `${CanvasSettings.width}px`;
-                $("#administratorCommands").css("width", widthInPixels);
 
                 if (Main.game.started) {
-                    $("#canvasCommands").css("width", widthInPixels);
-                    $("#playerCommands").css("width", widthInPixels);
-
                     if (this.canvas1 !== undefined) {
                         this.canvas1.destroy();
                         this.canvas2.destroy();
@@ -149,7 +145,7 @@ module CocaineCartels {
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
                     this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
 
-                    $("#playerColor").css("background-color", Main.currentPlayer.color);
+                    $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);
@@ -190,6 +186,7 @@ module CocaineCartels {
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
+                $("#administratorCommands").removeClass("hidden");
 
                 this.printStartPage();
 
@@ -286,8 +283,8 @@ module CocaineCartels {
             }
         }
 
-        public toggleProposeAllianceWith(otherPlayerColor: string) {
-
+        public toggleProposeAllianceWith(button: HTMLButtonElement, otherPlayerColor: string) {
+            $(button).toggleClass("active").blur();
         }
 
         public tick() {

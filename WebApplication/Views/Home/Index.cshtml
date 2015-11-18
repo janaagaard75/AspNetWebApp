@@ -1,69 +1,89 @@
 ﻿@using CocaineCartels.BusinessLogic
 @using Newtonsoft.Json
 
-<div id="gameStopped">
-    <div id="gameStartLobby" class="container-fluid" style="background-color: white">
-        <h1>Cocaine Cartels</h1>
-        <p>Waiting for players to join. <span id="startNumberOfPlayers"></span> players have joined so far.</p>
-        <p>Your color: <span id="startPlayerColor"></span></p>
-        <p></p>
-        <p>Players joined: <span id="startPlayersColors"></span></p>
-        <p><button id="allPlayersSeemToBeHereButton" onclick="cocaineCartels.allPlayersSeemToBeHereClicked();" class="btn btn-default btn-lg">All players seem to be here</button></p>
-        <p>The game will start when all players have pressed the button above.</p>
-        <h4>Settings</h4>
-        <p>Each turn all players get @Settings.NewUnitsPerTurn new units plus one extra unit for every @Settings.NewUnitPerCellsControlled cells controlled.</p>
-        <p>Up to @Settings.MovesPerTurn move commands allowed per turn.</p>
-        <p>The board size is @Settings.GridSize.</p>
-        @*<p>The first player to reaxh @Settings.PointsToWinTheGame points wins.</p>*@
-    </div>
+<div id="headerContainer" class="container-fluid">
+    <h1>Cocaine Cartels</h1>
 </div>
-<div id="gameStarted">
-    <div id="canvasCommands" class="container-fluid canvas-commands">
-        <div class="row">
-            <div class="col-xs-7">
-                <p>
-                    Step through last turn:
-                    <button id="boardButton1" onclick="cocaineCartels.setActiveBoard(1);" class="btn btn-default">1</button>
-                    <button id="boardButton2" onclick="cocaineCartels.setActiveBoard(2);" class="btn btn-default">2</button>
-                    <button id="boardButton3" onclick="cocaineCartels.setActiveBoard(3);" class="btn btn-default">3</button>
-                    <button id="boardButton4" onclick="cocaineCartels.setActiveBoard(4);" class="btn btn-default">4</button>
-                </p>
-            </div>
-            <div class="col-xs-3 text-right">
-                <p>Your color: <span id="playerColor" class="label">&nbsp;</span></p>
-            </div>
-            <div class="col-xs-2 text-right">
-                <p id="moves">Moves: <span id="numberOfMovesLeft"></span></p>
-            </div>
+<div id="gameStopped" class="container-fluid hidden">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+            <p>
+                Waiting for players to join. <span id="startNumberOfPlayers"></span> players have joined so far.
+            </p>
+            <p>Your color: <span id="startPlayerColor"></span></p>
+            <p></p>
+            <p>Players joined: <span id="startPlayersColors"></span></p>
+            <p>
+                <button id="allPlayersSeemToBeHereButton" onclick="cocaineCartels.allPlayersSeemToBeHereClicked();" class="btn btn-primary btn-lg">All players seem to be here</button>
+            </p>
+            <p>The game will start when all players have pressed the button above.</p>
+            <h4>Settings</h4>
+            <p>Each turn all players get @Settings.NewUnitsPerTurn new units plus one extra unit for every @Settings.NewUnitPerCellsControlled cells controlled.</p>
+            <p>Up to @Settings.MovesPerTurn move commands allowed per turn.</p>
+            <p>The board size is @Settings.GridSize.</p>
+            @*<p>The first player to reach @Settings.PointsToWinTheGame points wins.</p>*@
         </div>
     </div>
-    <div id="canvas1"></div>
-    <div id="canvas2"></div>
-    <div id="canvas3"></div>
-    <div id="canvas4"></div>
-    <div id="playerCommands" class="container-fluid player-commands">
-        <div class="row">
-            <div class="col-xs-4">
-                <div class="row">
-                    <div class="col-xs-4">Points:</div>
-                    <div class="col-xs-8"><span id="playersPoints"></span></div>
+</div>
+<div id="gameStarted" class="container-fluid hidden">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p>Your color: <span id="playerColor" class="label">&nbsp;</span></p>
                 </div>
             </div>
-            <div class="col-xs-4 text-center">
-                @*<p>Proprose alliance with:</p>
-                <div id="alliances"></div>*@
+            <div class="row">
+                <div class="col-xs-12">
+                    <p>Points:</p>
+                    <p id="playersPoints"></p>
+                </div>
             </div>
-            <div class="col-xs-4 text-right">
-                <p>
-                    <button id="readyButton" class="btn btn-default" onclick="cocaineCartels.readyButtonClicked();">I'm ready</button>
-                </p>
-                <p>Are ready: <span id="playersStatus"></span></p>
+        </div>
+        <div class="col-sm-6 col-height">
+            <div id="canvasButtonsRow" class="row">
+                <div class="col-xs-9">
+                    <p>
+                        <span class="form-control-static">Step through last turn:</span>&nbsp;
+                        <button id="boardButton1" onclick="cocaineCartels.setActiveBoard(1);" class="btn btn-default">1</button>
+                        <button id="boardButton2" onclick="cocaineCartels.setActiveBoard(2);" class="btn btn-default">2</button>
+                        <button id="boardButton3" onclick="cocaineCartels.setActiveBoard(3);" class="btn btn-default">3</button>
+                        <button id="boardButton4" onclick="cocaineCartels.setActiveBoard(4);" class="btn btn-default">4</button>
+                    </p>
+                </div>
+                <div class="col-xs-3">
+                    <p id="moves" class="form-control-static">Moves: <span id="numberOfMovesLeft"></span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="canvas1"></div>
+                    <div id="canvas2"></div>
+                    <div id="canvas3"></div>
+                    <div id="canvas4"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 col-height">
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <p>Propose alliances with:</p>
+                    <div id="alliances"></div>
+                </div>
+            </div>
+            <div class="row row-ready">
+                <div class="col-xs-12 text-right">
+                    <p>Are ready: <span id="playersStatus"></span></p>
+                    <p>
+                        <button id="readyButton" class="btn btn-primary btn-lg" onclick="cocaineCartels.readyButtonClicked();">I'm ready</button>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div id="administratorCommands" class="container-fluid administrator-commands">
-    <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default">Reset Game</button>
+    <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default btn-sm">Reset game</button>
 </div>
 
 @section beforeBundledScripts

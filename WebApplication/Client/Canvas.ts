@@ -19,7 +19,6 @@
         private static board: Board; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
-        private backgroundLayer: Konva.Layer;
         private boardLayer: Konva.Layer;
         private canvasId: string;
         private commandsLayer: Konva.Layer;
@@ -30,10 +29,6 @@
 
         private addLayers() {
             this.destroy();
-
-            this.backgroundLayer = new Konva.Layer();
-            this.backgroundLayer.hitGraphEnabled(false)
-            this.stage.add(this.backgroundLayer);
 
             this.boardLayer = new Konva.Layer();
             this.stage.add(this.boardLayer);
@@ -62,10 +57,7 @@
             });
             this.shapesWithEvents = [];
 
-            if (this.backgroundLayer !== undefined) {
-                this.backgroundLayer.getChildren().each(node => {
-                    node.destroy();
-                });
+            if (this.boardLayer !== undefined) {
                 this.commandsLayer.getChildren().each(node => {
                     node.destroy();
                 });
@@ -76,7 +68,6 @@
                     node.destroy();
                 });
 
-                this.backgroundLayer.destroy();
                 this.boardLayer.destroy();
                 this.commandsLayer.destroy();
                 this.dragLayer.destroy();
@@ -131,15 +122,6 @@
         }
 
         private drawCells() {
-            const background = new Konva.Rect({
-                x: 0,
-                y: 0,
-                width: CanvasSettings.width,
-                height: CanvasSettings.height,
-                fill: "#fff"
-            });
-            this.backgroundLayer.add(background);
-
             Canvas.board.cells.forEach(cell => {
                 this.drawCell(cell);
             });

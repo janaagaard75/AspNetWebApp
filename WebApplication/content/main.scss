@@ -1,23 +1,19 @@
 ﻿@import "bootstrap";
 
-.administrator-commands
-{
+.administrator-commands {
     margin-top: 10px;
 }
 
-.canvas-commands
-{
+.canvas-commands {
     height: 50px;
     padding-top: 10px;
 }
 
-.container-fluid
-{
+.container-fluid {
     min-width: 575px;
 }
 
-.grab-cursor
-{
+.grab-cursor {
     cursor: move;
     cursor: -moz-grab;
     cursor: -webkit-grab;
@@ -25,8 +21,7 @@
     cursor: grab;
 }
 
-.grabbing-cursor
-{
+.grabbing-cursor {
     cursor: move;
     cursor: -moz-grabbing;
     cursor: -webkit-grabbing;
@@ -38,8 +33,7 @@
     display: none;
 }
 
-.konvajs-content
-{
+.konvajs-content {
     @include center-block;
 }
 
@@ -48,18 +42,15 @@
     border-width: 2px;
 }
 
-.moves
-{
+.moves {
     text-align: center;
 }
 
-.no-wrap
-{
+.no-wrap {
     white-space: nowrap;
 }
 
-.points
-{
+.points {
     border-style: solid;
     border-width: 1px;
     display: inline-block;
@@ -68,17 +59,16 @@
     width: 30px;
 }
 
-.player-commands
-{
-    height: 115px;
-}
-
-.points
-{
+.points {
     text-align: center;
 }
 
-.your-color
-{
+@media (min-width: $screen-sm) {
+    .row-ready {
+        margin-top: 30em;
+    }
+}
+
+.your-color {
     text-align: right;
 }
