@@ -514,17 +514,18 @@ var CocaineCartels;
                 throw "gridSize must be defined.";
             }
             var gridGutterWidth = 30; // Also defined in variables.scss.
-            var availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
+            var canvasButtonsRowHeight = 43; // Hard coded here, since it might be hidden.
+            var availableHeight = $(window).height() - ($("#headerContainer").height() + canvasButtonsRowHeight);
             var availableWidth = $(document).width() / 2 - gridGutterWidth;
             var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
-            var correspondingWidth = availableHeight * aspectRatio;
-            if (correspondingWidth <= availableWidth) {
+            var neededWidthToMatchFullHeight = Math.round(availableHeight * aspectRatio);
+            if (neededWidthToMatchFullHeight <= availableWidth) {
                 this.height = availableHeight;
-                this.width = correspondingWidth;
+                this.width = neededWidthToMatchFullHeight;
             }
             else {
-                var correspondingHeight = availableWidth / aspectRatio;
-                this.height = correspondingHeight;
+                var neededHeightToMatchFullWidth = Math.round(availableWidth / aspectRatio);
+                this.height = neededHeightToMatchFullWidth;
                 this.width = availableWidth;
             }
             var boardSize = Math.min(this.height, this.width);
@@ -1098,15 +1099,25 @@ var CocaineCartels;
                     return "Unknown";
             }
         };
-        Main.printAlliancesInfo = function () {
-            var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
-            var allianceButtons = allOtherPlayers
-                .map(function (player) {
-                var playerButton = "<button onclick=\"cocaineCartels.toggleProposeAllianceWith(this, '" + player.color + "');\" class=\"btn btn-default label-border\" style=\"border-color: " + player.color + "\" title=\"Propose alliance\">&nbsp;&nbsp;&nbsp;</button>";
-                return playerButton;
-            })
-                .join(" ");
-            $("#alliances").html(allianceButtons);
+        Main.printAllianceCheckboxes = function () {
+            switch (Main.game.turnMode) {
+                case CocaineCartels.TurnMode.ProposeAlliances:
+                    var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
+                    var allianceCheckboxes = allOtherPlayers
+                        .map(function (player) {
+                        var playerButton = "<div class=\"checkbox\"><label><input type=\"checkbox\" onclick=\"cocaineCartels.toggleProposeAllianceWith(this, '" + player.color + "');\"/> <span style=\"color: " + player.color + "\">" + player.name + "</span></label></div>";
+                        return playerButton;
+                    })
+                        .join(" ");
+                    $("#allianceCheckboxes").html(allianceCheckboxes);
+                    $("#alliances").removeClass("hidden");
+                    break;
+                case CocaineCartels.TurnMode.ReviewAllianceRequests:
+                    $("#alliances").removeClass("hidden");
+                    break;
+                default:
+                    $("#alliances").addClass("hidden");
+            }
         };
         Main.printNumberOfMovesLeft = function () {
             var numberOfMovesLeft = CocaineCartels.Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
@@ -1131,7 +1142,7 @@ var CocaineCartels;
                     points = player.points;
                     addedPoints = "+" + player.pointsLastTurn;
                 }
-                var playerPoints = "<table style=\"display: inline-block\"><tr><td><span class=\"label\" style=\"background-color: " + player.color + "; color: " + player.textColor + "\">" + points + "</span></td></tr><tr><td>" + addedPoints + "</td></tr></table>";
+                var playerPoints = "<table style=\"display: inline-block\"><tr><td><span class=\"label\" style=\"background-color: " + player.color + "; color: #fff;\">" + points + "</span></td></tr><tr><td>" + addedPoints + "</td></tr></table>";
                 return playerPoints;
             });
             $("#playersPoints").html(playersPoints.join(" "));
@@ -1197,7 +1208,7 @@ var CocaineCartels;
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
-                    Main.printAlliancesInfo();
+                    Main.printAllianceCheckboxes();
                     _this.setActiveBoard(4);
                     var enableFirstThreeBoards = (Main.game.turnNumber >= 2);
                     for (var i = 1; i <= 3; i++) {
@@ -1415,8 +1426,8 @@ var CocaineCartels;
             this.commandsSentOn = Player.parseDateString(playerData.commandsSentOn);
             this.points = playerData.points;
             this.pointsLastTurn = playerData.pointsLastTurn;
+            this.name = playerData.name;
             this.ready = playerData.ready;
-            this.textColor = playerData.textColor;
         }
         Object.defineProperty(Player.prototype, "numberOfMoveCommands", {
             /** Returns the number of move commands that the current has assigned. */

@@ -1,14 +1,14 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    internal class PlayerColors
+    internal class PlayerData
     {
-        public PlayerColors(string mainColor, string textColor)
+        public PlayerData(string color, string name)
         {
-            MainColor = mainColor;
-            TextColor = textColor;
+            Color = color;
+            Name = name;
         }
 
-        public string MainColor { get; }
-        public string TextColor { get; }
+        public string Color { get; }
+        public string Name { get; }
     }
 }

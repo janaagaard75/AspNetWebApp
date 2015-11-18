@@ -7,12 +7,12 @@ namespace CocaineCartels.BusinessLogic
 {
     public class Player : IEquatable<Player>
     {
-        internal Player(PlayerColors colors, IPAddress ipAddress, string userAgent)
+        internal Player(string colors, string name, IPAddress ipAddress, string userAgent)
         {
-            Color = colors.MainColor;
+            Color = colors;
             CommandsSentOn = null;
             IpAddress = ipAddress;
-            TextColor = colors.TextColor;
+            Name = name;
             UserAgent = userAgent;
 
             AllianceProposals = new HashSet<Player>();
@@ -30,6 +30,8 @@ namespace CocaineCartels.BusinessLogic
 
         [JsonIgnore]
         public IPAddress IpAddress { get; }
+
+        public string Name { get; }
 
         public int Points { get; set; }
 

@@ -15,14 +15,14 @@ namespace CocaineCartels.BusinessLogic
         private static readonly Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
         public static Game Instance => _GameInstance.Value;
 
-        private readonly PlayerColors[] PlayersColors =
+        private readonly PlayerData[] PlayersData =
         {
-            new PlayerColors("#f22", "#fff"),
-            new PlayerColors("#cc0", "#fff"),
-            new PlayerColors("#0b0", "#fff"),
-            new PlayerColors("#07e", "#fff"),
-            new PlayerColors("#84f", "#fff"),
-            new PlayerColors("#f0f", "#fff")
+            new PlayerData("#f22", "Red"),
+            new PlayerData("#cc0", "Yellow"),
+            new PlayerData("#0b0", "Green"),
+            new PlayerData("#07e", "Magenta"),
+            new PlayerData("#84f", "Blue"),
+            new PlayerData("#f0f", "Cyan")
         };
 
         private readonly object AddPlayerLock = new object();
@@ -49,7 +49,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
-        private int MaximumNumberOfPlayers => PlayersColors.Length;
+        private int MaximumNumberOfPlayers => PlayersData.Length;
         private int NumberOfPlayers => Players.Count;
         public bool Started => TurnNumber > 0;
 
@@ -67,7 +67,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Cannot add players to a game that has started.");
                 }
 
-                Player player = new Player(PlayersColors[NumberOfPlayers], ipAddress, userAgent);
+                Player player = new Player(PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name, ipAddress, userAgent);
                 Players.Add(player);
 
                 return player;

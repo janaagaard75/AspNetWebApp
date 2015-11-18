@@ -86,17 +86,28 @@ module CocaineCartels {
             }
         }
 
-        private static printAlliancesInfo() {
-            const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
+        private static printAllianceCheckboxes() {
+            switch (Main.game.turnMode) {
+                case TurnMode.ProposeAlliances:
+                    const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
+                    const allianceCheckboxes = allOtherPlayers
+                        .map(player => {
+                            const playerButton = `<div class="checkbox"><label><input type="checkbox" onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');"/> <span style="color: ${player.color}">${player.name}</span></label></div>`;
+                            return playerButton;
+                        })
+                        .join(" ");
 
-            const allianceButtons = allOtherPlayers
-                .map(player => {
-                    const playerButton = `<button onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');" class="btn btn-default label-border" style="border-color: ${player.color}" title="Propose alliance">&nbsp;&nbsp;&nbsp;</button>`;
-                    return playerButton;
-                })
-                .join(" ");
+                    $("#allianceCheckboxes").html(allianceCheckboxes);
+                    $("#alliances").removeClass("hidden");
+                    break;
 
-            $("#alliances").html(allianceButtons);
+                case TurnMode.ReviewAllianceRequests:
+                    $("#alliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#alliances").addClass("hidden");
+            }
         }
 
         public static printNumberOfMovesLeft() {
@@ -122,7 +133,7 @@ module CocaineCartels {
                     addedPoints = `+${player.pointsLastTurn}`;
                 }
 
-                const playerPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: ${player.textColor}">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
+                const playerPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: #fff;">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
                 return playerPoints;
             });
             $("#playersPoints").html(playersPoints.join(" "));
@@ -198,7 +209,7 @@ module CocaineCartels {
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
-                    Main.printAlliancesInfo();
+                    Main.printAllianceCheckboxes();
 
                     this.setActiveBoard(4);
 
