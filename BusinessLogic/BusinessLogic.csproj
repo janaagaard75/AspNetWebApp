@@ -58,6 +58,7 @@
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="TurnMode.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
