@@ -153,6 +153,11 @@ module CocaineCartels {
             $("#turnMode").html(turnMode);
         }
 
+        private printTurnNumber() {
+            const turnNumber = Main.game.turnNumber.toString();
+            $("#turnNumber").html(turnNumber);
+        }
+
         private refreshGame() {
             this.updateGameState().then(() => {
                 const widthInPixels = `${CanvasSettings.width}px`;
@@ -168,7 +173,7 @@ module CocaineCartels {
                     this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
                     this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
-                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), true);
+                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), Main.game.turnMode === TurnMode.PlanMoves);
 
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
@@ -212,6 +217,7 @@ module CocaineCartels {
                     $("#gameStopped").removeClass("hidden");
                 }
 
+                this.printTurnNumber();
                 this.printTurnMode();
                 $("#administratorCommands").removeClass("hidden");
 
