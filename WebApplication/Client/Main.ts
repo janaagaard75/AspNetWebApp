@@ -186,6 +186,7 @@ module CocaineCartels {
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
+                $("#administratorCommands").removeClass("hidden");
 
                 this.printStartPage();
 
