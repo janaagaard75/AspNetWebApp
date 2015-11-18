@@ -515,10 +515,19 @@ var CocaineCartels;
             if (gridSize == null) {
                 throw "gridSize must be defined.";
             }
+            var availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
             var availableWidth = $("#canvas1").width();
-            var aspectRatio = 10 / 11; // A bit highter than wide to make space for the new units below the board.
-            this.height = availableWidth / aspectRatio;
-            this.width = availableWidth;
+            var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
+            var correspondingWidth = availableHeight * aspectRatio;
+            if (correspondingWidth <= availableWidth) {
+                this.height = availableHeight;
+                this.width = correspondingWidth;
+            }
+            else {
+                var correspondingHeight = availableWidth / aspectRatio;
+                this.height = correspondingHeight;
+                this.width = availableWidth;
+            }
             var boardSize = Math.min(this.height, this.width);
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
             this.lineWidth = 1 + boardSize / 1000;

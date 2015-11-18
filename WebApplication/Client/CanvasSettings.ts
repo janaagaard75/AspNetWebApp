@@ -21,11 +21,19 @@ module CocaineCartels {
                 throw "gridSize must be defined.";
             }
 
+            const availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
             const availableWidth = $("#canvas1").width();
-            const aspectRatio = 10 / 11; // A bit highter than wide to make space for the new units below the board.
+            const aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
 
-            this.height = availableWidth / aspectRatio;
-            this.width = availableWidth;
+            const correspondingWidth = availableHeight * aspectRatio;
+            if (correspondingWidth <= availableWidth) {
+                this.height = availableHeight;
+                this.width = correspondingWidth;
+            } else {
+                const correspondingHeight = availableWidth / aspectRatio;
+                this.height = correspondingHeight;
+                this.width = availableWidth;
+            }
 
             const boardSize = Math.min(this.height, this.width);
 

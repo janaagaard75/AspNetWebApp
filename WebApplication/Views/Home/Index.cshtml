@@ -1,7 +1,7 @@
 ﻿@using CocaineCartels.BusinessLogic
 @using Newtonsoft.Json
 
-<div class="container-fluid">
+<div id="headerContainer" class="container-fluid">
     <h1>Cocaine Cartels</h1>
 </div>
 <div id="gameStopped" class="container-fluid">
@@ -40,8 +40,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="row">
+        <div class="col-sm-6 col-height">
+            <div id="canvasButtonsRow" class="row">
                 <div class="col-xs-9">
                     <p>
                         <span class="form-control-static">Step through last turn:</span>&nbsp;
@@ -64,20 +64,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 col-height">
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-12 text-right">
                     <p>Propose alliances with:</p>
                     <div id="alliances"></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12">
+            <div class="row row-ready">
+                <div class="col-xs-12 text-right">
                     <p>Are ready: <span id="playersStatus"></span></p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-12 text-right">
                     <p>
                         <button id="readyButton" class="btn btn-default btn-lg" onclick="cocaineCartels.readyButtonClicked();">I'm ready</button>
                     </p>
