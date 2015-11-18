@@ -154,9 +154,6 @@ var CocaineCartels;
         }
         Canvas.prototype.addLayers = function () {
             this.destroy();
-            this.backgroundLayer = new Konva.Layer();
-            this.backgroundLayer.hitGraphEnabled(false);
-            this.stage.add(this.backgroundLayer);
             this.boardLayer = new Konva.Layer();
             this.stage.add(this.boardLayer);
             this.unitsLayer = new Konva.Layer();
@@ -179,10 +176,7 @@ var CocaineCartels;
                 shape.destroy();
             });
             this.shapesWithEvents = [];
-            if (this.backgroundLayer !== undefined) {
-                this.backgroundLayer.getChildren().each(function (node) {
-                    node.destroy();
-                });
+            if (this.boardLayer !== undefined) {
                 this.commandsLayer.getChildren().each(function (node) {
                     node.destroy();
                 });
@@ -192,7 +186,6 @@ var CocaineCartels;
                 this.unitsLayer.getChildren().each(function (node) {
                     node.destroy();
                 });
-                this.backgroundLayer.destroy();
                 this.boardLayer.destroy();
                 this.commandsLayer.destroy();
                 this.dragLayer.destroy();
@@ -239,14 +232,6 @@ var CocaineCartels;
         };
         Canvas.prototype.drawCells = function () {
             var _this = this;
-            var background = new Konva.Rect({
-                x: 0,
-                y: 0,
-                width: CocaineCartels.CanvasSettings.width,
-                height: CocaineCartels.CanvasSettings.height,
-                fill: "#fff"
-            });
-            this.backgroundLayer.add(background);
             Canvas.board.cells.forEach(function (cell) {
                 _this.drawCell(cell);
             });
