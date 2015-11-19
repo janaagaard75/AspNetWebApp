@@ -44,6 +44,7 @@ namespace CocaineCartels.BusinessLogic
 
         public List<Player> Players { get; private set; }
 
+        // TODO j: Move to the Turn class.
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
