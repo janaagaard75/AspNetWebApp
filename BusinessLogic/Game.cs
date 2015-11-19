@@ -214,7 +214,13 @@ namespace CocaineCartels.BusinessLogic
                 }
             });
 
-            // TODO j: Filter out alliance proposals and alliances, so that only the player's proposals and alliances are returned.
+            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer != player.Color);
+
+            // When planning the turns, only see own alliances.
+            if (currentTurn.Mode == TurnMode.PlanMoves)
+            {
+                currentTurn.Alliances.AlliancePairs.RemoveWhere(alliance => alliance.PlayerA != player.Color && alliance.PlayerB != player.Color);
+            }
 
             return currentTurn;
         }
@@ -242,10 +248,7 @@ namespace CocaineCartels.BusinessLogic
             IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
-            unitsBelongingToPlayer.ForEach(unit =>
-            {
-                unit.RemoveCommands();
-            });
+            unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
@@ -366,7 +369,7 @@ namespace CocaineCartels.BusinessLogic
 
         private void PerformReviewAllianceRequestsTurn()
         {
-            // Loop through each player's alliance proposals. See if there is a revere proposal. If so, then create an alliance between the two players.
+            // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
                 IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
@@ -425,10 +428,7 @@ namespace CocaineCartels.BusinessLogic
 
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
         {
-            Players.Where(player => player.Color == playerColor).ForEach(player =>
-            {
-                player.Ready = isReady;
-            });
+            Players.Where(player => player.Color == playerColor).ForEach(player => { player.Ready = isReady; });
 
             PerformTurnIfAllPlayersAreReady();
         }

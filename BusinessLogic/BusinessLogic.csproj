@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlliancePair.cs" />
     <Compile Include="AllianceProposal.cs" />
     <Compile Include="Alliances.cs" />
     <Compile Include="GameModeType.cs" />
