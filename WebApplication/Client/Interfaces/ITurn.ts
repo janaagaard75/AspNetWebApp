@@ -5,5 +5,6 @@
         cells: Array<ICell>;
         mode: TurnMode;
         newUnits: Array<IUnit>;
+        turnNumber: number;
     }
 }

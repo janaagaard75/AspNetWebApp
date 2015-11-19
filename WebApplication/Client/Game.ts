@@ -30,7 +30,6 @@ module CocaineCartels {
             this.currentTurn = new Turn(currentTurnData);
 
             this.started = gameData.started;
-            this.turnNumber = gameData.turnNumber;
         }
 
         public currentTurn: Turn;
@@ -39,7 +38,6 @@ module CocaineCartels {
         public previousTurnWithPlaceCommands: Turn;
         public previousTurnWithMoveCommands: Turn;
         public started: boolean;
-        public turnNumber: number;
 
         /** Returns the player with the specified color. Returns null if the player wasn't found. */
         public getPlayer(playerColor: string): Player {

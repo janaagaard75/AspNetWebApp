@@ -14,7 +14,5 @@
         previousTurnShowingPlaceCommands: ITurn;
 
         started: boolean;
-
-        turnNumber: number;
     }
 }

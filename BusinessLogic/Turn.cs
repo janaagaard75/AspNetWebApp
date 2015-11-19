@@ -11,6 +11,7 @@ namespace CocaineCartels.BusinessLogic
             Alliances = new Alliances();
             Cells = InitializeCells(gridSize);
             ResetNewUnits();
+            TurnNumber = 0;
         }
 
         public HashSet<AllianceProposal> AllianceProposals { get; }
@@ -18,6 +19,8 @@ namespace CocaineCartels.BusinessLogic
         public IEnumerable<Cell> Cells { get; }
         public TurnMode Mode { get; set; }
         public List<Unit> NewUnits { get; private set; }
+        /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
+        public int TurnNumber { get; private set; }
 
         internal IEnumerable<Unit> AllUnits
         {
@@ -55,6 +58,11 @@ namespace CocaineCartels.BusinessLogic
             {
                 cell.Fight();
             });
+        }
+
+        public void IncreaseTurnNumber()
+        {
+            TurnNumber++;
         }
 
         private IEnumerable<Cell> InitializeCells(int gridSize)

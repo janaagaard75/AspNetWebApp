@@ -165,7 +165,7 @@ module CocaineCartels {
         }
 
         private printTurnNumber() {
-            const turnNumber = Main.game.turnNumber.toString();
+            const turnNumber = Main.game.currentTurn.turnNumber.toString();
             $("#turnNumber").html(turnNumber);
         }
 
@@ -213,7 +213,7 @@ module CocaineCartels {
 
                     this.setActiveBoard(4);
 
-                    const enableFirstThreeBoards = (Main.game.turnNumber >= 2);
+                    const enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
                         const boardButtonId = `#boardButton${i}`;
                         $(boardButtonId).prop("disabled", !enableFirstThreeBoards);
@@ -333,7 +333,7 @@ module CocaineCartels {
 
         public tick() {
             GameService.getStatus().then(status => {
-                if (status.turnNumber !== Main.game.turnNumber) {
+                if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
                     this.refreshGame();
                     return;
                 }

@@ -44,13 +44,10 @@ namespace CocaineCartels.BusinessLogic
 
         public List<Player> Players { get; private set; }
 
-        // TODO j: Move to the Turn class.
-        /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
-        public int TurnNumber { get; private set; }
-
         private int MaximumNumberOfPlayers => PlayersData.Length;
         private int NumberOfPlayers => Players.Count;
         public bool Started => TurnNumber > 0;
+        public int TurnNumber => NextTurn.TurnNumber;
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -288,8 +285,7 @@ namespace CocaineCartels.BusinessLogic
                         throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
                 }
 
-
-                TurnNumber++;
+                NextTurn.IncreaseTurnNumber();
             }
         }
 
@@ -410,7 +406,6 @@ namespace CocaineCartels.BusinessLogic
             NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
             NextTurn.Mode = TurnMode.StartGame;
-            TurnNumber = 0;
         }
 
         public void SetAllPlayersSeemToBeHere(Player player, bool allSeemToBeHere)
@@ -450,7 +445,7 @@ namespace CocaineCartels.BusinessLogic
                 }
 
                 NextTurn.Mode = TurnMode.PlanMoves;
-                TurnNumber = 1;
+                NextTurn.IncreaseTurnNumber();
             }
         }
 

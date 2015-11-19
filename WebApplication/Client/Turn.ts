@@ -20,11 +20,14 @@
                 const newUnit = new Unit(unitData, this, null);
                 this.newUnits.push(newUnit);
             });
+
+            this.turnNumber = turnData.turnNumber;
         }
 
         public cells: Array<Cell>;
         public mode: TurnMode;
         public newUnits: Array<Unit>;
+        public turnNumber: number;
 
         public get allUnits(): Array<Unit> {
             const allUnits = this.unitsOnBoard.concat(this.newUnits);

@@ -48,7 +48,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpGet, Route("api/status")]
         public Status GetStatus()
         {
-            Status status = new Status(Game.Instance.Players, Game.Instance.TurnNumber);
+            Status status = new Status(Game.Instance.Players, Game.Instance. TurnNumber);
             return status;
         }
 
