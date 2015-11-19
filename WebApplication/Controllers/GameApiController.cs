@@ -40,7 +40,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpGet, Route("api/gamestate")]
         public GameState GetGameState()
         {
-            Board currentTurn = Game.Instance.GetCurrentTurn(CurrentPlayer);
+            Turn currentTurn = Game.Instance.GetCurrentTurn(CurrentPlayer);
             GameState state = new GameState(CurrentPlayer.Color, currentTurn, Game.Instance);
             return state;
         }

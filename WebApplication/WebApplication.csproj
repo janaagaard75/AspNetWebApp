@@ -263,7 +263,7 @@
     <TypeScriptCompile Include="Client\GameState.ts" />
     <TypeScriptCompile Include="Client\HexagonEvent.ts" />
     <TypeScriptCompile Include="Client\HttpClient.ts" />
-    <TypeScriptCompile Include="Client\Interfaces\IBoard.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\ITurn.ts" />
     <TypeScriptCompile Include="Client\Interfaces\ICell.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGame.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGameState.ts" />

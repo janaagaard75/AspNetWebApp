@@ -4,7 +4,7 @@ module CocaineCartels {
     export class Cell {
         constructor(
             cellData: ICell,
-            board: Board
+            board: Turn
         ) {
             this._cellData = cellData;
             this.board = board;
@@ -14,7 +14,7 @@ module CocaineCartels {
         private _cellData: ICell;
         private _units: Array<Unit> = undefined;
 
-        public board: Board;
+        public board: Turn;
         public dropAllowed = false;
         public hex: Hex;
         public hexagon: Konva.Shape;

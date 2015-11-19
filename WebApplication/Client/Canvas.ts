@@ -3,7 +3,7 @@
 
     export class Canvas {
         constructor(
-            board: Board,
+            board: Turn,
             canvasId: string,
             interactive: boolean
         ) {
@@ -16,7 +16,7 @@
             }
         }
 
-        private static board: Board; // Has be to static to be accessible inside unitDragBound function.
+        private static board: Turn; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
         private boardLayer: Konva.Layer;

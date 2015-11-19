@@ -1,9 +1,9 @@
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
-    var Board = (function () {
+    var Turn = (function () {
         /** Call initializeUnits after the board has been initialized. */
-        function Board(boardData) {
+        function Turn(boardData) {
             var _this = this;
             // No units and commands initialized yet.
             this.cells = [];
@@ -17,7 +17,7 @@ var CocaineCartels;
                 _this.newUnits.push(newUnit);
             });
         }
-        Object.defineProperty(Board.prototype, "allUnits", {
+        Object.defineProperty(Turn.prototype, "allUnits", {
             get: function () {
                 var allUnits = this.unitsOnBoard.concat(this.newUnits);
                 return allUnits;
@@ -25,7 +25,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Board.prototype, "moveCommands", {
+        Object.defineProperty(Turn.prototype, "moveCommands", {
             get: function () {
                 var moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
                     .map(function (unit) { return unit.moveCommand; })
@@ -35,7 +35,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Board.prototype, "unitsOnBoard", {
+        Object.defineProperty(Turn.prototype, "unitsOnBoard", {
             /** Returns the list of units placed on the board, i.e. units to be placed on the board are not included. */
             get: function () {
                 var unitsDoubleArray = this.cells.map(function (cell) { return cell.units; });
@@ -45,7 +45,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Board.prototype, "unitsOnBoardOrToBePlacedOnBoard", {
+        Object.defineProperty(Turn.prototype, "unitsOnBoardOrToBePlacedOnBoard", {
             get: function () {
                 var unitsOnBoardOrToBePlacedOnBoard = this.unitsOnBoard.concat(this.unitsToBePlacedOnBoard);
                 return unitsOnBoardOrToBePlacedOnBoard;
@@ -53,7 +53,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Board.prototype, "unitsToBePlacedOnBoard", {
+        Object.defineProperty(Turn.prototype, "unitsToBePlacedOnBoard", {
             get: function () {
                 var unitsToBePlacedOnBoard = this.newUnits.filter(function (unit) { return unit.placeCommand !== null; });
                 return unitsToBePlacedOnBoard;
@@ -61,7 +61,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Board.prototype.allowedCellsForMove = function (unit) {
+        Turn.prototype.allowedCellsForMove = function (unit) {
             if (unit.cell === null && unit.placeCommand === null) {
                 throw "It's not allowed to move a cell that is not on the board or to be placed on the board.";
             }
@@ -78,7 +78,7 @@ var CocaineCartels;
             });
             return allowedCells;
         };
-        Board.prototype.allowedCellsForPlace = function (unit) {
+        Turn.prototype.allowedCellsForPlace = function (unit) {
             var cellsWithUnits = this.cells.filter(function (cell) {
                 var cellHasUnitsBelongingToCurrentPlayer = cell.units
                     .filter(function (u) { return u.moveCommand === null; })
@@ -92,15 +92,15 @@ var CocaineCartels;
             var allowedCells = CocaineCartels.Utilities.union(cellsWithUnits, moveFromCells);
             return allowedCells;
         };
-        Board.prototype.getCell = function (hex) {
+        Turn.prototype.getCell = function (hex) {
             var cell = this.cells.filter(function (c) { return c.hex.equals(hex); })[0];
             return cell;
         };
-        Board.prototype.getMoveCommands = function (from, to) {
+        Turn.prototype.getMoveCommands = function (from, to) {
             var moveCommands = this.moveCommands.filter(function (moveCommand) { return moveCommand.from === from && moveCommand.to === to; });
             return moveCommands;
         };
-        Board.prototype.nearestCell = function (pos) {
+        Turn.prototype.nearestCell = function (pos) {
             var minDist = null;
             var nearestCell;
             this.cells.forEach(function (cell) {
@@ -112,19 +112,19 @@ var CocaineCartels;
             });
             return nearestCell;
         };
-        Board.prototype.newUnitsForPlayer = function (player) {
+        Turn.prototype.newUnitsForPlayer = function (player) {
             var newUnits = this.newUnits.filter(function (u) { return u.player.color === player.color; });
             return newUnits;
         };
-        Board.prototype.placeUnit = function (unit, on) {
+        Turn.prototype.placeUnit = function (unit, on) {
             if (unit.cell !== null) {
                 throw "The unit is already placed on a cell.";
             }
             on.addUnit(unit);
         };
-        return Board;
+        return Turn;
     })();
-    CocaineCartels.Board = Board;
+    CocaineCartels.Turn = Turn;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -742,21 +742,21 @@ var CocaineCartels;
                 this.previousTurn = null;
             }
             else {
-                this.previousTurn = new CocaineCartels.Board(gameData.previousTurn);
+                this.previousTurn = new CocaineCartels.Turn(gameData.previousTurn);
             }
             if (gameData.previousTurnShowingPlaceCommands === null) {
                 this.previousTurnWithPlaceCommands = null;
             }
             else {
-                this.previousTurnWithPlaceCommands = new CocaineCartels.Board(gameData.previousTurnShowingPlaceCommands);
+                this.previousTurnWithPlaceCommands = new CocaineCartels.Turn(gameData.previousTurnShowingPlaceCommands);
             }
             if (gameData.previousTurnShowingMoveCommands === null) {
                 this.previousTurnWithMoveCommands = null;
             }
             else {
-                this.previousTurnWithMoveCommands = new CocaineCartels.Board(gameData.previousTurnShowingMoveCommands);
+                this.previousTurnWithMoveCommands = new CocaineCartels.Turn(gameData.previousTurnShowingMoveCommands);
             }
-            this.currentTurn = new CocaineCartels.Board(currentTurnData);
+            this.currentTurn = new CocaineCartels.Turn(currentTurnData);
             this.started = gameData.started;
             this.turnMode = gameData.turnMode;
             this.turnNumber = gameData.turnNumber;

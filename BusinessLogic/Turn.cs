@@ -3,10 +3,9 @@ using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
-    // TODO j: Rename to Turn.
-    public class Board
+    public class Turn
     {
-        public Board(int gridSize)
+        public Turn(int gridSize)
         {
             AllianceProposals = new HashSet<AllianceProposal>();
             Alliances = new Alliances();

@@ -1,10 +1,10 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export class Board {
+    export class Turn {
         /** Call initializeUnits after the board has been initialized. */
         constructor(
-            boardData: IBoard
+            boardData: ITurn
         ) {
             // No units and commands initialized yet.
             this.cells = [];

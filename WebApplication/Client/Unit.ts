@@ -5,7 +5,7 @@ module CocaineCartels {
         /** Set cell to null if this is a new unit. */
         constructor(
             unitData: IUnit,
-            board: Board,
+            board: Turn,
             cell: Cell
         ) {
             this._unitData = unitData;
@@ -24,7 +24,7 @@ module CocaineCartels {
         private _unitData: IUnit;
 
         /** The board that this units is located on. Never null. */
-        public board: Board;
+        public board: Turn;
 
         /** The cell that the unit is located on. Null if this is a new unit that has not yet been placed on the board. */
         public cell: Cell;

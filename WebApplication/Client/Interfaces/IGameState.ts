@@ -3,7 +3,7 @@
 
     export interface IGameState {
         currentPlayerColor: string;
-        currentTurn: IBoard;
+        currentTurn: ITurn;
         gameInstance: IGame;
     }
 }

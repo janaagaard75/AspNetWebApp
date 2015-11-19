@@ -1,7 +1,7 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export interface IBoard {
+    export interface ITurn {
         cells: Array<ICell>;
         newUnits: Array<IUnit>;
     }
