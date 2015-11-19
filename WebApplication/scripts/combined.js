@@ -1,19 +1,6 @@
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
-    // Must match the enum in AlliancesSystem.cs.
-    (function (AlliancesSystem) {
-        AlliancesSystem[AlliancesSystem["Undefined"] = 0] = "Undefined";
-        AlliancesSystem[AlliancesSystem["AlliancesInSeparateTurns"] = 1] = "AlliancesInSeparateTurns";
-        AlliancesSystem[AlliancesSystem["AlliancesEveryTurn"] = 2] = "AlliancesEveryTurn";
-        AlliancesSystem[AlliancesSystem["AlliancesSeconndTurn"] = 3] = "AlliancesSeconndTurn";
-        AlliancesSystem[AlliancesSystem["NoAlliances"] = 4] = "NoAlliances";
-    })(CocaineCartels.AlliancesSystem || (CocaineCartels.AlliancesSystem = {}));
-    var AlliancesSystem = CocaineCartels.AlliancesSystem;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
     var Board = (function () {
         /** Call initializeUnits after the board has been initialized. */
         function Board(boardData) {
@@ -1490,7 +1477,6 @@ var CocaineCartels;
     var Settings = (function () {
         function Settings() {
         }
-        Settings.alliancesSystem = serverSideSettings.AlliancesSystem;
         Settings.gridSize = serverSideSettings.GridSize;
         Settings.movesPerTurn = serverSideSettings.MovesPerTurn;
         return Settings;

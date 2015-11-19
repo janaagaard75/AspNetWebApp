@@ -3,15 +3,20 @@ using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
+    // TODO j: Rename to Turn.
     public class Board
     {
         public Board(int gridSize)
         {
+            AllianceProposals = new HashSet<AllianceProposal>();
+            Alliances = new Alliances();
             Cells = InitializeCells(gridSize);
             ResetNewUnits();
         }
 
-        public readonly IEnumerable<Cell> Cells;
+        public HashSet<AllianceProposal> AllianceProposals { get; }
+        public Alliances Alliances { get; } 
+        public IEnumerable<Cell> Cells { get; }
         public List<Unit> NewUnits { get; private set; }
 
         internal IEnumerable<Unit> AllUnits

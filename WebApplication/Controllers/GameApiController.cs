@@ -64,7 +64,7 @@ namespace CocaineCartels.WebApplication.Controllers
         {
             string currentPlayerColor = GetCurrentPlayerColor();
 
-            Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
+            Game.Instance.DeleteNextTurnPlaceAndMoveCommands(currentPlayerColor);
 
             commands.PlaceCommands.ForEach(placeCommand =>
             {

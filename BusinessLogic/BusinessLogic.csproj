@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE0001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,7 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlliancesSystem.cs" />
+    <Compile Include="AllianceProposal.cs" />
+    <Compile Include="Alliances.cs" />
+    <Compile Include="GameModeType.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="PlayerColors.cs" />
