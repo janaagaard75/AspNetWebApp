@@ -67,7 +67,7 @@ module CocaineCartels {
         }
 
         private static getTurnModeString(turnMode: TurnMode): string {
-            switch (Main.game.turnMode) {
+            switch (Main.game.currentTurn.mode) {
                 case TurnMode.PlanMoves:
                     return "Plan moves";
 
@@ -87,7 +87,7 @@ module CocaineCartels {
         }
 
         private static printAllianceCheckboxes() {
-            switch (Main.game.turnMode) {
+            switch (Main.game.currentTurn.mode) {
                 case TurnMode.ProposeAlliances:
                     const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
                     const allianceCheckboxes = allOtherPlayers
@@ -160,7 +160,7 @@ module CocaineCartels {
         }
 
         private printTurnMode() {
-            const turnMode = Main.getTurnModeString(Main.game.turnMode);
+            const turnMode = Main.getTurnModeString(Main.game.currentTurn.mode);
             $("#turnMode").html(turnMode);
         }
 
@@ -184,7 +184,7 @@ module CocaineCartels {
                     this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
                     this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
                     this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
-                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), Main.game.turnMode === TurnMode.PlanMoves);
+                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), Main.game.currentTurn.mode === TurnMode.PlanMoves);
 
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);

@@ -44,9 +44,6 @@ namespace CocaineCartels.BusinessLogic
 
         public List<Player> Players { get; private set; }
 
-        // TODO j: Move to the Turn class.
-        public TurnMode TurnMode { get; private set; }
-
         /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
         public int TurnNumber { get; private set; }
 
@@ -269,7 +266,7 @@ namespace CocaineCartels.BusinessLogic
         {
             lock (TurnLock)
             {
-                switch (TurnMode)
+                switch (NextTurn.Mode)
                 {
                     case TurnMode.PlanMoves:
                         PerformPlanMovesTurn();
@@ -284,7 +281,7 @@ namespace CocaineCartels.BusinessLogic
                         break;
 
                     default:
-                        throw new NotSupportedException($"Turn mode {TurnMode} is not supported.");
+                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
                 }
 
 
@@ -339,11 +336,11 @@ namespace CocaineCartels.BusinessLogic
             switch (Settings.GameMode)
             {
                 case GameModeType.NoAlliances:
-                    // Nothing to do here - keep the turn mode to TurnMode.PlanMoves.
+                    // Nothing to do here - keep the turn mode to PlanMoves.
                     break;
 
                 case GameModeType.AlliancesInSeparateTurns:
-                    TurnMode = TurnMode.ProposeAlliances;
+                    NextTurn.Mode = TurnMode.ProposeAlliances;
                     break;
 
                 default:
@@ -358,7 +355,7 @@ namespace CocaineCartels.BusinessLogic
             switch (Settings.GameMode)
             {
                 case GameModeType.AlliancesInSeparateTurns:
-                    TurnMode = TurnMode.ReviewAllianceRequests;
+                    NextTurn.Mode = TurnMode.ReviewAllianceRequests;
                     break;
 
                 default:
@@ -385,7 +382,7 @@ namespace CocaineCartels.BusinessLogic
             switch (Settings.GameMode)
             {
                 case GameModeType.AlliancesInSeparateTurns:
-                    TurnMode = TurnMode.PlanMoves;
+                    NextTurn.Mode = TurnMode.PlanMoves;
                     break;
 
                 default:
@@ -408,7 +405,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurnShowingMoveCommands = null;
             NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
-            TurnMode = TurnMode.StartGame;
+            NextTurn.Mode = TurnMode.StartGame;
             TurnNumber = 0;
         }
 
@@ -451,7 +448,7 @@ namespace CocaineCartels.BusinessLogic
                     player.Ready = false;
                 }
 
-                TurnMode = TurnMode.PlanMoves;
+                NextTurn.Mode = TurnMode.PlanMoves;
                 TurnNumber = 1;
             }
         }

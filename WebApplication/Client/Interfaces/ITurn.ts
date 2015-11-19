@@ -3,6 +3,7 @@
 
     export interface ITurn {
         cells: Array<ICell>;
+        mode: TurnMode;
         newUnits: Array<IUnit>;
     }
 }

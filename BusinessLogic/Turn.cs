@@ -16,6 +16,7 @@ namespace CocaineCartels.BusinessLogic
         public HashSet<AllianceProposal> AllianceProposals { get; }
         public Alliances Alliances { get; } 
         public IEnumerable<Cell> Cells { get; }
+        public TurnMode Mode { get; set; }
         public List<Unit> NewUnits { get; private set; }
 
         internal IEnumerable<Unit> AllUnits

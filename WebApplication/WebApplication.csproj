@@ -254,7 +254,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Client\Board.ts" />
+    <TypeScriptCompile Include="Client\Turn.ts" />
     <TypeScriptCompile Include="Client\Canvas.ts" />
     <TypeScriptCompile Include="Client\Cell.ts" />
     <TypeScriptCompile Include="Client\ComandType.ts" />
