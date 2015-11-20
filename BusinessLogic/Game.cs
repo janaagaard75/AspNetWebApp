@@ -274,10 +274,6 @@ namespace CocaineCartels.BusinessLogic
                         PerformProposeAlliancesTurn();
                         break;
 
-                    case TurnMode.ReviewAllianceRequests:
-                        PerformReviewAllianceRequestsTurn();
-                        break;
-
                     default:
                         throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
                 }
@@ -346,21 +342,6 @@ namespace CocaineCartels.BusinessLogic
         }
 
         private void PerformProposeAlliancesTurn()
-        {
-            // Not much to do here - the alliance proposals should already be stored in NextTurn.
-
-            switch (Settings.GameMode)
-            {
-                case GameModeType.AlliancesInSeparateTurns:
-                    NextTurn.Mode = TurnMode.ReviewAllianceRequests;
-                    break;
-
-                default:
-                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
-            }
-        }
-
-        private void PerformReviewAllianceRequestsTurn()
         {
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
