@@ -95,12 +95,38 @@ module CocaineCartels {
                         .join(" ");
 
                     $("#allianceCheckboxes").html(allianceCheckboxes);
-                    $("#alliances").removeClass("hidden");
+                    $("#allianceProposals").removeClass("hidden");
                     break;
 
                 default:
-                    $("#alliances").addClass("hidden");
+                    $("#allianceProposals").addClass("hidden");
             }
+        }
+
+        private static printAllAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.ProposeAlliances:
+                    Main.game.currentTurn
+
+                    $("#allAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#allAlliances").addClass("hidden");
+            }
+        }
+
+        private static printOwnAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.PlanMoves:
+
+                    $("#ownAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#ownAlliances").addClass("hidden");
+            }
+
         }
 
         public static printNumberOfMovesLeft() {

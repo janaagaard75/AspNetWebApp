@@ -14,8 +14,8 @@ namespace CocaineCartels.BusinessLogic
             TurnNumber = 0;
         }
 
+        public Alliances Alliances { get; }
         public HashSet<AllianceProposal> AllianceProposals { get; }
-        public Alliances Alliances { get; } 
         public IEnumerable<Cell> Cells { get; }
         public TurnMode Mode { get; set; }
         public List<Unit> NewUnits { get; private set; }
