@@ -7,12 +7,14 @@ module CocaineCartels {
         public static arrowPointerWidth = 5;
         public static arrowShadowBlurRadius = 10;
         public static arrowWidth: number;
-        public static center: Pos;
         public static canvasIdTemplate = "canvas";
+        public static cellBorderWidth: number;
         public static cellRadius: number;
+        public static center: Pos;
         public static height: number;
-        public static lineWidth: number;
+        public static newUnitBorderWidth: number;
         public static spaceToNewUnits: number;
+        public static unitBorderWidth: number;
         public static unitRadius: number;
         public static width: number;
 
@@ -41,15 +43,18 @@ module CocaineCartels {
             const boardSize = Math.min(this.height, this.width);
 
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
-            this.lineWidth = 1 + boardSize / 1000;
+            this.cellBorderWidth = 1 + boardSize / 1000;
             this.spaceToNewUnits = 0;
 
-            this.arrowWidth = 2 * this.lineWidth;
+            this.arrowWidth = 2 * this.cellBorderWidth;
             this.center = new Pos(
                 this.width / 2,
                 this.width / 2 - this.cellRadius / 3
             );
-            this.unitRadius = this.cellRadius / 2.5;
+            this.unitBorderWidth = this.cellBorderWidth;
+            this.unitRadius = this.cellRadius / 3;
+
+            this.newUnitBorderWidth = 2 * this.unitBorderWidth;
         }
     }
 }

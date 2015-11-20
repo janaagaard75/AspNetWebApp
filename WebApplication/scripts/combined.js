@@ -74,7 +74,7 @@ var CocaineCartels;
                 radius: CocaineCartels.CanvasSettings.cellRadius,
                 sides: 6,
                 stroke: "#ccc",
-                strokeWidth: CocaineCartels.CanvasSettings.lineWidth
+                strokeWidth: CocaineCartels.CanvasSettings.cellBorderWidth
             });
             cell.hexagon = hexagon;
             hexagon.on(CocaineCartels.HexagonEvent.dragEnter, function () {
@@ -147,23 +147,26 @@ var CocaineCartels;
             });
         };
         Canvas.prototype.drawUnit = function (unit, pos, unitIndex, numberOfUnits) {
-            var ownedByThisPlayer = unit.player.color === CocaineCartels.Main.currentPlayer.color;
+            var isNewUnit = (unit.cell === null || unit.placeCommand !== null);
+            var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / numberOfUnits;
             var x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             var overlapPos = new CocaineCartels.Pos(x, pos.y);
             var fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
-            var strokeColor = (unit.cell === null || unit.placeCommand !== null) ? "#000" : "#999";
+            var borderColor = ownedByThisPlayer ? "#000" : "#999";
+            var borderWidth = isNewUnit ? CocaineCartels.CanvasSettings.newUnitBorderWidth : CocaineCartels.CanvasSettings.unitBorderWidth;
+            var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
                 var circle = new Konva.Circle({
                     draggable: this.interactive && ownedByThisPlayer,
                     fill: fillColor,
-                    radius: CocaineCartels.CanvasSettings.unitRadius,
+                    radius: unitRadius,
                     shadowBlur: 20,
                     shadowColor: "#000",
                     shadowEnabled: false,
                     shadowOpacity: 0.7,
-                    stroke: strokeColor,
-                    strokeWidth: CocaineCartels.CanvasSettings.lineWidth,
+                    stroke: borderColor,
+                    strokeWidth: borderWidth,
                     x: overlapPos.x,
                     y: overlapPos.y
                 });
@@ -171,7 +174,7 @@ var CocaineCartels;
             }
             else {
                 unit.circle.fill(fillColor);
-                unit.circle.stroke(strokeColor);
+                unit.circle.stroke(borderColor);
                 unit.circle.x(overlapPos.x);
                 unit.circle.y(overlapPos.y);
                 unit.circle.moveToTop();
@@ -389,11 +392,13 @@ var CocaineCartels;
             }
             var boardSize = Math.min(this.height, this.width);
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
-            this.lineWidth = 1 + boardSize / 1000;
+            this.cellBorderWidth = 1 + boardSize / 1000;
             this.spaceToNewUnits = 0;
-            this.arrowWidth = 2 * this.lineWidth;
+            this.arrowWidth = 2 * this.cellBorderWidth;
             this.center = new CocaineCartels.Pos(this.width / 2, this.width / 2 - this.cellRadius / 3);
-            this.unitRadius = this.cellRadius / 2.5;
+            this.unitBorderWidth = this.cellBorderWidth;
+            this.unitRadius = this.cellRadius / 3;
+            this.newUnitBorderWidth = 2 * this.unitBorderWidth;
         };
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;
