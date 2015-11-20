@@ -83,6 +83,24 @@ module CocaineCartels {
             }
         }
 
+        private static printAllAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.ProposeAlliances:
+                    const allAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(pair => {
+                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                        })
+                        .join(" ");
+
+                    $("#allAlliancesList").html(allAlliances);
+                    $("#allAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#allAlliances").addClass("hidden");
+            }
+        }
+
         private static printAllianceCheckboxes() {
             switch (Main.game.currentTurn.mode) {
                 case TurnMode.ProposeAlliances:
@@ -103,32 +121,6 @@ module CocaineCartels {
             }
         }
 
-        private static printAllAlliances() {
-            switch (Main.game.currentTurn.mode) {
-                case TurnMode.ProposeAlliances:
-                    Main.game.currentTurn
-
-                    $("#allAlliances").removeClass("hidden");
-                    break;
-
-                default:
-                    $("#allAlliances").addClass("hidden");
-            }
-        }
-
-        private static printOwnAlliances() {
-            switch (Main.game.currentTurn.mode) {
-                case TurnMode.PlanMoves:
-
-                    $("#ownAlliances").removeClass("hidden");
-                    break;
-
-                default:
-                    $("#ownAlliances").addClass("hidden");
-            }
-
-        }
-
         public static printNumberOfMovesLeft() {
             const numberOfMovesLeft = Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
             document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
@@ -137,6 +129,24 @@ module CocaineCartels {
                 movesElement.classList.add("label", "label-danger");
             } else {
                 movesElement.classList.remove("label", "label-danger");
+            }
+        }
+
+        private static printOwnAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.PlanMoves:
+                    const ownAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(pair => {
+                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                        })
+                        .join(" ");
+
+                    $("#ownAlliancesList").html(ownAlliances);
+                    $("#ownAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#ownAlliances").addClass("hidden");
             }
         }
 
@@ -228,6 +238,8 @@ module CocaineCartels {
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
+                    Main.printAllAlliances();
+                    Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
 
                     this.setActiveBoard(4);

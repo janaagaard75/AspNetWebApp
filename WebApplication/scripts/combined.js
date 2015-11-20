@@ -982,6 +982,21 @@ var CocaineCartels;
                     return "Unknown";
             }
         };
+        Main.printAllAlliances = function () {
+            switch (Main.game.currentTurn.mode) {
+                case CocaineCartels.TurnMode.ProposeAlliances:
+                    var allAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(function (pair) {
+                        return "<div><span style=\"color: " + pair.playerA + "\">" + pair.playerA + "</span> & <span style=\"color: " + pair.playerB + "\">" + pair.playerB + "</span></div>";
+                    })
+                        .join(" ");
+                    $("#allAlliancesList").html(allAlliances);
+                    $("#allAlliances").removeClass("hidden");
+                    break;
+                default:
+                    $("#allAlliances").addClass("hidden");
+            }
+        };
         Main.printAllianceCheckboxes = function () {
             switch (Main.game.currentTurn.mode) {
                 case CocaineCartels.TurnMode.ProposeAlliances:
@@ -999,25 +1014,6 @@ var CocaineCartels;
                     $("#allianceProposals").addClass("hidden");
             }
         };
-        Main.printAllAlliances = function () {
-            switch (Main.game.currentTurn.mode) {
-                case CocaineCartels.TurnMode.ProposeAlliances:
-                    Main.game.currentTurn;
-                    $("#allAlliances").removeClass("hidden");
-                    break;
-                default:
-                    $("#allAlliances").addClass("hidden");
-            }
-        };
-        Main.printOwnAlliances = function () {
-            switch (Main.game.currentTurn.mode) {
-                case CocaineCartels.TurnMode.PlanMoves:
-                    $("#ownAlliances").removeClass("hidden");
-                    break;
-                default:
-                    $("#ownAlliances").addClass("hidden");
-            }
-        };
         Main.printNumberOfMovesLeft = function () {
             var numberOfMovesLeft = CocaineCartels.Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
             document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
@@ -1027,6 +1023,21 @@ var CocaineCartels;
             }
             else {
                 movesElement.classList.remove("label", "label-danger");
+            }
+        };
+        Main.printOwnAlliances = function () {
+            switch (Main.game.currentTurn.mode) {
+                case CocaineCartels.TurnMode.PlanMoves:
+                    var ownAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(function (pair) {
+                        return "<div><span style=\"color: " + pair.playerA + "\">" + pair.playerA + "</span> & <span style=\"color: " + pair.playerB + "\">" + pair.playerB + "</span></div>";
+                    })
+                        .join(" ");
+                    $("#ownAlliancesList").html(ownAlliances);
+                    $("#ownAlliances").removeClass("hidden");
+                    break;
+                default:
+                    $("#ownAlliances").addClass("hidden");
             }
         };
         Main.printPlayersPoints = function (showLastTurnsPoints) {
@@ -1107,6 +1118,8 @@ var CocaineCartels;
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
+                    Main.printAllAlliances();
+                    Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
                     _this.setActiveBoard(4);
                     var enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
