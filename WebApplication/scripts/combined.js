@@ -989,9 +989,15 @@ var CocaineCartels;
                     var allAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(function (pair) {
                         return "<div><span style=\"color: " + pair.playerA + "\">" + pair.playerA + "</span> & <span style=\"color: " + pair.playerB + "\">" + pair.playerB + "</span></div>";
-                    })
-                        .join(" ");
-                    $("#allAlliancesList").html(allAlliances);
+                    });
+                    var allAlliancesText;
+                    if (allAlliances.length >= 1) {
+                        allAlliancesText = allAlliances.join(" ");
+                    }
+                    else {
+                        allAlliancesText = "No players were allied.";
+                    }
+                    $("#allAlliancesList").html(allAlliancesText);
                     $("#allAlliances").removeClass("hidden");
                     break;
                 default:
@@ -1032,9 +1038,15 @@ var CocaineCartels;
                     var ownAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(function (pair) {
                         return "<div><span style=\"color: " + pair.playerA + "\">" + pair.playerA + "</span> & <span style=\"color: " + pair.playerB + "\">" + pair.playerB + "</span></div>";
-                    })
-                        .join(" ");
-                    $("#ownAlliancesList").html(ownAlliances);
+                    });
+                    var ownAlliancesText;
+                    if (ownAlliances.length >= 1) {
+                        ownAlliancesText = ownAlliances.join(" ");
+                    }
+                    else {
+                        ownAlliancesText = "You're not allied with anybody.";
+                    }
+                    $("#ownAlliancesList").html(ownAlliancesText);
                     $("#ownAlliances").removeClass("hidden");
                     break;
                 default:

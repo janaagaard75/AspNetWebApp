@@ -89,10 +89,16 @@ module CocaineCartels {
                     const allAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(pair => {
                             return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
-                        })
-                        .join(" ");
+                        });
 
-                    $("#allAlliancesList").html(allAlliances);
+                    let allAlliancesText: string;
+                    if (allAlliances.length >= 1) {
+                        allAlliancesText = allAlliances.join(" ");
+                    } else {
+                        allAlliancesText = "No players were allied.";
+                    }
+
+                    $("#allAlliancesList").html(allAlliancesText);
                     $("#allAlliances").removeClass("hidden");
                     break;
 
@@ -138,10 +144,16 @@ module CocaineCartels {
                     const ownAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(pair => {
                             return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
-                        })
-                        .join(" ");
+                        });
 
-                    $("#ownAlliancesList").html(ownAlliances);
+                    let ownAlliancesText: string;
+                    if (ownAlliances.length >= 1) {
+                        ownAlliancesText = ownAlliances.join(" ");
+                    } else {
+                        ownAlliancesText = "You're not allied with anybody.";
+                    }
+
+                    $("#ownAlliancesList").html(ownAlliancesText);
                     $("#ownAlliances").removeClass("hidden");
                     break;
 
