@@ -74,9 +74,6 @@ module CocaineCartels {
                 case TurnMode.ProposeAlliances:
                     return "Propose alliances";
 
-                case TurnMode.ReviewAllianceRequests:
-                    return "Respond to alliace requests";
-
                 case TurnMode.StartGame:
                     return "Start game lobby";
 
@@ -98,10 +95,6 @@ module CocaineCartels {
                         .join(" ");
 
                     $("#allianceCheckboxes").html(allianceCheckboxes);
-                    $("#alliances").removeClass("hidden");
-                    break;
-
-                case TurnMode.ReviewAllianceRequests:
                     $("#alliances").removeClass("hidden");
                     break;
 

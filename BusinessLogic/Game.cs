@@ -258,30 +258,6 @@ namespace CocaineCartels.BusinessLogic
             return matchingPlayer;
         }
 
-        /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
-        /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
-        private void PerformTurn()
-        {
-            lock (TurnLock)
-            {
-                switch (NextTurn.Mode)
-                {
-                    case TurnMode.PlanMoves:
-                        PerformPlanMovesTurn();
-                        break;
-
-                    case TurnMode.ProposeAlliances:
-                        PerformProposeAlliancesTurn();
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
-                }
-
-                NextTurn.IncreaseTurnNumber();
-            }
-        }
-
         private void PerformPlanMovesTurn()
         {
             // NextTurn now becomes the previous turn.
@@ -365,6 +341,30 @@ namespace CocaineCartels.BusinessLogic
 
                 default:
                     throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
+            }
+        }
+
+        /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
+        /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
+        private void PerformTurn()
+        {
+            lock (TurnLock)
+            {
+                switch (NextTurn.Mode)
+                {
+                    case TurnMode.PlanMoves:
+                        PerformPlanMovesTurn();
+                        break;
+
+                    case TurnMode.ProposeAlliances:
+                        PerformProposeAlliancesTurn();
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
+                }
+
+                NextTurn.IncreaseTurnNumber();
             }
         }
 
