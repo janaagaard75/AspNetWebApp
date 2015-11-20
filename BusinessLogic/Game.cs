@@ -216,7 +216,14 @@ namespace CocaineCartels.BusinessLogic
             // When planning the turns, only see own alliances.
             if (currentTurn.Mode == TurnMode.PlanMoves)
             {
-                currentTurn.Alliances.AlliancePairs.RemoveWhere(alliance => alliance.PlayerA != player.Color && alliance.PlayerB != player.Color);
+                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA == player.Color || pair.PlayerB == player.Color);
+
+                currentTurn.Alliances.ResetAlliances();
+
+                foreach (var pair in ownAlliancePairs)
+                {
+                    currentTurn.Alliances.AddAlliance(pair.PlayerA, pair.PlayerB);
+                }
             }
 
             return currentTurn;

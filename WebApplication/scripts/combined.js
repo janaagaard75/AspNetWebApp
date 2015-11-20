@@ -341,6 +341,7 @@ var CocaineCartels;
                 previousHexagon = null;
                 Canvas.board.cells.forEach(function (cell) {
                     cell.dropAllowed = false;
+                    _this.updateCellColor(cell);
                 });
                 _this.redrawBoard();
             });

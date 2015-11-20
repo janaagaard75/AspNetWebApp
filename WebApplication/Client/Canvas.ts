@@ -414,6 +414,7 @@
 
                 Canvas.board.cells.forEach(cell => {
                     cell.dropAllowed = false;
+                    this.updateCellColor(cell);
                 });
 
                 this.redrawBoard();
