@@ -59,8 +59,8 @@ namespace CocaineCartels.WebApplication.Controllers
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, false);
         }
 
-        [HttpPost, Route("api/commands")]
-        public void PostCommands(ClientCommands commands)
+        [HttpPost, Route("api/movecommands")]
+        public void PostMoveCommands(ClientCommands commands)
         {
             string currentPlayerColor = GetCurrentPlayerColor();
 
