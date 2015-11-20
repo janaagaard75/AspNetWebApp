@@ -291,7 +291,7 @@ module CocaineCartels {
             let proposals: Array<ClientAllianceProposal> = [];
 
             $(".jsAllianceProposal").each((index, checkbox) => {
-                if ($(checkbox).is("checked")) {
+                if ($(checkbox).prop("checked")) {
                     const proposal = new ClientAllianceProposal($(checkbox).val());
                     proposals.push(proposal);
                 }
