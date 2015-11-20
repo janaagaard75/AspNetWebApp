@@ -65,7 +65,7 @@ namespace CocaineCartels.BusinessLogic
             foreach (string player in playersOnCell)
             {
                 IEnumerable<string> allies = Turn.Alliances.GetAllies(player);
-                IEnumerable<string> enemies = playersOnCell.Except(allies);
+                IEnumerable<string> enemies = playersOnCell.Except(allies).Except(new[] { player });
 
                 double numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player);
                 double damagePerEnemy = numberOfPlayersUnits / enemies.Count();
