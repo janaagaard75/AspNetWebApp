@@ -1,7 +1,6 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    // Must match the enum in AlliancesSystem.ts.
-    public enum AlliancesSystem
+    public enum GameModeType
     {
         Undefined,
 

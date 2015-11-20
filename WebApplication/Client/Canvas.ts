@@ -3,7 +3,7 @@
 
     export class Canvas {
         constructor(
-            board: Board,
+            board: Turn,
             canvasId: string,
             interactive: boolean
         ) {
@@ -16,7 +16,7 @@
             }
         }
 
-        private static board: Board; // Has be to static to be accessible inside unitDragBound function.
+        private static board: Turn; // Has be to static to be accessible inside unitDragBound function.
         private stage: Konva.Stage;
 
         private boardLayer: Konva.Layer;
@@ -101,7 +101,7 @@
                 radius: CanvasSettings.cellRadius,
                 sides: 6,
                 stroke: "#ccc",
-                strokeWidth: CanvasSettings.lineWidth
+                strokeWidth: CanvasSettings.cellBorderWidth
             });
 
             cell.hexagon = hexagon;
@@ -194,25 +194,28 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
-            const ownedByThisPlayer = unit.player.color === Main.currentPlayer.color;
+            const isNewUnit = (unit.cell === null || unit.placeCommand !== null);
+            const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
 
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const overlapPos = new Pos(x, pos.y);
             const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
-            const strokeColor = (unit.cell === null || unit.placeCommand !== null) ? "#000" : "#999";
+            const borderColor = ownedByThisPlayer ? "#000" : "#999";
+            const borderWidth = isNewUnit ? CanvasSettings.newUnitBorderWidth : CanvasSettings.unitBorderWidth;
+            const unitRadius = CanvasSettings.unitRadius;
 
             if (unit.circle === null) {
                 const circle = new Konva.Circle({
                     draggable: this.interactive && ownedByThisPlayer,
                     fill: fillColor,
-                    radius: CanvasSettings.unitRadius,
+                    radius: unitRadius,
                     shadowBlur: 20,
                     shadowColor: "#000",
                     shadowEnabled: false,
                     shadowOpacity: 0.7,
-                    stroke: strokeColor,
-                    strokeWidth: CanvasSettings.lineWidth,
+                    stroke: borderColor,
+                    strokeWidth: borderWidth,
                     x: overlapPos.x,
                     y: overlapPos.y
                 });
@@ -220,7 +223,7 @@
                 unit.circle = circle;
             } else {
                 unit.circle.fill(fillColor);
-                unit.circle.stroke(strokeColor);
+                unit.circle.stroke(borderColor);
                 unit.circle.x(overlapPos.x);
                 unit.circle.y(overlapPos.y);
                 unit.circle.moveToTop();

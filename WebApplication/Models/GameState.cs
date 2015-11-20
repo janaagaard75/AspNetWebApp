@@ -4,7 +4,7 @@ namespace CocaineCartels.WebApplication.Models
 {
     public class GameState
     {
-        public GameState(string currentPlayerColor, Board currentTurn, Game gameInstance)
+        public GameState(string currentPlayerColor, Turn currentTurn, Game gameInstance)
         {
             CurrentPlayerColor = currentPlayerColor;
             CurrentTurn = currentTurn;
@@ -12,7 +12,7 @@ namespace CocaineCartels.WebApplication.Models
         }
 
         public string CurrentPlayerColor { get; }
-        public Board CurrentTurn { get; }
+        public Turn CurrentTurn { get; }
         public Game GameInstance { get; }
     }
 }

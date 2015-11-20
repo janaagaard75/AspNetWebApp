@@ -2,7 +2,7 @@ module CocaineCartels {
     "use strict";
 
     export class Game {
-        constructor(currentTurnData: IBoard, gameData: IGame) {
+        constructor(currentTurnData: ITurn, gameData: IGame) {
             this.players = [];
             gameData.players.forEach(playerData => {
                 const player = new Player(playerData);
@@ -12,35 +12,32 @@ module CocaineCartels {
             if (gameData.previousTurn === null) {
                 this.previousTurn = null;
             } else {
-                this.previousTurn = new Board(gameData.previousTurn);
+                this.previousTurn = new Turn(gameData.previousTurn);
             }
 
             if (gameData.previousTurnShowingPlaceCommands === null) {
                 this.previousTurnWithPlaceCommands = null;
             } else {
-                this.previousTurnWithPlaceCommands = new Board(gameData.previousTurnShowingPlaceCommands);
+                this.previousTurnWithPlaceCommands = new Turn(gameData.previousTurnShowingPlaceCommands);
             }
 
             if (gameData.previousTurnShowingMoveCommands === null) {
                 this.previousTurnWithMoveCommands = null;
             } else {
-                this.previousTurnWithMoveCommands = new Board(gameData.previousTurnShowingMoveCommands);
+                this.previousTurnWithMoveCommands = new Turn(gameData.previousTurnShowingMoveCommands);
             }
 
-            this.currentTurn = new Board(currentTurnData);
+            this.currentTurn = new Turn(currentTurnData);
 
             this.started = gameData.started;
-
-            this.turnNumber = gameData.turnNumber;
         }
 
-        public currentTurn: Board;
+        public currentTurn: Turn;
         public players: Array<Player>;
-        public previousTurn: Board;
-        public previousTurnWithPlaceCommands: Board;
-        public previousTurnWithMoveCommands: Board;
+        public previousTurn: Turn;
+        public previousTurnWithPlaceCommands: Turn;
+        public previousTurnWithMoveCommands: Turn;
         public started: boolean;
-        public turnNumber: number;
 
         /** Returns the player with the specified color. Returns null if the player wasn't found. */
         public getPlayer(playerColor: string): Player {
@@ -54,7 +51,7 @@ module CocaineCartels {
         }
 
         /** Hacky solution for initializing the boards. */
-        public initializeBoard(board: Board) {
+        public initializeBoard(board: Turn) {
             if (board === null) {
                 return;
             }

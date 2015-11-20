@@ -6,9 +6,9 @@
         allianceProposals: Array<string>;
         color: string;
         commandsSentOn: string;
+        name: string;
         points: number;
         pointsLastTurn: number;
         ready: boolean;
-        textColor: string;
     }
 }

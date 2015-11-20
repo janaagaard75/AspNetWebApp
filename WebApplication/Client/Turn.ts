@@ -1,27 +1,33 @@
 ﻿module CocaineCartels {
     "use strict";
 
-    export class Board {
+    export class Turn {
         /** Call initializeUnits after the board has been initialized. */
         constructor(
-            boardData: IBoard
+            turnData: ITurn
         ) {
             // No units and commands initialized yet.
             this.cells = [];
-            boardData.cells.forEach(cellData => {
+            turnData.cells.forEach(cellData => {
                 const cell = new Cell(cellData, this);
                 this.cells.push(cell);
             });
 
+            this.mode = turnData.mode;
+
             this.newUnits = [];
-            boardData.newUnits.forEach(unitData => {
+            turnData.newUnits.forEach(unitData => {
                 const newUnit = new Unit(unitData, this, null);
                 this.newUnits.push(newUnit);
             });
+
+            this.turnNumber = turnData.turnNumber;
         }
 
         public cells: Array<Cell>;
+        public mode: TurnMode;
         public newUnits: Array<Unit>;
+        public turnNumber: number;
 
         public get allUnits(): Array<Unit> {
             const allUnits = this.unitsOnBoard.concat(this.newUnits);

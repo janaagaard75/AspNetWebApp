@@ -1,7 +1,7 @@
-﻿namespace CocaineCartels.BusinessLogic
-{
-    public enum TurnMode
-    {
+﻿module CocaineCartels {
+    "use strict";
+
+    export enum TurnMode {
         Undefined,
         ReviewAllianceRequests,
         PlanMoves,

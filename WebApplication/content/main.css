@@ -2529,10 +2529,6 @@ a.label:hover, a.label:focus {
 .points {
   text-align: center; }
 
-@media (min-width: 768px) {
-  .row-ready {
-    margin-top: 30em; } }
-
 .your-color {
   text-align: right; }
 

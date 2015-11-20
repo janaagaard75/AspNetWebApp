@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
 
@@ -7,22 +6,19 @@ namespace CocaineCartels.BusinessLogic
 {
     public class Player : IEquatable<Player>
     {
-        internal Player(PlayerColors colors, IPAddress ipAddress, string userAgent)
+        internal Player(string colors, string name, IPAddress ipAddress, string userAgent)
         {
-            Color = colors.MainColor;
+            Color = colors;
             CommandsSentOn = null;
             IpAddress = ipAddress;
-            TextColor = colors.TextColor;
+            Name = name;
             UserAgent = userAgent;
 
-            AllianceProposals = new HashSet<Player>();
             Points = 0;
             PointsLastTurn = 0;
             Ready = false;
         }
 
-        public HashSet<Player> AllianceProposals { get; set; }
-        
         /// <summary>The main color also identifies a player, so use this property the player ID.</summary>
         public string Color { get; }
 
@@ -30,6 +26,8 @@ namespace CocaineCartels.BusinessLogic
 
         [JsonIgnore]
         public IPAddress IpAddress { get; }
+
+        public string Name { get; }
 
         public int Points { get; set; }
 

@@ -9,16 +9,16 @@ module CocaineCartels {
             this.commandsSentOn = Player.parseDateString(playerData.commandsSentOn);
             this.points = playerData.points;
             this.pointsLastTurn = playerData.pointsLastTurn;
+            this.name = playerData.name;
             this.ready = playerData.ready;
-            this.textColor = playerData.textColor;
         }
 
         public color: string;
         public commandsSentOn: Date;
+        public name: string;
         public points: number;
         public pointsLastTurn: number;
         public ready: boolean;
-        public textColor: string;
 
         /** Returns the number of move commands that the current has assigned. */
         public get numberOfMoveCommands(): number {

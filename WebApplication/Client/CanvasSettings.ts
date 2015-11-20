@@ -7,12 +7,14 @@ module CocaineCartels {
         public static arrowPointerWidth = 5;
         public static arrowShadowBlurRadius = 10;
         public static arrowWidth: number;
-        public static center: Pos;
         public static canvasIdTemplate = "canvas";
+        public static cellBorderWidth: number;
         public static cellRadius: number;
+        public static center: Pos;
         public static height: number;
-        public static lineWidth: number;
+        public static newUnitBorderWidth: number;
         public static spaceToNewUnits: number;
+        public static unitBorderWidth: number;
         public static unitRadius: number;
         public static width: number;
 
@@ -22,33 +24,37 @@ module CocaineCartels {
             }
 
             const gridGutterWidth = 30; // Also defined in variables.scss.
+            const canvasButtonsRowHeight = 43; // Hard coded here, since it might be hidden.
 
-            const availableHeight = $(document).height() - ($("#headerContainer").height() + $("#canvasButtonsRow").height());
+            const availableHeight = $(window).height() - ($("#headerContainer").height() + canvasButtonsRowHeight);
             const availableWidth = $(document).width() / 2 - gridGutterWidth;
             const aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
 
-            const correspondingWidth = availableHeight * aspectRatio;
-            if (correspondingWidth <= availableWidth) {
+            const neededWidthToMatchFullHeight = Math.round(availableHeight * aspectRatio);
+            if (neededWidthToMatchFullHeight <= availableWidth) {
                 this.height = availableHeight;
-                this.width = correspondingWidth;
+                this.width = neededWidthToMatchFullHeight;
             } else {
-                const correspondingHeight = availableWidth / aspectRatio;
-                this.height = correspondingHeight;
+                const neededHeightToMatchFullWidth = Math.round(availableWidth / aspectRatio);
+                this.height = neededHeightToMatchFullWidth;
                 this.width = availableWidth;
             }
 
             const boardSize = Math.min(this.height, this.width);
 
             this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
-            this.lineWidth = 1 + boardSize / 1000;
+            this.cellBorderWidth = 1 + boardSize / 1000;
             this.spaceToNewUnits = 0;
 
-            this.arrowWidth = 2 * this.lineWidth;
+            this.arrowWidth = 2 * this.cellBorderWidth;
             this.center = new Pos(
                 this.width / 2,
                 this.width / 2 - this.cellRadius / 3
             );
-            this.unitRadius = this.cellRadius / 2.5;
+            this.unitBorderWidth = this.cellBorderWidth;
+            this.unitRadius = this.cellRadius / 3;
+
+            this.newUnitBorderWidth = 2 * this.unitBorderWidth;
         }
     }
 }

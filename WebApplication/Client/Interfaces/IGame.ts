@@ -5,16 +5,14 @@
         players: Array<IPlayer>;
 
         /** Null on first turn. */
-        previousTurn: IBoard;
+        previousTurn: ITurn;
 
         /** Null on first turn. */
-        previousTurnShowingMoveCommands: IBoard;
+        previousTurnShowingMoveCommands: ITurn;
 
         /** Null on first turn. */
-        previousTurnShowingPlaceCommands: IBoard;
+        previousTurnShowingPlaceCommands: ITurn;
 
         started: boolean;
-
-        turnNumber: number;
     }
 }

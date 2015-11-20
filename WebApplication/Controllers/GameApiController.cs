@@ -40,7 +40,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpGet, Route("api/gamestate")]
         public GameState GetGameState()
         {
-            Board currentTurn = Game.Instance.GetCurrentTurn(CurrentPlayer);
+            Turn currentTurn = Game.Instance.GetCurrentTurn(CurrentPlayer);
             GameState state = new GameState(CurrentPlayer.Color, currentTurn, Game.Instance);
             return state;
         }
@@ -48,7 +48,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpGet, Route("api/status")]
         public Status GetStatus()
         {
-            Status status = new Status(Game.Instance.Players, Game.Instance.TurnNumber);
+            Status status = new Status(Game.Instance.Players, Game.Instance. TurnNumber);
             return status;
         }
 
@@ -64,7 +64,7 @@ namespace CocaineCartels.WebApplication.Controllers
         {
             string currentPlayerColor = GetCurrentPlayerColor();
 
-            Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
+            Game.Instance.DeleteNextTurnPlaceAndMoveCommands(currentPlayerColor);
 
             commands.PlaceCommands.ForEach(placeCommand =>
             {

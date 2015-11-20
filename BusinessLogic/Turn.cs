@@ -3,16 +3,24 @@ using System.Linq;
 
 namespace CocaineCartels.BusinessLogic
 {
-    public class Board
+    public class Turn
     {
-        public Board(int gridSize)
+        public Turn(int gridSize)
         {
+            AllianceProposals = new HashSet<AllianceProposal>();
+            Alliances = new Alliances();
             Cells = InitializeCells(gridSize);
             ResetNewUnits();
+            TurnNumber = 0;
         }
 
-        public readonly IEnumerable<Cell> Cells;
+        public HashSet<AllianceProposal> AllianceProposals { get; }
+        public Alliances Alliances { get; } 
+        public IEnumerable<Cell> Cells { get; }
+        public TurnMode Mode { get; set; }
         public List<Unit> NewUnits { get; private set; }
+        /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
+        public int TurnNumber { get; private set; }
 
         internal IEnumerable<Unit> AllUnits
         {
@@ -50,6 +58,11 @@ namespace CocaineCartels.BusinessLogic
             {
                 cell.Fight();
             });
+        }
+
+        public void IncreaseTurnNumber()
+        {
+            TurnNumber++;
         }
 
         private IEnumerable<Cell> InitializeCells(int gridSize)

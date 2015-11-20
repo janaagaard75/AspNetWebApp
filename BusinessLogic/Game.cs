@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 
@@ -16,14 +15,14 @@ namespace CocaineCartels.BusinessLogic
         private static readonly Lazy<Game> _GameInstance = new Lazy<Game>(() => new Game());
         public static Game Instance => _GameInstance.Value;
 
-        private readonly PlayerColors[] PlayersColors =
+        private readonly PlayerData[] PlayersData =
         {
-            new PlayerColors("#f22", "#fff"),
-            new PlayerColors("#cc0", "#fff"),
-            new PlayerColors("#0b0", "#fff"),
-            new PlayerColors("#07e", "#fff"),
-            new PlayerColors("#84f", "#fff"),
-            new PlayerColors("#f0f", "#fff")
+            new PlayerData("#f22", "Red"),
+            new PlayerData("#cc0", "Yellow"),
+            new PlayerData("#0b0", "Green"),
+            new PlayerData("#07e", "Magenta"),
+            new PlayerData("#84f", "Blue"),
+            new PlayerData("#f0f", "Cyan")
         };
 
         private readonly object AddPlayerLock = new object();
@@ -32,25 +31,23 @@ namespace CocaineCartels.BusinessLogic
         private readonly object TurnLock = new object();
 
         /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
-        public Board PreviousTurn { get; private set; }
+        public Turn PreviousTurn { get; private set; }
 
         /// <summary>The board from the previous turn, with all the new units placed on the board, but no move commands have been executed. This board is <see cref="PreviousTurn"/> with place commands executed.</summary>
-        public Board PreviousTurnShowingPlaceCommands { get; private set; }
+        public Turn PreviousTurnShowingPlaceCommands { get; private set; }
 
         /// <summary>The board from the previous turn, with all move commands executed, but not combats resolved. This board is <see cref="PreviousTurnShowingPlaceCommands"/> with move commands executed.</summary>
-        public Board PreviousTurnShowingMoveCommands { get; private set; }
+        public Turn PreviousTurnShowingMoveCommands { get; private set; }
 
         /// <summary>This board is the one used to store the player's commands for the next turn. It's <see cref="PreviousTurnShowingMoveCommands"/> with combat resolved.</summary>
-        private Board NextTurn { get; set; }
+        private Turn NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
 
-        /// <summary>TurnNumber is 0 when the game hasn't been started yet.</summary>
-        public int TurnNumber { get; private set; }
-
-        private int MaximumNumberOfPlayers => PlayersColors.Length;
+        private int MaximumNumberOfPlayers => PlayersData.Length;
         private int NumberOfPlayers => Players.Count;
         public bool Started => TurnNumber > 0;
+        public int TurnNumber => NextTurn.TurnNumber;
 
         private Player AddPlayer(IPAddress ipAddress, string userAgent)
         {
@@ -66,19 +63,17 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Cannot add players to a game that has started.");
                 }
 
-                Player player = new Player(PlayersColors[NumberOfPlayers], ipAddress, userAgent);
+                Player player = new Player(PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name, ipAddress, userAgent);
                 Players.Add(player);
 
                 return player;
             }
         }
 
-        public void AddAllianceProposal(string playerProposingColor, string playerProposedToColor)
+        public void AddAllianceProposal(string fromPlayerColor, string toPlayerColor)
         {
-            var proposingPlayer = Players.Single(p => p.Color == playerProposingColor);
-            var proposedToPlayer = Players.Single(p => p.Color == playerProposedToColor);
-
-            proposedToPlayer.AllianceProposals.Add(proposedToPlayer);
+            var allianceProposal = new AllianceProposal(fromPlayerColor, toPlayerColor);
+            NextTurn.AllianceProposals.Add(allianceProposal);
         }
 
         /// <summary>Assign a move command to a unit. The unit is not moved. Units to be placed on the from cell are also candidates for the move command.</summary>
@@ -196,7 +191,7 @@ namespace CocaineCartels.BusinessLogic
         }
 
         /// <summary>Returns the NextTurn board, but only with the specified player's commands.</summary>
-        public Board GetCurrentTurn(Player player)
+        public Turn GetCurrentTurn(Player player)
         {
             var currentTurn = NextTurn.Clone();
 
@@ -216,6 +211,14 @@ namespace CocaineCartels.BusinessLogic
                 }
             });
 
+            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer != player.Color);
+
+            // When planning the turns, only see own alliances.
+            if (currentTurn.Mode == TurnMode.PlanMoves)
+            {
+                currentTurn.Alliances.AlliancePairs.RemoveWhere(alliance => alliance.PlayerA != player.Color && alliance.PlayerB != player.Color);
+            }
+
             return currentTurn;
         }
 
@@ -231,17 +234,18 @@ namespace CocaineCartels.BusinessLogic
             return newUnitsThisTurn;
         }
 
+        public void DeleteNextTurnAllianceProposals(string playerColor)
+        {
+            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
+        }
+
         /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
-        public void DeleteNextTurnCommands(string playerColor)
+        public void DeleteNextTurnPlaceAndMoveCommands(string playerColor)
         {
             IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
-            IEnumerable<Unit> units = unitsOnBoard.Concat(newUnits);
-            units.ForEach(unit =>
-            {
-                unit.RemoveCommands();
-            });
-            Players.Single(p => p.Color == playerColor).AllianceProposals = new HashSet<Player>();
+            IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
+            unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
@@ -263,61 +267,126 @@ namespace CocaineCartels.BusinessLogic
         {
             lock (TurnLock)
             {
-                // NextTurn now becomes the previous turn.
-                PreviousTurn = NextTurn.Clone();
-
-                // Remove all the commands on the previous turn board.
-                PreviousTurn.AllUnits.ForEach(unit =>
+                switch (NextTurn.Mode)
                 {
-                    unit.RemoveCommands();
-                });
+                    case TurnMode.PlanMoves:
+                        PerformPlanMovesTurn();
+                        break;
 
-                // Place all new units.
-                List<Unit> unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
-                unitsToPlace.ForEach(unit =>
+                    case TurnMode.ProposeAlliances:
+                        PerformProposeAlliancesTurn();
+                        break;
+
+                    case TurnMode.ReviewAllianceRequests:
+                        PerformReviewAllianceRequestsTurn();
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
+                }
+
+                NextTurn.IncreaseTurnNumber();
+            }
+        }
+
+        private void PerformPlanMovesTurn()
+        {
+            // NextTurn now becomes the previous turn.
+            PreviousTurn = NextTurn.Clone();
+
+            // Remove all the commands on the previous turn board.
+            PreviousTurn.AllUnits.ForEach(unit => { unit.RemoveCommands(); });
+
+            // Place all new units.
+            List<Unit> unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
+            unitsToPlace.ForEach(unit =>
+            {
+                NextTurn.NewUnits.Remove(unit);
+                unit.PlaceCommand.On.AddUnit(unit);
+            });
+            PreviousTurnShowingPlaceCommands = NextTurn.Clone();
+
+            // Remove all the move commands on the board showing where the units have been placed.
+            PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit => { unit.RemoveMoveCommand(); });
+
+            // Remove the place commands, move all the units, keeping the move commands.
+            NextTurn.AllUnits.ForEach(unit => { unit.RemovePlaceCommand(); });
+            List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
+            unitsToMove.ForEach(unit =>
+            {
+                unit.Cell.RemoveUnit(unit);
+                unit.MoveCommand.To.AddUnit(unit);
+            });
+            PreviousTurnShowingMoveCommands = NextTurn.Clone();
+
+            // Remove the move commands on the final board.
+            NextTurn.UnitsOnCells.ForEach(unit => { unit.RemoveMoveCommand(); });
+
+            NextTurn.Fight();
+
+            // Assign new units to the players, add points to them and set their ready state to false.
+            Players.ForEach(player =>
+            {
+                NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
+                AddPointsToPlayer(player);
+                player.CommandsSentOn = null;
+                player.Ready = false;
+            });
+
+            switch (Settings.GameMode)
+            {
+                case GameModeType.NoAlliances:
+                    // Nothing to do here - keep the turn mode to PlanMoves.
+                    break;
+
+                case GameModeType.AlliancesInSeparateTurns:
+                    NextTurn.Mode = TurnMode.ProposeAlliances;
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
+            }
+        }
+
+        private void PerformProposeAlliancesTurn()
+        {
+            // Not much to do here - the alliance proposals should already be stored in NextTurn.
+
+            switch (Settings.GameMode)
+            {
+                case GameModeType.AlliancesInSeparateTurns:
+                    NextTurn.Mode = TurnMode.ReviewAllianceRequests;
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
+            }
+        }
+
+        private void PerformReviewAllianceRequestsTurn()
+        {
+            // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
+            Players.ForEach(player =>
+            {
+                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
+                proposals.ForEach(proposal =>
                 {
-                    NextTurn.NewUnits.Remove(unit);
-                    unit.PlaceCommand.On.AddUnit(unit);
+                    AllianceProposal reverseProposal = new AllianceProposal(proposal.ToPlayer, proposal.FromPlayer);
+                    if (NextTurn.AllianceProposals.Contains(reverseProposal))
+                    {
+                        NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
+                    }
                 });
-                PreviousTurnShowingPlaceCommands = NextTurn.Clone();
+            });
 
-                // Remove all the move commands on the board showing where the units have been placed.
-                PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit =>
-                {
-                    unit.RemoveMoveCommand();
-                });
+            switch (Settings.GameMode)
+            {
+                case GameModeType.AlliancesInSeparateTurns:
+                    NextTurn.Mode = TurnMode.PlanMoves;
+                    break;
 
-                // Remove the place commands, move all the units, keeping the move commands.
-                NextTurn.AllUnits.ForEach(unit =>
-                {
-                    unit.RemovePlaceCommand();
-                });
-                List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
-                unitsToMove.ForEach(unit =>
-                {
-                    unit.Cell.RemoveUnit(unit);
-                    unit.MoveCommand.To.AddUnit(unit);
-                });
-                PreviousTurnShowingMoveCommands = NextTurn.Clone();
-
-                // Remove the move commands on the final board.
-                NextTurn.UnitsOnCells.ForEach(unit =>
-                {
-                    unit.RemoveMoveCommand();
-                });
-
-                NextTurn.Fight();
-
-                // Assign new units to the players, add points to them and set their ready state to false.
-                Players.ForEach(player =>
-                {
-                    NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
-                    AddPointsToPlayer(player);
-                    player.CommandsSentOn = null;
-                    player.Ready = false;
-                });
-
-                TurnNumber++;
+                default:
+                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
             }
         }
 
@@ -334,9 +403,9 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurn = null;
             PreviousTurnShowingPlaceCommands = null;
             PreviousTurnShowingMoveCommands = null;
-            NextTurn = new Board(Settings.GridSize);
+            NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
-            TurnNumber = 0;
+            NextTurn.Mode = TurnMode.StartGame;
         }
 
         public void SetAllPlayersSeemToBeHere(Player player, bool allSeemToBeHere)
@@ -354,10 +423,7 @@ namespace CocaineCartels.BusinessLogic
 
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
         {
-            Players.Where(player => player.Color == playerColor).ForEach(player =>
-            {
-                player.Ready = isReady;
-            });
+            Players.Where(player => player.Color == playerColor).ForEach(player => { player.Ready = isReady; });
 
             PerformTurnIfAllPlayersAreReady();
         }
@@ -378,7 +444,8 @@ namespace CocaineCartels.BusinessLogic
                     player.Ready = false;
                 }
 
-                TurnNumber = 1;
+                NextTurn.Mode = TurnMode.PlanMoves;
+                NextTurn.IncreaseTurnNumber();
             }
         }
 

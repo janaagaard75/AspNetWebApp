@@ -35,7 +35,7 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -254,8 +254,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Client\AlliancesSystem.ts" />
-    <TypeScriptCompile Include="Client\Board.ts" />
+    <TypeScriptCompile Include="Client\Turn.ts" />
     <TypeScriptCompile Include="Client\Canvas.ts" />
     <TypeScriptCompile Include="Client\Cell.ts" />
     <TypeScriptCompile Include="Client\ComandType.ts" />
@@ -264,7 +263,7 @@
     <TypeScriptCompile Include="Client\GameState.ts" />
     <TypeScriptCompile Include="Client\HexagonEvent.ts" />
     <TypeScriptCompile Include="Client\HttpClient.ts" />
-    <TypeScriptCompile Include="Client\Interfaces\IBoard.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\ITurn.ts" />
     <TypeScriptCompile Include="Client\Interfaces\ICell.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGame.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IGameState.ts" />
@@ -284,6 +283,7 @@
     <TypeScriptCompile Include="Client\Game.ts" />
     <TypeScriptCompile Include="Client\Hex.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IDragBoundFunc.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\TurnMode.ts" />
     <TypeScriptCompile Include="Client\Main.ts" />
     <TypeScriptCompile Include="Client\MoveCommand.ts" />
     <TypeScriptCompile Include="Client\PlaceCommand.ts" />
