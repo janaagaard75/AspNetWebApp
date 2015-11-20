@@ -14,6 +14,16 @@ namespace CocaineCartels.BusinessLogic
         public void AddAlliance(string playerA, string playerB)
         {
             AlliancePair alliance = new AlliancePair(playerA, playerB);
+
+            foreach (var existingPair in AlliancePairs)
+            {
+                if (alliance.PlayerA == existingPair.PlayerA && alliance.PlayerB == existingPair.PlayerB)
+                {
+                    // Already in the list.
+                    return;
+                }
+            }
+
             AlliancePairs.Add(alliance);
         }
 
