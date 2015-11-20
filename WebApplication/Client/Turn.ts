@@ -6,6 +6,9 @@
         constructor(
             turnData: ITurn
         ) {
+            this.allianceProposals = turnData.allianceProposals;
+            this.alliances = turnData.alliances;
+
             // No units and commands initialized yet.
             this.cells = [];
             turnData.cells.forEach(cellData => {
@@ -24,6 +27,8 @@
             this.turnNumber = turnData.turnNumber;
         }
 
+        public allianceProposals: Array<IAllianceProposal>;
+        public alliances: IAlliances;
         public cells: Array<Cell>;
         public mode: TurnMode;
         public newUnits: Array<Unit>;

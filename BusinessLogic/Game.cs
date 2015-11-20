@@ -70,9 +70,9 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        public void AddAllianceProposal(string fromPlayerColor, string toPlayerColor)
+        public void AddAllianceProposal(string fromPlayer, string toPlayer)
         {
-            var allianceProposal = new AllianceProposal(fromPlayerColor, toPlayerColor);
+            var allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
             NextTurn.AllianceProposals.Add(allianceProposal);
         }
 
@@ -216,7 +216,14 @@ namespace CocaineCartels.BusinessLogic
             // When planning the turns, only see own alliances.
             if (currentTurn.Mode == TurnMode.PlanMoves)
             {
-                currentTurn.Alliances.AlliancePairs.RemoveWhere(alliance => alliance.PlayerA != player.Color && alliance.PlayerB != player.Color);
+                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA == player.Color || pair.PlayerB == player.Color);
+
+                currentTurn.Alliances.ResetAlliances();
+
+                foreach (var pair in ownAlliancePairs)
+                {
+                    currentTurn.Alliances.AddAlliance(pair.PlayerA, pair.PlayerB);
+                }
             }
 
             return currentTurn;
@@ -234,18 +241,15 @@ namespace CocaineCartels.BusinessLogic
             return newUnitsThisTurn;
         }
 
-        public void DeleteNextTurnAllianceProposals(string playerColor)
-        {
-            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
-        }
-
-        /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
-        public void DeleteNextTurnPlaceAndMoveCommands(string playerColor)
+        /// <summary>Remove all commands for the next turn that was assigned to the specified player, i.e. place commands, move commands and alliance proposals.</summary>
+        public void DeleteNextTurnCommands(string playerColor)
         {
             IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
             unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
+
+            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
@@ -259,34 +263,6 @@ namespace CocaineCartels.BusinessLogic
             }
 
             return matchingPlayer;
-        }
-
-        /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
-        /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
-        private void PerformTurn()
-        {
-            lock (TurnLock)
-            {
-                switch (NextTurn.Mode)
-                {
-                    case TurnMode.PlanMoves:
-                        PerformPlanMovesTurn();
-                        break;
-
-                    case TurnMode.ProposeAlliances:
-                        PerformProposeAlliancesTurn();
-                        break;
-
-                    case TurnMode.ReviewAllianceRequests:
-                        PerformReviewAllianceRequestsTurn();
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
-                }
-
-                NextTurn.IncreaseTurnNumber();
-            }
         }
 
         private void PerformPlanMovesTurn()
@@ -350,33 +326,29 @@ namespace CocaineCartels.BusinessLogic
 
         private void PerformProposeAlliancesTurn()
         {
-            // Not much to do here - the alliance proposals should already be stored in NextTurn.
+            // Remove the old alliances.
+            NextTurn.Alliances.ResetAlliances();
 
-            switch (Settings.GameMode)
-            {
-                case GameModeType.AlliancesInSeparateTurns:
-                    NextTurn.Mode = TurnMode.ReviewAllianceRequests;
-                    break;
-
-                default:
-                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
-            }
-        }
-
-        private void PerformReviewAllianceRequestsTurn()
-        {
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
                 IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
                 proposals.ForEach(proposal =>
                 {
-                    AllianceProposal reverseProposal = new AllianceProposal(proposal.ToPlayer, proposal.FromPlayer);
-                    if (NextTurn.AllianceProposals.Contains(reverseProposal))
+                    if (NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0)
                     {
                         NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
                     }
                 });
+            });
+
+            // Remove all alliance proposals.
+            NextTurn.AllianceProposals.RemoveWhere(proposal => true);
+
+            Players.ForEach(player =>
+            {
+                player.CommandsSentOn = null;
+                player.Ready = false;
             });
 
             switch (Settings.GameMode)
@@ -387,6 +359,30 @@ namespace CocaineCartels.BusinessLogic
 
                 default:
                     throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
+            }
+        }
+
+        /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>
+        /// <remarks>All commands are stored on the NextTurn board. After each step of the turn the board is cloned to one for of the previous boards, which will allows the clients to show the different steps executed in the turn.</remarks>
+        private void PerformTurn()
+        {
+            lock (TurnLock)
+            {
+                switch (NextTurn.Mode)
+                {
+                    case TurnMode.PlanMoves:
+                        PerformPlanMovesTurn();
+                        break;
+
+                    case TurnMode.ProposeAlliances:
+                        PerformProposeAlliancesTurn();
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Turn mode {NextTurn.Mode} is not supported.");
+                }
+
+                NextTurn.IncreaseTurnNumber();
             }
         }
 

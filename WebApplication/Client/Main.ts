@@ -74,9 +74,6 @@ module CocaineCartels {
                 case TurnMode.ProposeAlliances:
                     return "Propose alliances";
 
-                case TurnMode.ReviewAllianceRequests:
-                    return "Respond to alliace requests";
-
                 case TurnMode.StartGame:
                     return "Start game lobby";
 
@@ -86,27 +83,47 @@ module CocaineCartels {
             }
         }
 
+        private static printAllAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.ProposeAlliances:
+                    const allAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(pair => {
+                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                        });
+
+                    let allAlliancesText: string;
+                    if (allAlliances.length >= 1) {
+                        allAlliancesText = allAlliances.join(" ");
+                    } else {
+                        allAlliancesText = "No players were allied.";
+                    }
+
+                    $("#allAlliancesList").html(allAlliancesText);
+                    $("#allAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#allAlliances").addClass("hidden");
+            }
+        }
+
         private static printAllianceCheckboxes() {
             switch (Main.game.currentTurn.mode) {
                 case TurnMode.ProposeAlliances:
                     const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
                     const allianceCheckboxes = allOtherPlayers
                         .map(player => {
-                            const playerButton = `<div class="checkbox"><label><input type="checkbox" onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');"/> <span style="color: ${player.color}">${player.name}</span></label></div>`;
+                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${player.color}" onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${player.color}">${player.name}</span></label></div>`;
                             return playerButton;
                         })
                         .join(" ");
 
                     $("#allianceCheckboxes").html(allianceCheckboxes);
-                    $("#alliances").removeClass("hidden");
-                    break;
-
-                case TurnMode.ReviewAllianceRequests:
-                    $("#alliances").removeClass("hidden");
+                    $("#allianceProposals").removeClass("hidden");
                     break;
 
                 default:
-                    $("#alliances").addClass("hidden");
+                    $("#allianceProposals").addClass("hidden");
             }
         }
 
@@ -118,6 +135,30 @@ module CocaineCartels {
                 movesElement.classList.add("label", "label-danger");
             } else {
                 movesElement.classList.remove("label", "label-danger");
+            }
+        }
+
+        private static printOwnAlliances() {
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.PlanMoves:
+                    const ownAlliances = Main.game.currentTurn.alliances.alliancePairs
+                        .map(pair => {
+                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                        });
+
+                    let ownAlliancesText: string;
+                    if (ownAlliances.length >= 1) {
+                        ownAlliancesText = ownAlliances.join(" ");
+                    } else {
+                        ownAlliancesText = "You're not allied with anybody.";
+                    }
+
+                    $("#ownAlliancesList").html(ownAlliancesText);
+                    $("#ownAlliances").removeClass("hidden");
+                    break;
+
+                default:
+                    $("#ownAlliances").addClass("hidden");
             }
         }
 
@@ -209,6 +250,8 @@ module CocaineCartels {
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
+                    Main.printAllAlliances();
+                    Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
 
                     this.setActiveBoard(4);
@@ -269,6 +312,46 @@ module CocaineCartels {
         }
 
         public sendCommands() {
+            let commands: ClientCommands;
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.PlanMoves:
+                    commands = this.getMoveCommands();
+                    break;
+
+                case TurnMode.ProposeAlliances:
+                    commands = this.getAllianceProposalCommands();
+                    break;
+
+                default:
+                    throw `${Main.game.currentTurn.mode} is not supported.`;
+            }
+
+            GameService.sendCommands(commands)
+                .then(() => {
+                    // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
+                    Main.currentPlayer.ready = true;
+                    Main.printPlayersStatus();
+                })
+                .catch(e => {
+                    alert(`Error sending commands: ${e}.`);
+                });
+        }
+
+        private getAllianceProposalCommands(): ClientCommands {
+            let proposals: Array<ClientAllianceProposal> = [];
+
+            $(".jsAllianceProposal").each((index, checkbox) => {
+                if ($(checkbox).prop("checked")) {
+                    const proposal = new ClientAllianceProposal($(checkbox).val());
+                    proposals.push(proposal);
+                }
+            });
+
+            const commands = new ClientCommands(proposals, null, null);
+            return commands;
+        }
+
+        private getMoveCommands(): ClientCommands {
             const currentPlayersUnitsOnBoardOrToBePlacedOnBoard = Main.game.currentTurn.unitsOnBoardOrToBePlacedOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
             const moveCommands = currentPlayersUnitsOnBoardOrToBePlacedOnBoard
@@ -281,17 +364,8 @@ module CocaineCartels {
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new ClientCommands(moveCommands, placeCommands);
-
-            GameService.sendCommands(commands)
-                .then(() => {
-                    // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
-                    Main.currentPlayer.ready = true;
-                    Main.printPlayersStatus();
-                })
-                .catch(e => {
-                    alert(`Error sending commands: ${e}.`);
-                });
+            const commands = new ClientCommands(null, moveCommands, placeCommands);
+            return commands;
         }
 
         public setActiveBoard(activeBoard: number) {
@@ -327,8 +401,8 @@ module CocaineCartels {
             }
         }
 
-        public toggleProposeAllianceWith(button: HTMLButtonElement, otherPlayerColor: string) {
-            $(button).toggleClass("active").blur();
+        public toggleProposeAllianceWith() {
+            Main.currentPlayer.ready = false;
         }
 
         public tick() {

@@ -3,7 +3,6 @@
     public enum TurnMode
     {
         Undefined,
-        ReviewAllianceRequests,
         PlanMoves,
         ProposeAlliances,
         StartGame

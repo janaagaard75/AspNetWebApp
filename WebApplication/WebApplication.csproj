@@ -169,6 +169,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClientAllianceProposal.cs" />
     <Compile Include="Models\ClientHex.cs" />
     <Compile Include="Models\ClientMoveCommand.cs" />
     <Compile Include="Models\ClientPlaceCommand.cs" />
@@ -254,6 +255,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Client\ClientAllianceProposal.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IAlliances.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IAlliancePair.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\IAllianceProposal.ts" />
     <TypeScriptCompile Include="Client\Turn.ts" />
     <TypeScriptCompile Include="Client\Canvas.ts" />
     <TypeScriptCompile Include="Client\Cell.ts" />
