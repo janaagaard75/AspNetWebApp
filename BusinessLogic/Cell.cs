@@ -51,7 +51,17 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        public void FightWithAlliances()
+        private void FightWithAlliances()
+        {
+            bool somebodyDied;
+            do
+            {
+                somebodyDied = FightWithAlliances2();
+            }
+            while (somebodyDied);
+        }
+
+        private bool FightWithAlliances2()
         {
             IEnumerable<string> playersOnCell = PlayersOnCell();
 
@@ -77,6 +87,7 @@ namespace CocaineCartels.BusinessLogic
             }
 
             // Remove units from each player.
+            bool somebodyDied = false;
             foreach (string player in playersOnCell)
             {
                 int numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player);
@@ -87,8 +98,15 @@ namespace CocaineCartels.BusinessLogic
                     unitsToRemove = numberOfPlayersUnits;
                 }
 
+                if (unitsToRemove > 0)
+                {
+                    somebodyDied = true;
+                }
+
                 RemoveUnitsFromPlayer(player, unitsToRemove);
             }
+
+            return somebodyDied;
         }
 
         private IEnumerable<string> PlayersOnCell()
