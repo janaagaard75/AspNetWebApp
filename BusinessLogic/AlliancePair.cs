@@ -7,6 +7,12 @@ namespace CocaineCartels.BusinessLogic
     {
         public AlliancePair(string playerA, string playerB)
         {
+            if (playerA == playerB)
+            {
+                throw new ApplicationException("A player cannot ally with oneself.");
+            }
+
+            // Always order the players in a consistent way.
             if (Compare(playerA, playerB, StringComparison.Ordinal) < 0)
             {
                 PlayerA = playerA;
