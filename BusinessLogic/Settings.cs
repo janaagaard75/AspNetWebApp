@@ -6,7 +6,7 @@ namespace CocaineCartels.BusinessLogic
     {
         [JsonProperty] internal const GameModeType GameMode = GameModeType.AlliancesInSeparateTurns;
 
-        [JsonProperty] public const int GridSize = 1;
+        [JsonProperty] public const int GridSize = 2;
         [JsonProperty] public const int MovesPerTurn = 5;
         [JsonProperty] public const int NewUnitPerCellsControlled = 2 * NewUnitsPerTurn + 1;
         [JsonProperty] public const int NewUnitsPerTurn = 3;
