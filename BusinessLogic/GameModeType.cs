@@ -7,8 +7,6 @@
         /// <summary>Alliances are planned in turns separate from moves. Forming </summary>
         AlliancesInSeparateTurns,
 
-        AlliancesEveryTurn,
-        AlliancesSeconndTurn,
         NoAlliances
     }
 }

@@ -79,7 +79,7 @@ namespace CocaineCartels.BusinessLogic
                         continue;
                     }
 
-                    var cell = new Cell(r, s, t);
+                    var cell = new Cell(this, r, s, t);
                     cells.Add(cell);
                 }
             }

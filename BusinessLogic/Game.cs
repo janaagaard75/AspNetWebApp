@@ -319,6 +319,9 @@ namespace CocaineCartels.BusinessLogic
 
         private void PerformProposeAlliancesTurn()
         {
+            // Remove the old alliances.
+            NextTurn.Alliances.ResetAlliances();
+
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
@@ -331,6 +334,15 @@ namespace CocaineCartels.BusinessLogic
                         NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
                     }
                 });
+            });
+
+            // Remove all alliance proposals.
+            NextTurn.AllianceProposals.RemoveWhere(proposal => true);
+
+            Players.ForEach(player =>
+            {
+                player.CommandsSentOn = null;
+                player.Ready = false;
             });
 
             switch (Settings.GameMode)
