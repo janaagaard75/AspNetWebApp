@@ -48,7 +48,7 @@ namespace CocaineCartels.WebApplication.Controllers
         [HttpGet, Route("api/status")]
         public Status GetStatus()
         {
-            Status status = new Status(Game.Instance.Players, Game.Instance. TurnNumber);
+            Status status = new Status(Game.Instance.Players, Game.Instance.TurnNumber);
             return status;
         }
 
@@ -59,21 +59,26 @@ namespace CocaineCartels.WebApplication.Controllers
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, false);
         }
 
-        [HttpPost, Route("api/movecommands")]
-        public void PostMoveCommands(ClientCommands commands)
+        [HttpPost, Route("api/commands")]
+        public void PostCommands(ClientCommands commands)
         {
             string currentPlayerColor = GetCurrentPlayerColor();
 
-            Game.Instance.DeleteNextTurnPlaceAndMoveCommands(currentPlayerColor);
+            Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
 
-            commands.PlaceCommands.ForEach(placeCommand =>
+            commands.PlaceCommands?.ForEach(placeCommand =>
             {
                 Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
             });
 
-            commands.MoveCommands.ForEach(moveCommand =>
+            commands.MoveCommands?.ForEach(moveCommand =>
             {
                 Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
+            });
+
+            commands.AllianceProposals?.ForEach(proposal =>
+            {
+                Game.Instance.AddAllianceProposal(currentPlayerColor, proposal.ToPlayer);
             });
 
             Game.Instance.UpdateCommandsSentOn(currentPlayerColor);

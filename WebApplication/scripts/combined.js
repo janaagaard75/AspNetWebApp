@@ -541,8 +541,20 @@ var CocaineCartels;
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    var ClientAllianceProposal = (function () {
+        function ClientAllianceProposal(toPlayer) {
+            this.toPlayer = toPlayer;
+        }
+        return ClientAllianceProposal;
+    })();
+    CocaineCartels.ClientAllianceProposal = ClientAllianceProposal;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
     var ClientCommands = (function () {
-        function ClientCommands(moveCommands, placeCommands) {
+        function ClientCommands(allianceProposals, moveCommands, placeCommands) {
+            this.allianceProposals = allianceProposals;
             this.moveCommands = moveCommands;
             this.placeCommands = placeCommands;
         }
@@ -967,7 +979,7 @@ var CocaineCartels;
                     var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
                     var allianceCheckboxes = allOtherPlayers
                         .map(function (player) {
-                        var playerButton = "<div class=\"checkbox\"><label><input type=\"checkbox\" onclick=\"cocaineCartels.toggleProposeAllianceWith(this, '" + player.color + "');\"/> <span style=\"color: " + player.color + "\">" + player.name + "</span></label></div>";
+                        var playerButton = "<div class=\"checkbox\"><label><input type=\"checkbox\" value=\"" + player.color + "\" onclick=\"cocaineCartels.toggleProposeAllianceWith();\" class=\"jsAllianceProposal\" /> <span style=\"color: " + player.color + "\">" + player.name + "</span></label></div>";
                         return playerButton;
                     })
                         .join(" ");
@@ -1119,15 +1131,17 @@ var CocaineCartels;
             }
         };
         Main.prototype.sendCommands = function () {
-            var currentPlayersUnitsOnBoardOrToBePlacedOnBoard = Main.game.currentTurn.unitsOnBoardOrToBePlacedOnBoard.filter(function (unit) { return unit.player.color === Main.currentPlayer.color; });
-            var moveCommands = currentPlayersUnitsOnBoardOrToBePlacedOnBoard
-                .filter(function (unit) { return unit.moveCommand !== null; })
-                .map(function (unit) { return new CocaineCartels.ClientMoveCommand(unit.moveCommand.from.hex, unit.moveCommand.to.hex); });
-            var currentPlayersNewUnits = Main.game.currentTurn.newUnits.filter(function (unit) { return unit.player.color === Main.currentPlayer.color; });
-            var placeCommands = currentPlayersNewUnits
-                .filter(function (unit) { return unit.placeCommand !== null; })
-                .map(function (unit) { return new CocaineCartels.ClientPlaceCommand(unit.placeCommand.on.hex); });
-            var commands = new CocaineCartels.ClientCommands(moveCommands, placeCommands);
+            var commands;
+            switch (Main.game.currentTurn.mode) {
+                case CocaineCartels.TurnMode.PlanMoves:
+                    commands = this.getMoveCommands();
+                    break;
+                case CocaineCartels.TurnMode.ProposeAlliances:
+                    commands = this.getAllianceProposalCommands();
+                    break;
+                default:
+                    throw Main.game.currentTurn.mode + " is not supported.";
+            }
             CocaineCartels.GameService.sendCommands(commands)
                 .then(function () {
                 // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
@@ -1137,6 +1151,29 @@ var CocaineCartels;
                 .catch(function (e) {
                 alert("Error sending commands: " + e + ".");
             });
+        };
+        Main.prototype.getAllianceProposalCommands = function () {
+            var proposals = [];
+            $(".jsAllianceProposal").each(function (index, checkbox) {
+                if ($(checkbox).is("checked")) {
+                    var proposal = new CocaineCartels.ClientAllianceProposal($(checkbox).val());
+                    proposals.push(proposal);
+                }
+            });
+            var commands = new CocaineCartels.ClientCommands(proposals, null, null);
+            return commands;
+        };
+        Main.prototype.getMoveCommands = function () {
+            var currentPlayersUnitsOnBoardOrToBePlacedOnBoard = Main.game.currentTurn.unitsOnBoardOrToBePlacedOnBoard.filter(function (unit) { return unit.player.color === Main.currentPlayer.color; });
+            var moveCommands = currentPlayersUnitsOnBoardOrToBePlacedOnBoard
+                .filter(function (unit) { return unit.moveCommand !== null; })
+                .map(function (unit) { return new CocaineCartels.ClientMoveCommand(unit.moveCommand.from.hex, unit.moveCommand.to.hex); });
+            var currentPlayersNewUnits = Main.game.currentTurn.newUnits.filter(function (unit) { return unit.player.color === Main.currentPlayer.color; });
+            var placeCommands = currentPlayersNewUnits
+                .filter(function (unit) { return unit.placeCommand !== null; })
+                .map(function (unit) { return new CocaineCartels.ClientPlaceCommand(unit.placeCommand.on.hex); });
+            var commands = new CocaineCartels.ClientCommands(null, moveCommands, placeCommands);
+            return commands;
         };
         Main.prototype.setActiveBoard = function (activeBoard) {
             this.activeBoard = activeBoard;
@@ -1167,8 +1204,8 @@ var CocaineCartels;
                 Main.setCurrentPlayerNotReady();
             }
         };
-        Main.prototype.toggleProposeAllianceWith = function (button, otherPlayerColor) {
-            $(button).toggleClass("active").blur();
+        Main.prototype.toggleProposeAllianceWith = function () {
+            Main.currentPlayer.ready = false;
         };
         Main.prototype.tick = function () {
             var _this = this;

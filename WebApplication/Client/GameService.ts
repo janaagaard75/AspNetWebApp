@@ -27,8 +27,8 @@
             return HttpClient.get<void>("/api/reset");
         }
 
-        public static sendMoveCommands(commands: ClientCommands): Promise<void> {
-            return HttpClient.post<void>("/api/movecommands", commands);
+        public static sendCommands(commands: ClientCommands): Promise<void> {
+            return HttpClient.post<void>("/api/commands", commands);
         }
 
         public static setAllPlayersSeemToBeHere(allSeemToBeHere: boolean): Promise<void> {

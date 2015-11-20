@@ -92,7 +92,7 @@ module CocaineCartels {
                     const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
                     const allianceCheckboxes = allOtherPlayers
                         .map(player => {
-                            const playerButton = `<div class="checkbox"><label><input type="checkbox" onclick="cocaineCartels.toggleProposeAllianceWith(this, '${player.color}');"/> <span style="color: ${player.color}">${player.name}</span></label></div>`;
+                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${player.color}" onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${player.color}">${player.name}</span></label></div>`;
                             return playerButton;
                         })
                         .join(" ");
@@ -269,6 +269,46 @@ module CocaineCartels {
         }
 
         public sendCommands() {
+            let commands: ClientCommands;
+            switch (Main.game.currentTurn.mode) {
+                case TurnMode.PlanMoves:
+                    commands = this.getMoveCommands();
+                    break;
+
+                case TurnMode.ProposeAlliances:
+                    commands = this.getAllianceProposalCommands();
+                    break;
+
+                default:
+                    throw `${Main.game.currentTurn.mode} is not supported.`;
+            }
+
+            GameService.sendCommands(commands)
+                .then(() => {
+                    // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
+                    Main.currentPlayer.ready = true;
+                    Main.printPlayersStatus();
+                })
+                .catch(e => {
+                    alert(`Error sending commands: ${e}.`);
+                });
+        }
+
+        private getAllianceProposalCommands(): ClientCommands {
+            let proposals: Array<ClientAllianceProposal> = [];
+
+            $(".jsAllianceProposal").each((index, checkbox) => {
+                if ($(checkbox).is("checked")) {
+                    const proposal = new ClientAllianceProposal($(checkbox).val());
+                    proposals.push(proposal);
+                }
+            });
+
+            const commands = new ClientCommands(proposals, null, null);
+            return commands;
+        }
+
+        private getMoveCommands(): ClientCommands {
             const currentPlayersUnitsOnBoardOrToBePlacedOnBoard = Main.game.currentTurn.unitsOnBoardOrToBePlacedOnBoard.filter(unit => unit.player.color === Main.currentPlayer.color);
 
             const moveCommands = currentPlayersUnitsOnBoardOrToBePlacedOnBoard
@@ -281,17 +321,8 @@ module CocaineCartels {
                 .filter(unit => unit.placeCommand !== null)
                 .map(unit => new ClientPlaceCommand(unit.placeCommand.on.hex));
 
-            const commands = new ClientCommands(moveCommands, placeCommands);
-
-            GameService.sendCommands(commands)
-                .then(() => {
-                    // This might cause a blinking of the player's status if there is currently a status update in the pipeline.
-                    Main.currentPlayer.ready = true;
-                    Main.printPlayersStatus();
-                })
-                .catch(e => {
-                    alert(`Error sending commands: ${e}.`);
-                });
+            const commands = new ClientCommands(null, moveCommands, placeCommands);
+            return commands;
         }
 
         public setActiveBoard(activeBoard: number) {
@@ -327,8 +358,8 @@ module CocaineCartels {
             }
         }
 
-        public toggleProposeAllianceWith(button: HTMLButtonElement, otherPlayerColor: string) {
-            $(button).toggleClass("active").blur();
+        public toggleProposeAllianceWith() {
+            Main.currentPlayer.ready = false;
         }
 
         public tick() {

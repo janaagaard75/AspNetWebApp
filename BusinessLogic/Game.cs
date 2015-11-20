@@ -70,9 +70,9 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        public void AddAllianceProposal(string fromPlayerColor, string toPlayerColor)
+        public void AddAllianceProposal(string fromPlayer, string toPlayer)
         {
-            var allianceProposal = new AllianceProposal(fromPlayerColor, toPlayerColor);
+            var allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
             NextTurn.AllianceProposals.Add(allianceProposal);
         }
 
@@ -234,18 +234,15 @@ namespace CocaineCartels.BusinessLogic
             return newUnitsThisTurn;
         }
 
-        public void DeleteNextTurnAllianceProposals(string playerColor)
-        {
-            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
-        }
-
-        /// <summary>Remove all commands for the next turn that was assigned to the specified player.</summary>
-        public void DeleteNextTurnPlaceAndMoveCommands(string playerColor)
+        /// <summary>Remove all commands for the next turn that was assigned to the specified player, i.e. place commands, move commands and alliance proposals.</summary>
+        public void DeleteNextTurnCommands(string playerColor)
         {
             IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
             unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
+
+            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
