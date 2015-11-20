@@ -328,8 +328,7 @@ namespace CocaineCartels.BusinessLogic
                 IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
                 proposals.ForEach(proposal =>
                 {
-                    AllianceProposal reverseProposal = new AllianceProposal(proposal.ToPlayer, proposal.FromPlayer);
-                    if (NextTurn.AllianceProposals.Contains(reverseProposal))
+                    if (NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0)
                     {
                         NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
                     }
