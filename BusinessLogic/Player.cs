@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace CocaineCartels.BusinessLogic
 {
-    public class Player : IEquatable<Player>
+    public class Player
     {
         internal Player(string colors, string name, IPAddress ipAddress, string userAgent)
         {
@@ -36,15 +36,7 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>If the game hasn't started yet: The player believe that all players are here. If the game has started: The player has sent in commands and is thus ready for the next turn.</summary>
         public bool Ready { get; set; }
 
-        public string TextColor { get; }
-
         [JsonIgnore]
         public readonly string UserAgent;
-
-        public bool Equals(Player other)
-        {
-            bool areEqual = Color == other.Color;
-            return areEqual;
-        }
     }
 }

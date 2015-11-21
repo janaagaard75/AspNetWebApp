@@ -197,7 +197,7 @@ namespace CocaineCartels.BusinessLogic
 
             currentTurn.UnitsOnCells.ForEach(unit =>
             {
-                if (!unit.Player.Equals(player))
+                if (unit.Player.Color != player.Color)
                 {
                     unit.RemoveMoveCommand();
                 }
@@ -205,7 +205,7 @@ namespace CocaineCartels.BusinessLogic
 
             currentTurn.NewUnits.ForEach(unit =>
             {
-                if (!unit.Player.Equals(player))
+                if (unit.Player.Color != player.Color)
                 {
                     unit.RemovePlaceCommand();
                 }
