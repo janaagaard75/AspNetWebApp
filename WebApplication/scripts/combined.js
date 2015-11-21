@@ -685,11 +685,6 @@ var CocaineCartels;
     var GameService = (function () {
         function GameService() {
         }
-        GameService.getCurrentPlayer = function () {
-            return CocaineCartels.HttpClient.get("/api/currentplayercolor").then(function (color) {
-                return color;
-            });
-        };
         GameService.getGameState = function () {
             return CocaineCartels.HttpClient.get("/api/gamestate").then(function (gameStateData) {
                 var gameState = new CocaineCartels.GameState(gameStateData);
@@ -819,6 +814,7 @@ var CocaineCartels;
                     }
                     else {
                         if (client.status !== 200) {
+                            console.error(client.response);
                             reject("Status is " + client.status + " " + client.statusText + ". Only 200 OK is supported when a value is returned.");
                         }
                     }
@@ -988,7 +984,7 @@ var CocaineCartels;
                 case CocaineCartels.TurnMode.ProposeAlliances:
                     var allAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(function (pair) {
-                        return "<div><span style=\"color: " + pair.playerA + "\">" + pair.playerA + "</span> & <span style=\"color: " + pair.playerB + "\">" + pair.playerB + "</span></div>";
+                        return "<div><span style=\"color: " + pair.playerA.color + "\">" + pair.playerA.name + "</span> & <span style=\"color: " + pair.playerB.color + "\">" + pair.playerB.name + "</span></div>";
                     });
                     var allAlliancesText;
                     if (allAlliances.length >= 1) {

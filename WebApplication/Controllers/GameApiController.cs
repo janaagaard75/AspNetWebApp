@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
+using CocaineCartels.BusinessLogic.Extensions;
 using CocaineCartels.WebApplication.Models;
 
 namespace CocaineCartels.WebApplication.Controllers
@@ -27,8 +28,7 @@ namespace CocaineCartels.WebApplication.Controllers
             }
         }
 
-        [HttpGet, Route("api/currentplayercolor")]
-        public string GetCurrentPlayerColor()
+        private string GetCurrentPlayerColor()
         {
             return CurrentPlayer.Color;
         }
@@ -62,20 +62,20 @@ namespace CocaineCartels.WebApplication.Controllers
 
             Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
 
-            foreach (var placeCommand in commands.PlaceCommands)
+            commands.PlaceCommands?.ForEach(placeCommand =>
             {
                 Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
-            }
+            });
 
-            foreach (var moveCommand in commands.MoveCommands)
+            commands.MoveCommands?.ForEach(moveCommand =>
             {
                 Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
-            }
+            });
 
-            foreach (var proposal in commands.AllianceProposals)
+            commands.AllianceProposals?.ForEach(proposal =>
             {
                 Game.Instance.AddAllianceProposal(currentPlayerColor, proposal.ToPlayer);
-            }
+            });
 
             Game.Instance.UpdateCommandsSentOn(currentPlayerColor);
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);

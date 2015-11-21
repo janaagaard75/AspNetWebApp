@@ -11,7 +11,7 @@ namespace CocaineCartels.BusinessLogic
 
         public HashSet<AlliancePair> AlliancePairs { get; private set; }
 
-        public void AddAlliance(string playerA, string playerB)
+        public void AddAlliance(Player playerA, Player playerB)
         {
             AlliancePair alliance = new AlliancePair(playerA, playerB);
 
@@ -27,17 +27,17 @@ namespace CocaineCartels.BusinessLogic
             AlliancePairs.Add(alliance);
         }
 
-        public IEnumerable<string> GetAllies(string player)
+        public IEnumerable<Player> GetAllies(Player player)
         {
-            HashSet<string> allies = new HashSet<string>();
+            HashSet<Player> allies = new HashSet<Player>();
 
             foreach (var pair in AlliancePairs)
             {
-                if (pair.PlayerA == player)
+                if (pair.PlayerA.Color == player.Color)
                 {
                     allies.Add(pair.PlayerB);
                 }
-                else if (pair.PlayerB == player)
+                else if (pair.PlayerB.Color == player.Color)
                 {
                     allies.Add(pair.PlayerA);
                 }

@@ -71,9 +71,11 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        public void AddAllianceProposal(string fromPlayer, string toPlayer)
+        public void AddAllianceProposal(string fromPlayerColor, string toPlayerColor)
         {
-            var allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
+            Player fromPlayer = GetPlayer(fromPlayerColor);
+            Player toPlayer = GetPlayer(toPlayerColor);
+            AllianceProposal allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
             NextTurn.AllianceProposals.Add(allianceProposal);
         }
 
@@ -212,12 +214,12 @@ namespace CocaineCartels.BusinessLogic
                 }
             });
 
-            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer != player.Color);
+            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color != player.Color);
 
             // When planning the turns, only see own alliances.
             if (currentTurn.Mode == TurnMode.PlanMoves)
             {
-                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA == player.Color || pair.PlayerB == player.Color);
+                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA.Color == player.Color || pair.PlayerB.Color == player.Color);
 
                 currentTurn.Alliances.ResetAlliances();
 
@@ -250,7 +252,7 @@ namespace CocaineCartels.BusinessLogic
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
             unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
 
-            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
+            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color == playerColor);
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
@@ -264,6 +266,12 @@ namespace CocaineCartels.BusinessLogic
             }
 
             return matchingPlayer;
+        }
+
+        internal Player GetPlayer(string playerColor)
+        {
+            Player player = Players.Single(p => p.Color == playerColor);
+            return player;
         }
 
         private void PerformPlanMovesTurn()
@@ -333,7 +341,7 @@ namespace CocaineCartels.BusinessLogic
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
-                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
+                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer.Color == player.Color);
                 proposals.ForEach(proposal =>
                 {
                     if (NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0)

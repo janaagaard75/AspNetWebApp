@@ -5,15 +5,15 @@ namespace CocaineCartels.BusinessLogic
 {
     public class AlliancePair
     {
-        public AlliancePair(string playerA, string playerB)
+        public AlliancePair(Player playerA, Player playerB)
         {
-            if (playerA == playerB)
+            if (playerA.Color == playerB.Color)
             {
                 throw new ApplicationException("A player cannot ally with oneself.");
             }
 
             // Always order the players in a consistent way.
-            if (Compare(playerA, playerB, StringComparison.Ordinal) < 0)
+            if (Compare(playerA.Color, playerB.Color, StringComparison.Ordinal) < 0)
             {
                 PlayerA = playerA;
                 PlayerB = playerB;
@@ -25,7 +25,7 @@ namespace CocaineCartels.BusinessLogic
             }
         }
 
-        public string PlayerA { get; }
-        public string PlayerB { get; }
+        public Player PlayerA { get; }
+        public Player PlayerB { get; }
     }
 }
