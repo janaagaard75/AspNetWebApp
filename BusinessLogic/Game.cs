@@ -50,7 +50,7 @@ namespace CocaineCartels.BusinessLogic
         public bool Started => TurnNumber > 0;
         public int TurnNumber => NextTurn.TurnNumber;
 
-        private Player AddPlayer(IPAddress ipAddress, string userAgent)
+        private Player AddPlayer(Guid id)
         {
             lock (AddPlayerLock)
             {
@@ -64,7 +64,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("Cannot add players to a game that has started.");
                 }
 
-                Player player = new Player(PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name, ipAddress, userAgent);
+                Player player = new Player(id, PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name);
                 Players.Add(player);
 
                 return player;
@@ -254,13 +254,13 @@ namespace CocaineCartels.BusinessLogic
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
-        public Player GetPlayer(IPAddress ipAddress, string userAgent)
+        public Player GetPlayer(Guid id)
         {
-            Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);
+            Player matchingPlayer = Players.FirstOrDefault(player => player.Id == id);
 
             if (matchingPlayer == null)
             {
-                return AddPlayer(ipAddress, userAgent);
+                return AddPlayer(id);
             }
 
             return matchingPlayer;

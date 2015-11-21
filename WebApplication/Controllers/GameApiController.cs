@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Web;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
 using CocaineCartels.WebApplication.Models;
@@ -9,25 +10,20 @@ namespace CocaineCartels.WebApplication.Controllers
 {
     public class GameApiController : ApiController
     {
-        private Player _CurrentPlayer;
-
         private Player CurrentPlayer
         {
             get
             {
-                if (_CurrentPlayer == null)
-                {
-                    if (HttpContext.Current == null || HttpContext.Current.Request.UserHostAddress == null)
-                    {
-                        throw new ApplicationException("HttpContext.Current or HttpContext.Current.Request.UserHostAddress is null.");
-                    }
+                CookieHeaderValue idCookie = Request.Headers.GetCookies(HomeController.IdentifierCookieName).FirstOrDefault();
 
-                    IPAddress ipAddress = IPAddress.Parse(HttpContext.Current.Request.UserHostAddress);
-                    string userAgent = HttpContext.Current.Request.UserAgent;
-                    _CurrentPlayer = Game.Instance.GetPlayer(ipAddress, userAgent);
+                if (idCookie == null)
+                {
+                    throw new ApplicationException("The identifier cookies was not found.");
                 }
 
-                return _CurrentPlayer;
+                Guid id = new Guid(idCookie.Cookies.First().Value);
+                Player currentPlayer = Game.Instance.GetPlayer(id);
+                return currentPlayer;
             }
         }
 
@@ -66,20 +62,20 @@ namespace CocaineCartels.WebApplication.Controllers
 
             Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
 
-            commands.PlaceCommands?.ForEach(placeCommand =>
+            foreach (var placeCommand in commands.PlaceCommands)
             {
                 Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
-            });
+            }
 
-            commands.MoveCommands?.ForEach(moveCommand =>
+            foreach (var moveCommand in commands.MoveCommands)
             {
                 Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
-            });
+            }
 
-            commands.AllianceProposals?.ForEach(proposal =>
+            foreach (var proposal in commands.AllianceProposals)
             {
                 Game.Instance.AddAllianceProposal(currentPlayerColor, proposal.ToPlayer);
-            });
+            }
 
             Game.Instance.UpdateCommandsSentOn(currentPlayerColor);
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);
