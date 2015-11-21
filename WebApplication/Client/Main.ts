@@ -110,10 +110,13 @@
         private static printAllianceCheckboxes() {
             switch (Main.game.currentTurn.mode) {
                 case TurnMode.ProposeAlliances:
-                    const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
-                    const allianceCheckboxes = allOtherPlayers
-                        .map(player => {
-                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${player.color}" onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${player.color}">${player.name}</span></label></div>`;
+                    const allianceProposals = Main.game.currentTurn.allianceProposals.map(proposal => proposal.toPlayer.color);
+                    const enemies = Main.game.players.filter(p => p !== Main.currentPlayer);
+                    const allianceCheckboxes = enemies
+                        .map(enemy => {
+                            const isChecked = (allianceProposals.indexOf(enemy.color) !== -1);
+                            const checked = isChecked ? ` checked=""` : "";
+                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${enemy.color}" ${checked} onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${enemy.color}">${enemy.name}</span></label></div>`;
                             return playerButton;
                         })
                         .join(" ");
@@ -402,7 +405,7 @@
         }
 
         public toggleProposeAllianceWith() {
-            Main.currentPlayer.ready = false;
+            Main.setCurrentPlayerNotReady();
         }
 
         public tick() {

@@ -1004,10 +1004,13 @@ var CocaineCartels;
         Main.printAllianceCheckboxes = function () {
             switch (Main.game.currentTurn.mode) {
                 case CocaineCartels.TurnMode.ProposeAlliances:
-                    var allOtherPlayers = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
-                    var allianceCheckboxes = allOtherPlayers
-                        .map(function (player) {
-                        var playerButton = "<div class=\"checkbox\"><label><input type=\"checkbox\" value=\"" + player.color + "\" onclick=\"cocaineCartels.toggleProposeAllianceWith();\" class=\"jsAllianceProposal\" /> <span style=\"color: " + player.color + "\">" + player.name + "</span></label></div>";
+                    var allianceProposals = Main.game.currentTurn.allianceProposals.map(function (proposal) { return proposal.toPlayer.color; });
+                    var enemies = Main.game.players.filter(function (p) { return p !== Main.currentPlayer; });
+                    var allianceCheckboxes = enemies
+                        .map(function (enemy) {
+                        var isChecked = (allianceProposals.indexOf(enemy.color) !== -1);
+                        var checked = isChecked ? " checked=\"\"" : "";
+                        var playerButton = "<div class=\"checkbox\"><label><input type=\"checkbox\" value=\"" + enemy.color + "\" " + checked + " onclick=\"cocaineCartels.toggleProposeAllianceWith();\" class=\"jsAllianceProposal\" /> <span style=\"color: " + enemy.color + "\">" + enemy.name + "</span></label></div>";
                         return playerButton;
                     })
                         .join(" ");
@@ -1253,7 +1256,7 @@ var CocaineCartels;
             }
         };
         Main.prototype.toggleProposeAllianceWith = function () {
-            Main.currentPlayer.ready = false;
+            Main.setCurrentPlayerNotReady();
         };
         Main.prototype.tick = function () {
             var _this = this;
