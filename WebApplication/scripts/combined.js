@@ -1260,7 +1260,8 @@ var CocaineCartels;
         };
         Main.prototype.tick = function () {
             var _this = this;
-            CocaineCartels.GameService.getStatus().then(function (status) {
+            CocaineCartels.GameService.getStatus()
+                .then(function (status) {
                 if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
                     _this.refreshGame();
                     return;
@@ -1302,8 +1303,12 @@ var CocaineCartels;
                     }
                     _this.printStartPlayersReady();
                 }
+                window.setTimeout(function () { return _this.tick(); }, 1000);
+            })
+                .catch(function (e) {
+                alert("Oh no! An internal error occurred. More information in the browser's console.");
+                console.error(e);
             });
-            window.setTimeout(function () { return _this.tick(); }, 1000);
         };
         Main.prototype.updateGameState = function () {
             return CocaineCartels.GameService.getGameState().then(function (gameState) {

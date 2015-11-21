@@ -48,6 +48,8 @@
     <Compile Include="AlliancePair.cs" />
     <Compile Include="AllianceProposal.cs" />
     <Compile Include="Alliances.cs" />
+    <Compile Include="Exceptions\GameStartedException.cs" />
+    <Compile Include="Exceptions\TooManyPlayersException.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Turn.cs" />
     <Compile Include="Cell.cs" />

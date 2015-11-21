@@ -406,53 +406,58 @@ module CocaineCartels {
         }
 
         public tick() {
-            GameService.getStatus().then(status => {
-                if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
-                    this.refreshGame();
-                    return;
-                }
-
-                if (Main.game.started) {
-                    // If the game has been started, just update the players' ready status.
-                    status.players.forEach(playerData => {
-                        const player = Main.game.getPlayer(playerData.color);
-                        player.ready = playerData.ready;
-                    });
-
-                    Main.printPlayersStatus();
-                } else {
-                    let updateListOfPlayers = false;
-                    if (status.players.length !== Main.game.players.length) {
-                        updateListOfPlayers = true;
-                    } else {
-                        for (let i = 0; i < Main.game.players.length; i++) {
-                            if (Main.game.players[i].color !== status.players[i].color) {
-                                updateListOfPlayers = true;
-                            }
-                        }
+            GameService.getStatus()
+                .then(status => {
+                    if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
+                        this.refreshGame();
+                        return;
                     }
 
-                    if (updateListOfPlayers) {
-                        Main.game.players = [];
-                        status.players.forEach(playerData => {
-                            const player = new Player(playerData);
-                            Main.game.players.push(player);
-                        });
-
-                        this.printStartPage();
-                    } else {
-                        // Just update each players' ready status.
+                    if (Main.game.started) {
+                        // If the game has been started, just update the players' ready status.
                         status.players.forEach(playerData => {
                             const player = Main.game.getPlayer(playerData.color);
                             player.ready = playerData.ready;
                         });
+
+                        Main.printPlayersStatus();
+                    } else {
+                        let updateListOfPlayers = false;
+                        if (status.players.length !== Main.game.players.length) {
+                            updateListOfPlayers = true;
+                        } else {
+                            for (let i = 0; i < Main.game.players.length; i++) {
+                                if (Main.game.players[i].color !== status.players[i].color) {
+                                    updateListOfPlayers = true;
+                                }
+                            }
+                        }
+
+                        if (updateListOfPlayers) {
+                            Main.game.players = [];
+                            status.players.forEach(playerData => {
+                                const player = new Player(playerData);
+                                Main.game.players.push(player);
+                            });
+
+                            this.printStartPage();
+                        } else {
+                            // Just update each players' ready status.
+                            status.players.forEach(playerData => {
+                                const player = Main.game.getPlayer(playerData.color);
+                                player.ready = playerData.ready;
+                            });
+                        }
+
+                        this.printStartPlayersReady();
                     }
 
-                    this.printStartPlayersReady();
-                }
-            });
-
-            window.setTimeout(() => this.tick(), 1000);
+                    window.setTimeout(() => this.tick(), 1000);
+                })
+                .catch(e => {
+                    alert("Oh no! An internal error occurred. More information in the browser's console.");
+                    console.error(e);
+                });
         }
 
         private updateGameState(): Promise<void> {

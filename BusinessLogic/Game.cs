@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using CocaineCartels.BusinessLogic.Exceptions;
 using CocaineCartels.BusinessLogic.Extensions;
 
 namespace CocaineCartels.BusinessLogic
@@ -56,12 +56,12 @@ namespace CocaineCartels.BusinessLogic
             {
                 if (NumberOfPlayers == MaximumNumberOfPlayers)
                 {
-                    throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
+                    throw new TooManyPlayersException(MaximumNumberOfPlayers);
                 }
 
                 if (Started)
                 {
-                    throw new ApplicationException("Cannot add players to a game that has started.");
+                    throw new GameStartedException();
                 }
 
                 Player player = new Player(id, PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name);
