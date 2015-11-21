@@ -1,4 +1,4 @@
-module CocaineCartels {
+﻿module CocaineCartels {
     "use strict";
 
     export class Main {
@@ -455,7 +455,7 @@ module CocaineCartels {
                     window.setTimeout(() => this.tick(), 1000);
                 })
                 .catch(e => {
-                    alert("Oh no! An internal error occurred. More information in the browser's console.");
+                    alert("Oh no! An internal error occurred. (╯°□°)╯︵ ┻━┻");
                     console.error(e);
                 });
         }

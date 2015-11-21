@@ -1306,7 +1306,7 @@ var CocaineCartels;
                 window.setTimeout(function () { return _this.tick(); }, 1000);
             })
                 .catch(function (e) {
-                alert("Oh no! An internal error occurred. More information in the browser's console.");
+                alert("Oh no! An internal error occurred. (╯°□°)╯︵ ┻━┻");
                 console.error(e);
             });
         };
