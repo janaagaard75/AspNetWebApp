@@ -48,7 +48,7 @@
     <Compile Include="AlliancePair.cs" />
     <Compile Include="AllianceProposal.cs" />
     <Compile Include="Alliances.cs" />
-    <Compile Include="GameModeType.cs" />
+    <Compile Include="GameMode.cs" />
     <Compile Include="Turn.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="PlayerColors.cs" />

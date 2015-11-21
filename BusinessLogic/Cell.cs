@@ -35,11 +35,11 @@ namespace CocaineCartels.BusinessLogic
         {
             switch (Settings.GameMode)
             {
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     FightWithAlliances();
                     break;
 
-                case GameModeType.NoAlliances:
+                case GameMode.NoAlliances:
                     while (PlayersOnCell().Count() > 1)
                     {
                         RemoveAUnitFromEachPlayer();

@@ -312,11 +312,11 @@ namespace CocaineCartels.BusinessLogic
 
             switch (Settings.GameMode)
             {
-                case GameModeType.NoAlliances:
+                case GameMode.NoAlliances:
                     // Nothing to do here - keep the turn mode to PlanMoves.
                     break;
 
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     NextTurn.Mode = TurnMode.ProposeAlliances;
                     break;
 
@@ -354,7 +354,7 @@ namespace CocaineCartels.BusinessLogic
 
             switch (Settings.GameMode)
             {
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     NextTurn.Mode = TurnMode.PlanMoves;
                     break;
 
