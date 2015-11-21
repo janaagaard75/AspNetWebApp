@@ -262,6 +262,7 @@ var CocaineCartels;
                     cell.dropAllowed = true;
                     _this.updateCellColor(cell);
                 });
+                _this.unitsLayer.draw();
             });
             this.stage.on("dragmove", function () {
                 var pos = _this.stage.getPointerPosition();

@@ -328,6 +328,8 @@
                     cell.dropAllowed = true;
                     this.updateCellColor(cell);
                 });
+
+                this.unitsLayer.draw();
             });
             
             this.stage.on("dragmove", () => {
