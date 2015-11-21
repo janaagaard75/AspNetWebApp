@@ -51,7 +51,7 @@
     <Compile Include="GameMode.cs" />
     <Compile Include="Turn.cs" />
     <Compile Include="Cell.cs" />
-    <Compile Include="PlayerColors.cs" />
+    <Compile Include="PlayerData.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hex.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
