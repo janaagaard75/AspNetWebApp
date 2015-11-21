@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CocaineCartels.BusinessLogic
+namespace CocaineCartels.BusinessLogic.Extensions
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once InconsistentNaming

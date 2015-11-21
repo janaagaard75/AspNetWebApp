@@ -55,9 +55,9 @@
     <Compile Include="PlayerColors.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hex.cs" />
-    <Compile Include="IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="ServerMoveCommand.cs" />
-    <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="ServerPlaceCommand.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
