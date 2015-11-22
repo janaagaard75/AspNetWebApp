@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using CocaineCartels.BusinessLogic.ArrayExtensions;
+using CocaineCartels.BusinessLogic.Extensions.ArrayExtensions;
 
-namespace CocaineCartels.BusinessLogic
+namespace CocaineCartels.BusinessLogic.Extensions
 {
     public static class ObjectExtensions
     {

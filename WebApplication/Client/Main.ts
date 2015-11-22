@@ -1,4 +1,4 @@
-module CocaineCartels {
+﻿module CocaineCartels {
     "use strict";
 
     export class Main {
@@ -88,7 +88,7 @@ module CocaineCartels {
                 case TurnMode.ProposeAlliances:
                     const allAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(pair => {
-                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                            return `<div><span style="color: ${pair.playerA.color}">${pair.playerA.name}</span> & <span style="color: ${pair.playerB.color}">${pair.playerB.name}</span></div>`;
                         });
 
                     let allAlliancesText: string;
@@ -110,10 +110,13 @@ module CocaineCartels {
         private static printAllianceCheckboxes() {
             switch (Main.game.currentTurn.mode) {
                 case TurnMode.ProposeAlliances:
-                    const allOtherPlayers = Main.game.players.filter(p => p !== Main.currentPlayer);
-                    const allianceCheckboxes = allOtherPlayers
-                        .map(player => {
-                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${player.color}" onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${player.color}">${player.name}</span></label></div>`;
+                    const allianceProposals = Main.game.currentTurn.allianceProposals.map(proposal => proposal.toPlayer.color);
+                    const enemies = Main.game.players.filter(p => p !== Main.currentPlayer);
+                    const allianceCheckboxes = enemies
+                        .map(enemy => {
+                            const isChecked = (allianceProposals.indexOf(enemy.color) !== -1);
+                            const checked = isChecked ? ` checked=""` : "";
+                            const playerButton = `<div class="checkbox"><label><input type="checkbox" value="${enemy.color}" ${checked} onclick="cocaineCartels.toggleProposeAllianceWith();" class="jsAllianceProposal" /> <span style="color: ${enemy.color}">${enemy.name}</span></label></div>`;
                             return playerButton;
                         })
                         .join(" ");
@@ -402,57 +405,67 @@ module CocaineCartels {
         }
 
         public toggleProposeAllianceWith() {
-            Main.currentPlayer.ready = false;
+            Main.setCurrentPlayerNotReady();
         }
 
         public tick() {
-            GameService.getStatus().then(status => {
-                if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
-                    this.refreshGame();
-                    return;
-                }
-
-                if (Main.game.started) {
-                    // If the game has been started, just update the players' ready status.
-                    status.players.forEach(playerData => {
-                        const player = Main.game.getPlayer(playerData.color);
-                        player.ready = playerData.ready;
-                    });
-
-                    Main.printPlayersStatus();
-                } else {
-                    let updateListOfPlayers = false;
-                    if (status.players.length !== Main.game.players.length) {
-                        updateListOfPlayers = true;
-                    } else {
-                        for (let i = 0; i < Main.game.players.length; i++) {
-                            if (Main.game.players[i].color !== status.players[i].color) {
-                                updateListOfPlayers = true;
-                            }
-                        }
+            GameService.getStatus()
+                .then(status => {
+                    if (Main.currentPlayer.color !== status.currentPlayer.color) {
+                        this.refreshGame();
+                        return;
                     }
 
-                    if (updateListOfPlayers) {
-                        Main.game.players = [];
-                        status.players.forEach(playerData => {
-                            const player = new Player(playerData);
-                            Main.game.players.push(player);
-                        });
+                    if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
+                        this.refreshGame();
+                        return;
+                    }
 
-                        this.printStartPage();
-                    } else {
-                        // Just update each players' ready status.
+                    if (Main.game.started) {
+                        // If the game has been started, just update the players' ready status.
                         status.players.forEach(playerData => {
                             const player = Main.game.getPlayer(playerData.color);
                             player.ready = playerData.ready;
                         });
+
+                        Main.printPlayersStatus();
+                    } else {
+                        let updateListOfPlayers = false;
+                        if (status.players.length !== Main.game.players.length) {
+                            updateListOfPlayers = true;
+                        } else {
+                            for (let i = 0; i < Main.game.players.length; i++) {
+                                if (Main.game.players[i].color !== status.players[i].color) {
+                                    updateListOfPlayers = true;
+                                }
+                            }
+                        }
+
+                        if (updateListOfPlayers) {
+                            Main.game.players = [];
+                            status.players.forEach(playerData => {
+                                const player = new Player(playerData);
+                                Main.game.players.push(player);
+                            });
+
+                            this.printStartPage();
+                        } else {
+                            // Just update each players' ready status.
+                            status.players.forEach(playerData => {
+                                const player = Main.game.getPlayer(playerData.color);
+                                player.ready = playerData.ready;
+                            });
+
+                            this.printStartPlayersReady();
+                        }
                     }
 
-                    this.printStartPlayersReady();
-                }
-            });
-
-            window.setTimeout(() => this.tick(), 1000);
+                    window.setTimeout(() => this.tick(), 1000);
+                })
+                .catch(e => {
+                    alert("Oh no! An internal error occurred. (╯°□°)╯︵ ┻━┻");
+                    console.error(e);
+                });
         }
 
         private updateGameState(): Promise<void> {

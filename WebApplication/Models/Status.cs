@@ -5,13 +5,15 @@ namespace CocaineCartels.WebApplication.Models
 {
     public class Status
     {
-        public Status(IEnumerable<Player> players, int turnNumber)
+        public Status(Player currentPlayer, IEnumerable<Player> players, int turnNumber)
         {
+            CurrentPlayer = currentPlayer;
             Players = players;
             TurnNumber = turnNumber;
         }
 
-        public IEnumerable<Player> Players { get; private set; }
-        public int TurnNumber { get; private set; }
+        public Player CurrentPlayer { get; }
+        public IEnumerable<Player> Players { get; }
+        public int TurnNumber { get; }
     }
 }

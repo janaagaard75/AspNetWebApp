@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using CocaineCartels.BusinessLogic.Exceptions;
+using CocaineCartels.BusinessLogic.Extensions;
 
 namespace CocaineCartels.BusinessLogic
 {
@@ -49,30 +50,32 @@ namespace CocaineCartels.BusinessLogic
         public bool Started => TurnNumber > 0;
         public int TurnNumber => NextTurn.TurnNumber;
 
-        private Player AddPlayer(IPAddress ipAddress, string userAgent)
+        private Player AddPlayer(Guid id)
         {
             lock (AddPlayerLock)
             {
                 if (NumberOfPlayers == MaximumNumberOfPlayers)
                 {
-                    throw new ApplicationException($"Cannot add more than {MaximumNumberOfPlayers} players to the game.");
+                    throw new TooManyPlayersException(MaximumNumberOfPlayers);
                 }
 
                 if (Started)
                 {
-                    throw new ApplicationException("Cannot add players to a game that has started.");
+                    throw new GameStartedException();
                 }
 
-                Player player = new Player(PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name, ipAddress, userAgent);
+                Player player = new Player(id, PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name);
                 Players.Add(player);
 
                 return player;
             }
         }
 
-        public void AddAllianceProposal(string fromPlayer, string toPlayer)
+        public void AddAllianceProposal(string fromPlayerColor, string toPlayerColor)
         {
-            var allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
+            Player fromPlayer = GetPlayer(fromPlayerColor);
+            Player toPlayer = GetPlayer(toPlayerColor);
+            AllianceProposal allianceProposal = new AllianceProposal(fromPlayer, toPlayer);
             NextTurn.AllianceProposals.Add(allianceProposal);
         }
 
@@ -197,7 +200,7 @@ namespace CocaineCartels.BusinessLogic
 
             currentTurn.UnitsOnCells.ForEach(unit =>
             {
-                if (!unit.Player.Equals(player))
+                if (unit.Player.Color != player.Color)
                 {
                     unit.RemoveMoveCommand();
                 }
@@ -205,18 +208,18 @@ namespace CocaineCartels.BusinessLogic
 
             currentTurn.NewUnits.ForEach(unit =>
             {
-                if (!unit.Player.Equals(player))
+                if (unit.Player.Color != player.Color)
                 {
                     unit.RemovePlaceCommand();
                 }
             });
 
-            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer != player.Color);
+            currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color != player.Color);
 
             // When planning the turns, only see own alliances.
             if (currentTurn.Mode == TurnMode.PlanMoves)
             {
-                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA == player.Color || pair.PlayerB == player.Color);
+                IEnumerable<AlliancePair> ownAlliancePairs = currentTurn.Alliances.AlliancePairs.Where(pair => pair.PlayerA.Color == player.Color || pair.PlayerB.Color == player.Color);
 
                 currentTurn.Alliances.ResetAlliances();
 
@@ -249,20 +252,26 @@ namespace CocaineCartels.BusinessLogic
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
             unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
 
-            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer == playerColor);
+            NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color == playerColor);
         }
 
         /// <summary>Returns the player matching the IP address and the user agent string. If no players a found, a player will be created.</summary>
-        public Player GetPlayer(IPAddress ipAddress, string userAgent)
+        public Player GetPlayer(Guid id)
         {
-            Player matchingPlayer = Players.FirstOrDefault(player => player.IpAddress.Equals(ipAddress) && player.UserAgent == userAgent);
+            Player matchingPlayer = Players.FirstOrDefault(player => player.Id == id);
 
             if (matchingPlayer == null)
             {
-                return AddPlayer(ipAddress, userAgent);
+                return AddPlayer(id);
             }
 
             return matchingPlayer;
+        }
+
+        internal Player GetPlayer(string playerColor)
+        {
+            Player player = Players.Single(p => p.Color == playerColor);
+            return player;
         }
 
         private void PerformPlanMovesTurn()
@@ -311,11 +320,11 @@ namespace CocaineCartels.BusinessLogic
 
             switch (Settings.GameMode)
             {
-                case GameModeType.NoAlliances:
+                case GameMode.NoAlliances:
                     // Nothing to do here - keep the turn mode to PlanMoves.
                     break;
 
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     NextTurn.Mode = TurnMode.ProposeAlliances;
                     break;
 
@@ -332,7 +341,7 @@ namespace CocaineCartels.BusinessLogic
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
-                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer == player.Color);
+                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer.Color == player.Color);
                 proposals.ForEach(proposal =>
                 {
                     if (NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0)
@@ -353,7 +362,7 @@ namespace CocaineCartels.BusinessLogic
 
             switch (Settings.GameMode)
             {
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     NextTurn.Mode = TurnMode.PlanMoves;
                     break;
 

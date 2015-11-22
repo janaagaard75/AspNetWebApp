@@ -35,11 +35,11 @@ namespace CocaineCartels.BusinessLogic
         {
             switch (Settings.GameMode)
             {
-                case GameModeType.AlliancesInSeparateTurns:
+                case GameMode.AlliancesInSeparateTurns:
                     FightWithAlliances();
                     break;
 
-                case GameModeType.NoAlliances:
+                case GameMode.NoAlliances:
                     while (PlayersOnCell().Count() > 1)
                     {
                         RemoveAUnitFromEachPlayer();
@@ -63,24 +63,24 @@ namespace CocaineCartels.BusinessLogic
 
         private bool FightWithAlliances2()
         {
-            IEnumerable<string> playersOnCell = PlayersOnCell();
+            IEnumerable<Player> playersOnCell = PlayersOnCell();
 
-            Dictionary<string, double> damagePerPlayer = new Dictionary<string, double>();
-            foreach (string player in playersOnCell)
+            Dictionary<Player, double> damagePerPlayer = new Dictionary<Player, double>();
+            foreach (Player player in playersOnCell)
             {
                 damagePerPlayer.Add(player, 0);
             }
 
             // Calculate the amount of damage for each player.
-            foreach (string player in playersOnCell)
+            foreach (Player player in playersOnCell)
             {
-                IEnumerable<string> allies = Turn.Alliances.GetAllies(player);
-                IEnumerable<string> enemies = playersOnCell.Except(allies).Except(new[] { player });
+                IEnumerable<Player> allies = Turn.Alliances.GetAllies(player);
+                IEnumerable<Player> enemies = playersOnCell.Except(allies).Except(new[] { player });
 
-                double numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player);
+                double numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player.Color);
                 double damagePerEnemy = numberOfPlayersUnits / enemies.Count();
 
-                foreach (string enemy in enemies)
+                foreach (Player enemy in enemies)
                 {
                     damagePerPlayer[enemy] = damagePerPlayer[enemy] + damagePerEnemy;
                 }
@@ -88,9 +88,9 @@ namespace CocaineCartels.BusinessLogic
 
             // Remove units from each player.
             bool somebodyDied = false;
-            foreach (string player in playersOnCell)
+            foreach (Player player in playersOnCell)
             {
-                int numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player);
+                int numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player.Color);
                 int unitsAfterDamage = Convert.ToInt32(Math.Round(numberOfPlayersUnits - damagePerPlayer[player], MidpointRounding.AwayFromZero));
                 int unitsToRemove = numberOfPlayersUnits - unitsAfterDamage;
                 if (unitsToRemove > numberOfPlayersUnits)
@@ -109,17 +109,17 @@ namespace CocaineCartels.BusinessLogic
             return somebodyDied;
         }
 
-        private IEnumerable<string> PlayersOnCell()
+        private IEnumerable<Player> PlayersOnCell()
         {
-            IEnumerable<string> players = UnitsList.GroupBy(unit => unit.Player.Color).Select(g => g.Key);
+            IEnumerable<Player> players = UnitsList.GroupBy(unit => unit.Player.Color).Select(g => Game.Instance.GetPlayer(g.Key));
             return players;
         }
 
-        private void RemoveUnitsFromPlayer(string player, int numberOfUnits)
+        private void RemoveUnitsFromPlayer(Player player, int numberOfUnits)
         {
             for (int i = 0; i < numberOfUnits; i++)
             {
-                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player.Color == player);
+                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player.Color == player.Color);
                 if (unitToRemove != null)
                 {
                     RemoveUnit(unitToRemove);
@@ -131,7 +131,7 @@ namespace CocaineCartels.BusinessLogic
         {
             Game.Instance.Players.ForEach(player =>
             {
-                RemoveUnitsFromPlayer(player.Color, 1);
+                RemoveUnitsFromPlayer(player, 1);
             });
         }
 

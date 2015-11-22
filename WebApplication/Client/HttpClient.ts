@@ -30,6 +30,7 @@
                         }
                     } else {
                         if (client.status !== 200) {
+                            console.error(client.response);
                             reject(`Status is ${client.status} ${client.statusText}. Only 200 OK is supported when a value is returned.`);
                         }
                     }

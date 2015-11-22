@@ -2,7 +2,7 @@
     "use strict";
 
     export interface IAlliancePair {
-        playerA: string;
-        playerB: string;
+        playerA: IPlayer;
+        playerB: IPlayer;
     }
 }

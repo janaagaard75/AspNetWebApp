@@ -1,6 +1,6 @@
 ﻿namespace CocaineCartels.BusinessLogic
 {
-    public enum GameModeType
+    public enum GameMode
     {
         Undefined,
 

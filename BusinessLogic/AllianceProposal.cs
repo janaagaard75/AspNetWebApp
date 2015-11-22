@@ -4,9 +4,9 @@ namespace CocaineCartels.BusinessLogic
 {
     public class AllianceProposal
     {
-        public AllianceProposal(string fromPlayer, string toPlayer)
+        public AllianceProposal(Player fromPlayer, Player toPlayer)
         {
-            if (fromPlayer == toPlayer)
+            if (fromPlayer.Color == toPlayer.Color)
             {
                 throw new ApplicationException("Cannot propose an alliance with oneself.");
             }
@@ -15,7 +15,7 @@ namespace CocaineCartels.BusinessLogic
             ToPlayer = toPlayer;
         }
 
-        public string FromPlayer { get; }
-        public string ToPlayer { get; }
+        public Player FromPlayer { get; }
+        public Player ToPlayer { get; }
     }
 }
