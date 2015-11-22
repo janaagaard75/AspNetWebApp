@@ -1262,6 +1262,10 @@ var CocaineCartels;
             var _this = this;
             CocaineCartels.GameService.getStatus()
                 .then(function (status) {
+                if (Main.currentPlayer.color !== status.currentPlayer.color) {
+                    _this.refreshGame();
+                    return;
+                }
                 if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
                     _this.refreshGame();
                     return;
@@ -1300,8 +1304,8 @@ var CocaineCartels;
                             var player = Main.game.getPlayer(playerData.color);
                             player.ready = playerData.ready;
                         });
+                        _this.printStartPlayersReady();
                     }
-                    _this.printStartPlayersReady();
                 }
                 window.setTimeout(function () { return _this.tick(); }, 1000);
             })

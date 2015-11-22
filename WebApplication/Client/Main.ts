@@ -411,6 +411,11 @@
         public tick() {
             GameService.getStatus()
                 .then(status => {
+                    if (Main.currentPlayer.color !== status.currentPlayer.color) {
+                        this.refreshGame();
+                        return;
+                    }
+
                     if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
                         this.refreshGame();
                         return;
@@ -450,9 +455,9 @@
                                 const player = Main.game.getPlayer(playerData.color);
                                 player.ready = playerData.ready;
                             });
-                        }
 
-                        this.printStartPlayersReady();
+                            this.printStartPlayersReady();
+                        }
                     }
 
                     window.setTimeout(() => this.tick(), 1000);

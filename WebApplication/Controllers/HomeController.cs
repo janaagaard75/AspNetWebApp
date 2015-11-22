@@ -6,7 +6,7 @@ namespace CocaineCartels.WebApplication.Controllers
 {
     public class HomeController : Controller
     {
-        internal const string IdentifierCookieName = "CCID";
+        internal const string IdentifierCookieName = "CocaineCartelsId";
 
         public ActionResult Index()
         {
