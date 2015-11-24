@@ -204,22 +204,22 @@ var CocaineCartels;
             if (this.animated) {
                 if (unit.newUnit) {
                     var newUnitTween = new Konva.Tween({
-                        node: unit.circle,
                         duration: CocaineCartels.CanvasSettings.newUnitTweenDuration,
+                        easing: Konva.Easings.ElasticEaseOut,
+                        node: unit.circle,
                         scaleX: 1,
                         scaleY: 1,
-                        easing: Konva.Easings.ElasticEaseOut
                     });
                     this.newUnitTweens.push(newUnitTween);
                 }
                 if (unit.moveCommand !== null) {
                     var newPos = unit.moveCommand.to.hex.pos;
                     var movedUnitTween = new Konva.Tween({
-                        node: unit.circle,
                         duration: CocaineCartels.CanvasSettings.movedUnitTweenDuration,
+                        node: unit.circle,
+                        easing: Konva.Easings.ElasticEaseInOut,
                         x: newPos.x,
-                        y: newPos.y,
-                        easing: Konva.Easings.BackEaseIn
+                        y: newPos.y
                     });
                     this.movedUnitTweens.push(movedUnitTween);
                 }
@@ -469,7 +469,7 @@ var CocaineCartels;
         CanvasSettings.arrowPointerWidth = 5;
         CanvasSettings.arrowShadowBlurRadius = 10;
         CanvasSettings.delayAfterTween = 0.5;
-        CanvasSettings.movedUnitTweenDuration = 0.5;
+        CanvasSettings.movedUnitTweenDuration = 1;
         CanvasSettings.newUnitTweenDuration = 1;
         CanvasSettings.newUnitZoom = 10;
         return CanvasSettings;
@@ -690,22 +690,12 @@ var CocaineCartels;
                 var player = new CocaineCartels.Player(playerData);
                 _this.players.push(player);
             });
-            //if (gameData.previousTurn === null) {
-            //    this.previousTurn = null;
-            //} else {
-            //    this.previousTurn = new Turn(gameData.previousTurn);
-            //}
             if (gameData.previousTurnShowingPlaceCommands === null) {
                 this.previousTurnWithPlaceCommands = null;
             }
             else {
                 this.previousTurnWithPlaceCommands = new CocaineCartels.Turn(gameData.previousTurnShowingPlaceCommands);
             }
-            //if (gameData.previousTurnShowingMoveCommands === null) {
-            //    this.previousTurnWithMoveCommands = null;
-            //} else {
-            //    this.previousTurnWithMoveCommands = new Turn(gameData.previousTurnShowingMoveCommands);
-            //}
             this.currentTurn = new CocaineCartels.Turn(currentTurnData);
             this.started = gameData.started;
         }

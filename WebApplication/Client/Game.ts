@@ -9,23 +9,11 @@ module CocaineCartels {
                 this.players.push(player);
             });
 
-            //if (gameData.previousTurn === null) {
-            //    this.previousTurn = null;
-            //} else {
-            //    this.previousTurn = new Turn(gameData.previousTurn);
-            //}
-
             if (gameData.previousTurnShowingPlaceCommands === null) {
                 this.previousTurnWithPlaceCommands = null;
             } else {
                 this.previousTurnWithPlaceCommands = new Turn(gameData.previousTurnShowingPlaceCommands);
             }
-
-            //if (gameData.previousTurnShowingMoveCommands === null) {
-            //    this.previousTurnWithMoveCommands = null;
-            //} else {
-            //    this.previousTurnWithMoveCommands = new Turn(gameData.previousTurnShowingMoveCommands);
-            //}
 
             this.currentTurn = new Turn(currentTurnData);
 
@@ -34,9 +22,7 @@ module CocaineCartels {
 
         public currentTurn: Turn;
         public players: Array<Player>;
-        //public previousTurn: Turn;
         public previousTurnWithPlaceCommands: Turn;
-        //public previousTurnWithMoveCommands: Turn;
         public started: boolean;
 
         /** Returns the player with the specified color. Returns null if the player wasn't found. */

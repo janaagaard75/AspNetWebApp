@@ -253,11 +253,11 @@
             if (this.animated) {
                 if (unit.newUnit) {
                     const newUnitTween = new Konva.Tween({
-                        node: unit.circle,
                         duration: CanvasSettings.newUnitTweenDuration,
+                        easing: Konva.Easings.ElasticEaseOut,
+                        node: unit.circle,
                         scaleX: 1,
                         scaleY: 1,
-                        easing: Konva.Easings.ElasticEaseOut
                     });
 
                     this.newUnitTweens.push(newUnitTween);
@@ -267,11 +267,11 @@
                     const newPos = unit.moveCommand.to.hex.pos;
 
                     const movedUnitTween = new Konva.Tween({
-                        node: unit.circle,
                         duration: CanvasSettings.movedUnitTweenDuration,
+                        node: unit.circle,
+                        easing: Konva.Easings.ElasticEaseInOut, // Konva.Easings.BackEaseIn,
                         x: newPos.x,
-                        y: newPos.y,
-                        easing: Konva.Easings.BackEaseIn
+                        y: newPos.y
                     });
 
                     this.movedUnitTweens.push(movedUnitTween);

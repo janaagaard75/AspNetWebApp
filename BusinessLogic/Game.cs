@@ -31,14 +31,8 @@ namespace CocaineCartels.BusinessLogic
         private readonly object StartGameLock = new object();
         private readonly object TurnLock = new object();
 
-        /// <summary>The board from the previous turn, before any commands are executed, with all the new units besides the board. This was how the board looked when the previous turn started.</summary>
-        public Turn PreviousTurn { get; private set; }
-
         /// <summary>The board from the previous turn, with all the new units placed on the board, but no move commands have been executed. This board is <see cref="PreviousTurn"/> with place commands executed.</summary>
         public Turn PreviousTurnShowingPlaceCommands { get; private set; }
-
-        /// <summary>The board from the previous turn, with all move commands executed, but not combats resolved. This board is <see cref="PreviousTurnShowingPlaceCommands"/> with move commands executed.</summary>
-        public Turn PreviousTurnShowingMoveCommands { get; private set; }
 
         /// <summary>This board is the one used to store the player's commands for the next turn. It's <see cref="PreviousTurnShowingMoveCommands"/> with combat resolved.</summary>
         private Turn NextTurn { get; set; }
@@ -276,12 +270,6 @@ namespace CocaineCartels.BusinessLogic
 
         private void PerformPlanMovesTurn()
         {
-            // NextTurn now becomes the previous turn.
-            PreviousTurn = NextTurn.Clone();
-
-            // Remove all the commands on the previous turn board.
-            PreviousTurn.AllUnits.ForEach(unit => { unit.RemoveCommands(); });
-
             // Place all new units.
             List<Unit> unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
             unitsToPlace.ForEach(unit =>
@@ -291,9 +279,6 @@ namespace CocaineCartels.BusinessLogic
             });
             PreviousTurnShowingPlaceCommands = NextTurn.Clone();
 
-            // Remove all the move commands on the board showing where the units have been placed.
-            //PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit => { unit.RemoveMoveCommand(); });
-
             // Remove the place commands, move all the units, keeping the move commands.
             NextTurn.AllUnits.ForEach(unit => { unit.RemovePlaceCommand(); });
             List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
@@ -302,7 +287,6 @@ namespace CocaineCartels.BusinessLogic
                 unit.Cell.RemoveUnit(unit);
                 unit.MoveCommand.To.AddUnit(unit);
             });
-            PreviousTurnShowingMoveCommands = NextTurn.Clone();
 
             // Remove the move commands on the final board.
             NextTurn.UnitsOnCells.ForEach(unit => { unit.RemoveMoveCommand(); });
@@ -409,9 +393,7 @@ namespace CocaineCartels.BusinessLogic
 
         public void ResetGame()
         {
-            PreviousTurn = null;
             PreviousTurnShowingPlaceCommands = null;
-            PreviousTurnShowingMoveCommands = null;
             NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
             NextTurn.Mode = TurnMode.StartGame;
