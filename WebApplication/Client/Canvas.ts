@@ -196,7 +196,7 @@
             const overlapPos = new Pos(x, pos.y);
             const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
-            const borderWidth = (this.animated && unit.newUnit) ? CanvasSettings.newUnitBorderWidth : CanvasSettings.unitBorderWidth;
+            const borderWidth = CanvasSettings.unitBorderWidth;
             const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitZoom : 1;
             const unitRadius = CanvasSettings.unitRadius;
 

@@ -156,7 +156,7 @@ var CocaineCartels;
             var overlapPos = new CocaineCartels.Pos(x, pos.y);
             var fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
-            var borderWidth = (this.animated && unit.newUnit) ? CocaineCartels.CanvasSettings.newUnitBorderWidth : CocaineCartels.CanvasSettings.unitBorderWidth;
+            var borderWidth = CocaineCartels.CanvasSettings.unitBorderWidth;
             var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitZoom : 1;
             var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
@@ -433,7 +433,6 @@ var CocaineCartels;
             this.center = new CocaineCartels.Pos(this.width / 2, this.width / 2 - this.cellRadius / 3);
             this.unitBorderWidth = this.cellBorderWidth;
             this.unitRadius = this.cellRadius / 3;
-            this.newUnitBorderWidth = 2 * this.unitBorderWidth;
         };
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;

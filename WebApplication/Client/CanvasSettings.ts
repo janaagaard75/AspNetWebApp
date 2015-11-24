@@ -11,7 +11,6 @@ module CocaineCartels {
         public static cellRadius: number;
         public static center: Pos;
         public static height: number;
-        public static newUnitBorderWidth: number;
         public static newUnitTweenDuration = 1;
         public static newUnitZoom = 10;
         public static spaceToNewUnits: number;
@@ -54,8 +53,6 @@ module CocaineCartels {
             );
             this.unitBorderWidth = this.cellBorderWidth;
             this.unitRadius = this.cellRadius / 3;
-
-            this.newUnitBorderWidth = 2 * this.unitBorderWidth;
         }
     }
 }
