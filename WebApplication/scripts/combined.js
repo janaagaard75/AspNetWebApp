@@ -247,6 +247,7 @@ var CocaineCartels;
         };
         Canvas.prototype.replayLastTurn = function () {
             throw "Not implemented.";
+            // TODO j:
             // Activate all the tweens here.
             // 1. Show new units.
             // 2. Show moves.
@@ -1624,6 +1625,7 @@ var CocaineCartels;
             this.board = board;
             this.cell = cell;
             this.circle = null;
+            this.newUnit = unitData.newUnit;
             this._color = unitData.player.color;
             this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
         }

@@ -12,6 +12,8 @@ module CocaineCartels {
             this.board = board;
             this.cell = cell;
             this.circle = null;
+            this.newUnit = unitData.newUnit;
+
             this._color = unitData.player.color;
             this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
         }
@@ -30,6 +32,8 @@ module CocaineCartels {
         public cell: Cell;
 
         public circle: Konva.Circle;
+
+        public newUnit: boolean;
 
         /** The color of the unit. Based on the color of the player who onws the unit. */
         public get color() {
