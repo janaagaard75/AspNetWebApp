@@ -147,7 +147,7 @@ var CocaineCartels;
             });
         };
         Canvas.prototype.drawUnit = function (unit, pos, unitIndex, numberOfUnits) {
-            var isNewUnit = (unit.cell === null || unit.placeCommand !== null);
+            var isNewUnit = unit.newUnit; // (unit.cell === null || unit.placeCommand !== null);
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
             var newUnitZoom = 10;
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / numberOfUnits;
@@ -248,11 +248,13 @@ var CocaineCartels;
         Canvas.prototype.replayLastTurn = function () {
             throw "Not implemented.";
             // TODO j:
-            // Activate all the tweens here.
+            // Switch to the replayCanvas.
+            // Activate all the tweens.
             // 1. Show new units.
             // 2. Show moves.
             // 3. Show battles.
             // 4. Show points.
+            // Switch back to the interactive canvas.
         };
         Canvas.prototype.setUpUnitDragEvents = function () {
             var _this = this;

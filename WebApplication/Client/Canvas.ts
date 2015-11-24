@@ -194,7 +194,7 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
-            const isNewUnit = (unit.cell === null || unit.placeCommand !== null);
+            const isNewUnit = unit.newUnit;// (unit.cell === null || unit.placeCommand !== null);
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
             const newUnitZoom = 10;
 
@@ -313,11 +313,13 @@
         public replayLastTurn() {
             throw "Not implemented.";
             // TODO j:
-            // Activate all the tweens here.
+            // Switch to the replayCanvas.
+            // Activate all the tweens.
             // 1. Show new units.
             // 2. Show moves.
             // 3. Show battles.
             // 4. Show points.
+            // Switch back to the interactive canvas.
         }
 
         private setUpUnitDragEvents() {
