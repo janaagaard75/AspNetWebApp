@@ -53,10 +53,10 @@ module CocaineCartels {
         }
 
         /** Units on this cell that were move here. This type of units is only shown on the third board. */
-        public get unitsMovedHere(): Array<Unit> {
-            const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
-            return unitsMovedHere;
-        }
+        //public get unitsMovedHere(): Array<Unit> {
+        //    const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
+        //    return unitsMovedHere;
+        //}
 
         /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
         public get unitsToBeMovedHere(): Array<Unit> {

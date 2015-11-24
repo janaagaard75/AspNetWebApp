@@ -71,7 +71,7 @@ module CocaineCartels {
             this._moveCommand = newMoveCommand;
         }
 
-        public get placedColor(): string {
+        public get movedColor(): string {
             return this._movedColor;
         }
 

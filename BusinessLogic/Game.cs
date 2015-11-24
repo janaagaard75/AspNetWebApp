@@ -292,7 +292,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurnShowingPlaceCommands = NextTurn.Clone();
 
             // Remove all the move commands on the board showing where the units have been placed.
-            PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit => { unit.RemoveMoveCommand(); });
+            //PreviousTurnShowingPlaceCommands.AllUnits.ForEach(unit => { unit.RemoveMoveCommand(); });
 
             // Remove the place commands, move all the units, keeping the move commands.
             NextTurn.AllUnits.ForEach(unit => { unit.RemovePlaceCommand(); });

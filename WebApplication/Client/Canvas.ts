@@ -8,6 +8,10 @@
             private animated: boolean,
             private interactive: boolean
         ) {
+            if (animated === true && interactive === true) {
+                throw "A canvas cannot be both animated and interactive.";
+            }
+
             if (turn !== null) {
                 this.drawBoard();
             }
@@ -194,7 +198,7 @@
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const overlapPos = new Pos(x, pos.y);
-            const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
+            const fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
             const borderWidth = CanvasSettings.unitBorderWidth;
             const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitZoom : 1;
@@ -246,16 +250,32 @@
 
             this.unitsLayer.add(unit.circle);
 
-            if (this.animated && unit.newUnit) {
-                const newUnitTween = new Konva.Tween({
-                    node: unit.circle,
-                    duration: CanvasSettings.newUnitTweenDuration,
-                    scaleX: 1,
-                    scaleY: 1,
-                    easing: Konva.Easings.ElasticEaseOut
-                });
+            if (this.animated) {
+                if (unit.newUnit) {
+                    const newUnitTween = new Konva.Tween({
+                        node: unit.circle,
+                        duration: CanvasSettings.newUnitTweenDuration,
+                        scaleX: 1,
+                        scaleY: 1,
+                        easing: Konva.Easings.ElasticEaseOut
+                    });
 
-                this.newUnitTweens.push(newUnitTween);
+                    this.newUnitTweens.push(newUnitTween);
+                }
+
+                if (unit.moveCommand !== null) {
+                    const newPos = unit.moveCommand.to.hex.pos;
+
+                    const movedUnitTween = new Konva.Tween({
+                        node: unit.circle,
+                        duration: CanvasSettings.movedUnitTweenDuration,
+                        x: newPos.x,
+                        y: newPos.y,
+                        easing: Konva.Easings.BackEaseIn
+                    });
+
+                    this.movedUnitTweens.push(movedUnitTween);
+                }
             }
         }
 
@@ -270,31 +290,36 @@
         }
 
         private drawUnitsOnCell(cell: Cell) {
-            const staying = cell.unitsStaying;
-            const movedHere = cell.unitsMovedHere;
-            const toBeMovedHere = cell.unitsToBeMovedHere;
-            const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
+            if (this.animated) {
+                console.info("drawing animated unit.");
+                const onCell = cell.units;
+                const total = onCell.length;
 
-            const total = staying.length + movedHere.length + toBeMovedHere.length + toBePlacedHere.length;
+                onCell.forEach((unit, index) => {
+                    this.drawUnit(unit, cell.hex.pos, index, total);
+                });
+            } else {
+                console.info("drawing interactive unit.");
+                const staying = cell.unitsStaying;
+                const toBeMovedHere = cell.unitsToBeMovedHere;
+                const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
 
-            staying.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, index, total);
-            });
+                const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
 
-            const movedHereStartIndex = staying.length;
-            movedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total);
-            });
+                staying.forEach((unit, index) => {
+                    this.drawUnit(unit, cell.hex.pos, index, total);
+                });
 
-            const movingHereStartIndex = movedHereStartIndex + movedHere.length;
-            toBeMovedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-            });
+                const movingHereStartIndex = staying.length; //movedHereStartIndex + movedHere.length;
+                toBeMovedHere.forEach((unit, index) => {
+                    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
+                });
 
-            const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-            toBePlacedHere.forEach((unit, index) => {
-                this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
-            });
+                const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
+                toBePlacedHere.forEach((unit, index) => {
+                    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+                });
+            }
         }
 
         private redrawBoard() {
@@ -305,23 +330,32 @@
         }
 
         public replayLastTurn(): Promise<void> {
+            // Reset all the tweens.
+            this.newUnitTweens.concat(this.movedUnitTweens).forEach(tween => {
+                tween.reset();
+            });
+
             // Animate new units.
             this.newUnitTweens.forEach(tween => {
-                tween.reset();
                 tween.play();
             });
 
-            // 2. Animate moves.
+            setTimeout(() => {
+                // Animate moves.
+                this.movedUnitTweens.forEach(tween => {
+                    tween.play();
+                });
+            }, CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween * 1000)
+
             // 3. Animate battles.
             // 4. Animate points.
 
-            const delay = 0.2;
-
             // Switch back to the interactive canvas.
+            const totalDelay = CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween + CanvasSettings.movedUnitTweenDuration + CanvasSettings.delayAfterTween;
             var promise = new Promise<void>((resolve, reject) => {
-                window.setTimeout(() => {
+                setTimeout(() => {
                     resolve();
-                }, (CanvasSettings.newUnitTweenDuration + delay) * 1000)
+                }, totalDelay * 1000);
             });
 
             return promise;

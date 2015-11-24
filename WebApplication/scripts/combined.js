@@ -10,6 +10,9 @@ var CocaineCartels;
             this.movedUnitTweens = [];
             this.newUnitTweens = [];
             this.shapesWithEvents = [];
+            if (animated === true && interactive === true) {
+                throw "A canvas cannot be both animated and interactive.";
+            }
             if (turn !== null) {
                 this.drawBoard();
             }
@@ -154,7 +157,7 @@ var CocaineCartels;
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / numberOfUnits;
             var x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             var overlapPos = new CocaineCartels.Pos(x, pos.y);
-            var fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
+            var fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
             var borderWidth = CocaineCartels.CanvasSettings.unitBorderWidth;
             var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitZoom : 1;
@@ -198,15 +201,28 @@ var CocaineCartels;
                 this.shapesWithEvents.push(unit.circle);
             }
             this.unitsLayer.add(unit.circle);
-            if (this.animated && unit.newUnit) {
-                var newUnitTween = new Konva.Tween({
-                    node: unit.circle,
-                    duration: CocaineCartels.CanvasSettings.newUnitTweenDuration,
-                    scaleX: 1,
-                    scaleY: 1,
-                    easing: Konva.Easings.ElasticEaseOut
-                });
-                this.newUnitTweens.push(newUnitTween);
+            if (this.animated) {
+                if (unit.newUnit) {
+                    var newUnitTween = new Konva.Tween({
+                        node: unit.circle,
+                        duration: CocaineCartels.CanvasSettings.newUnitTweenDuration,
+                        scaleX: 1,
+                        scaleY: 1,
+                        easing: Konva.Easings.ElasticEaseOut
+                    });
+                    this.newUnitTweens.push(newUnitTween);
+                }
+                if (unit.moveCommand !== null) {
+                    var newPos = unit.moveCommand.to.hex.pos;
+                    var movedUnitTween = new Konva.Tween({
+                        node: unit.circle,
+                        duration: CocaineCartels.CanvasSettings.movedUnitTweenDuration,
+                        x: newPos.x,
+                        y: newPos.y,
+                        easing: Konva.Easings.BackEaseIn
+                    });
+                    this.movedUnitTweens.push(movedUnitTween);
+                }
             }
         };
         Canvas.prototype.drawUnits = function () {
@@ -220,26 +236,32 @@ var CocaineCartels;
         };
         Canvas.prototype.drawUnitsOnCell = function (cell) {
             var _this = this;
-            var staying = cell.unitsStaying;
-            var movedHere = cell.unitsMovedHere;
-            var toBeMovedHere = cell.unitsToBeMovedHere;
-            var toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
-            var total = staying.length + movedHere.length + toBeMovedHere.length + toBePlacedHere.length;
-            staying.forEach(function (unit, index) {
-                _this.drawUnit(unit, cell.hex.pos, index, total);
-            });
-            var movedHereStartIndex = staying.length;
-            movedHere.forEach(function (unit, index) {
-                _this.drawUnit(unit, cell.hex.pos, movedHereStartIndex + index, total);
-            });
-            var movingHereStartIndex = movedHereStartIndex + movedHere.length;
-            toBeMovedHere.forEach(function (unit, index) {
-                _this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-            });
-            var toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-            toBePlacedHere.forEach(function (unit, index) {
-                _this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
-            });
+            if (this.animated) {
+                console.info("drawing animated unit.");
+                var onCell = cell.units;
+                var total = onCell.length;
+                onCell.forEach(function (unit, index) {
+                    _this.drawUnit(unit, cell.hex.pos, index, total);
+                });
+            }
+            else {
+                console.info("drawing interactive unit.");
+                var staying = cell.unitsStaying;
+                var toBeMovedHere = cell.unitsToBeMovedHere;
+                var toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
+                var total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
+                staying.forEach(function (unit, index) {
+                    _this.drawUnit(unit, cell.hex.pos, index, total);
+                });
+                var movingHereStartIndex = staying.length; //movedHereStartIndex + movedHere.length;
+                toBeMovedHere.forEach(function (unit, index) {
+                    _this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
+                });
+                var toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
+                toBePlacedHere.forEach(function (unit, index) {
+                    _this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+                });
+            }
         };
         Canvas.prototype.redrawBoard = function () {
             this.drawUnits();
@@ -248,20 +270,29 @@ var CocaineCartels;
             this.stage.draw();
         };
         Canvas.prototype.replayLastTurn = function () {
+            var _this = this;
+            // Reset all the tweens.
+            this.newUnitTweens.concat(this.movedUnitTweens).forEach(function (tween) {
+                tween.reset();
+            });
             // Animate new units.
             this.newUnitTweens.forEach(function (tween) {
-                tween.reset();
                 tween.play();
             });
-            // 2. Animate moves.
+            setTimeout(function () {
+                // Animate moves.
+                _this.movedUnitTweens.forEach(function (tween) {
+                    tween.play();
+                });
+            }, CocaineCartels.CanvasSettings.newUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween * 1000);
             // 3. Animate battles.
             // 4. Animate points.
-            var delay = 0.2;
             // Switch back to the interactive canvas.
+            var totalDelay = CocaineCartels.CanvasSettings.newUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween + CocaineCartels.CanvasSettings.movedUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             var promise = new Promise(function (resolve, reject) {
-                window.setTimeout(function () {
+                setTimeout(function () {
                     resolve();
-                }, (CocaineCartels.CanvasSettings.newUnitTweenDuration + delay) * 1000);
+                }, totalDelay * 1000);
             });
             return promise;
         };
@@ -437,6 +468,8 @@ var CocaineCartels;
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;
         CanvasSettings.arrowShadowBlurRadius = 10;
+        CanvasSettings.delayAfterTween = 0.5;
+        CanvasSettings.movedUnitTweenDuration = 0.5;
         CanvasSettings.newUnitTweenDuration = 1;
         CanvasSettings.newUnitZoom = 10;
         return CanvasSettings;
@@ -499,17 +532,12 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Cell.prototype, "unitsMovedHere", {
-            /** Units on this cell that were move here. This type of units is only shown on the third board. */
-            get: function () {
-                var _this = this;
-                var unitsMovedHere = this.units.filter(function (unit) { return unit.moveCommand !== null && unit.moveCommand.to === _this; });
-                return unitsMovedHere;
-            },
-            enumerable: true,
-            configurable: true
-        });
         Object.defineProperty(Cell.prototype, "unitsToBeMovedHere", {
+            /** Units on this cell that were move here. This type of units is only shown on the third board. */
+            //public get unitsMovedHere(): Array<Unit> {
+            //    const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
+            //    return unitsMovedHere;
+            //}
             /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
             get: function () {
                 var unitsMovingHere = this.moveCommandsToCell.map(function (command) { return command.unit; });
@@ -662,24 +690,22 @@ var CocaineCartels;
                 var player = new CocaineCartels.Player(playerData);
                 _this.players.push(player);
             });
-            if (gameData.previousTurn === null) {
-                this.previousTurn = null;
-            }
-            else {
-                this.previousTurn = new CocaineCartels.Turn(gameData.previousTurn);
-            }
+            //if (gameData.previousTurn === null) {
+            //    this.previousTurn = null;
+            //} else {
+            //    this.previousTurn = new Turn(gameData.previousTurn);
+            //}
             if (gameData.previousTurnShowingPlaceCommands === null) {
                 this.previousTurnWithPlaceCommands = null;
             }
             else {
                 this.previousTurnWithPlaceCommands = new CocaineCartels.Turn(gameData.previousTurnShowingPlaceCommands);
             }
-            if (gameData.previousTurnShowingMoveCommands === null) {
-                this.previousTurnWithMoveCommands = null;
-            }
-            else {
-                this.previousTurnWithMoveCommands = new CocaineCartels.Turn(gameData.previousTurnShowingMoveCommands);
-            }
+            //if (gameData.previousTurnShowingMoveCommands === null) {
+            //    this.previousTurnWithMoveCommands = null;
+            //} else {
+            //    this.previousTurnWithMoveCommands = new Turn(gameData.previousTurnShowingMoveCommands);
+            //}
             this.currentTurn = new CocaineCartels.Turn(currentTurnData);
             this.started = gameData.started;
         }
@@ -1134,7 +1160,7 @@ var CocaineCartels;
                         _this.replayCanvas.destroy();
                     }
                     _this.interactiveCanvas = new CocaineCartels.Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
-                    _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurnWithMoveCommands, "replayCanvas", true, false);
+                    _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurnWithPlaceCommands, "replayCanvas", true, false);
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
@@ -1185,9 +1211,11 @@ var CocaineCartels;
         };
         Main.prototype.replayLastTurn = function () {
             var _this = this;
+            $("#replayButton").prop("disabled", true);
             this.setActiveCanvas("replayCanvas");
             this.replayCanvas.replayLastTurn().then(function () {
                 _this.setActiveCanvas("interactiveCanvas");
+                $("#replayButton").prop("disabled", false);
             });
         };
         Main.prototype.resetGame = function () {
@@ -1346,9 +1374,9 @@ var CocaineCartels;
         Main.prototype.updateGameState = function () {
             return CocaineCartels.GameService.getGameState().then(function (gameState) {
                 Main.game = gameState.gameInstance;
-                Main.game.initializeBoard(Main.game.previousTurn);
+                //Main.game.initializeBoard(Main.game.previousTurn);
                 Main.game.initializeBoard(Main.game.previousTurnWithPlaceCommands);
-                Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
+                //Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
                 Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
             });
@@ -1675,7 +1703,7 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Unit.prototype, "placedColor", {
+        Object.defineProperty(Unit.prototype, "movedColor", {
             get: function () {
                 return this._movedColor;
             },
