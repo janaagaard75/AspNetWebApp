@@ -1129,11 +1129,11 @@ var CocaineCartels;
             this.updateGameState().then(function () {
                 var widthInPixels = CocaineCartels.CanvasSettings.width + "px";
                 if (Main.game.started) {
-                    if (_this.canvas4 !== undefined) {
-                        _this.canvas4.destroy();
+                    if (_this.interactiveCanvas !== undefined) {
+                        _this.interactiveCanvas.destroy();
                         _this.replayCanvas.destroy();
                     }
-                    _this.canvas4 = new CocaineCartels.Canvas(Main.game.currentTurn, "canvas4", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
+                    _this.interactiveCanvas = new CocaineCartels.Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
                     _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurnWithMoveCommands, "replayCanvas", true, false);
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
@@ -1159,7 +1159,7 @@ var CocaineCartels;
                     Main.printAllAlliances();
                     Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
-                    _this.setActiveCanvas("canvas4");
+                    _this.setActiveCanvas("interactiveCanvas");
                     var enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
                     for (var i = 1; i <= 3; i++) {
                         var boardButtonId = "#boardButton" + i;
@@ -1187,7 +1187,7 @@ var CocaineCartels;
             var _this = this;
             this.setActiveCanvas("replayCanvas");
             this.replayCanvas.replayLastTurn().then(function () {
-                _this.setActiveCanvas("canvas4");
+                _this.setActiveCanvas("interactiveCanvas");
             });
         };
         Main.prototype.resetGame = function () {
@@ -1259,7 +1259,7 @@ var CocaineCartels;
             return commands;
         };
         Main.prototype.setActiveCanvas = function (canvasId) {
-            var canvasIds = ["canvas4", "replayCanvas"];
+            var canvasIds = ["interactiveCanvas", "replayCanvas"];
             canvasIds.forEach(function (id) {
                 var canvasElement = $("#" + id);
                 if (id === canvasId) {

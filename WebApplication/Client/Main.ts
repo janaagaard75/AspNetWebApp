@@ -7,7 +7,7 @@
             this.refreshGame();
         }
 
-        private canvas4: Canvas;
+        private interactiveCanvas: Canvas;
         private replayCanvas: Canvas;
 
         public activeBoard: number;
@@ -211,12 +211,12 @@
                 const widthInPixels = `${CanvasSettings.width}px`;
 
                 if (Main.game.started) {
-                    if (this.canvas4 !== undefined) {
-                        this.canvas4.destroy();
+                    if (this.interactiveCanvas !== undefined) {
+                        this.interactiveCanvas.destroy();
                         this.replayCanvas.destroy();
                     }
 
-                    this.canvas4 = new Canvas(Main.game.currentTurn, "canvas4", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
+                    this.interactiveCanvas = new Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
                     this.replayCanvas = new Canvas(Main.game.previousTurnWithMoveCommands, "replayCanvas", true, false);
 
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
@@ -246,7 +246,7 @@
                     Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
 
-                    this.setActiveCanvas("canvas4");
+                    this.setActiveCanvas("interactiveCanvas");
 
                     const enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
@@ -281,7 +281,7 @@
             this.setActiveCanvas("replayCanvas");
             
             this.replayCanvas.replayLastTurn().then(() => {
-                this.setActiveCanvas("canvas4");
+                this.setActiveCanvas("interactiveCanvas");
             });
         }
 
@@ -369,7 +369,7 @@
         }
 
         private setActiveCanvas(canvasId) {
-            const canvasIds = ["canvas4", "replayCanvas"];
+            const canvasIds = ["interactiveCanvas", "replayCanvas"];
             canvasIds.forEach(id => {
                 const canvasElement = $(`#${id}`);
                 if (id === canvasId) {
