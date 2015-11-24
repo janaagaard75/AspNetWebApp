@@ -52,22 +52,22 @@ module CocaineCartels {
             return unitsAlreadyHereOrToBePlacedHere;
         }
 
-        /** Units on this cell that were move here. This type of units is only shown on the third board. */
-        //public get unitsMovedHere(): Array<Unit> {
-        //    const unitsMovedHere = this.units.filter(unit => unit.moveCommand !== null && unit.moveCommand.to === this);
-        //    return unitsMovedHere;
-        //}
-
-        /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
-        public get unitsToBeMovedHere(): Array<Unit> {
-            const unitsMovingHere = this.moveCommandsToCell.map(command => command.unit);
-            return unitsMovingHere;
+        /** Returns the units that have been moved from this cell. */
+        public get unitsMovedAwayFromHere(): Array<Unit> {
+            const unitsMovedAwayFromHere = this.moveCommandsFromCell.map(command => command.unit);
+            return unitsMovedAwayFromHere;
         }
 
         /** Units already on the cell and not moved away. Does not include units that will be placed here. */
         public get unitsStaying(): Array<Unit> {
             const unitsStaying = this.units.filter(unit => unit.moveCommand === null);
             return unitsStaying;
+        }
+
+        /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
+        public get unitsToBeMovedToHere(): Array<Unit> {
+            const unitsToBeMovedToHere = this.moveCommandsToCell.map(command => command.unit);
+            return unitsToBeMovedToHere;
         }
 
         /** Returns the units to be placed on this cell. Units might be moved to another cell. */

@@ -291,17 +291,22 @@
 
         private drawUnitsOnCell(cell: Cell) {
             if (this.animated) {
-                console.info("drawing animated unit.");
-                const onCell = cell.units;
-                const total = onCell.length;
+                const staying = cell.unitsStaying;
+                const movedAwayFromHere = cell.unitsMovedAwayFromHere;
 
-                onCell.forEach((unit, index) => {
+                const total = staying.length + movedAwayFromHere.length;
+
+                staying.forEach((unit, index) => {
                     this.drawUnit(unit, cell.hex.pos, index, total);
                 });
+
+                const movedAwayFromHereStartIndex = staying.length;
+                movedAwayFromHere.forEach((unit, index) => {
+                    this.drawUnit(unit, unit.moveCommand.from.hex.pos, movedAwayFromHereStartIndex + index, total);
+                });
             } else {
-                console.info("drawing interactive unit.");
                 const staying = cell.unitsStaying;
-                const toBeMovedHere = cell.unitsToBeMovedHere;
+                const toBeMovedHere = cell.unitsToBeMovedToHere;
                 const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
 
                 const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
