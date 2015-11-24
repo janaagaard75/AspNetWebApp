@@ -288,6 +288,10 @@
             window.location.reload();
         }
 
+        public replayLastTurn() {
+            this.canvas4.replayLastTurn();
+        }
+
         private resetGame() {
             GameService.resetGame().then(() => {
                 this.reloadPage();

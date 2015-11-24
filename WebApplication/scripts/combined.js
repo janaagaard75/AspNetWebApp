@@ -149,6 +149,7 @@ var CocaineCartels;
         Canvas.prototype.drawUnit = function (unit, pos, unitIndex, numberOfUnits) {
             var isNewUnit = (unit.cell === null || unit.placeCommand !== null);
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
+            var newUnitZoom = 10;
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / numberOfUnits;
             var x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             var overlapPos = new CocaineCartels.Pos(x, pos.y);
@@ -168,7 +169,9 @@ var CocaineCartels;
                     stroke: borderColor,
                     strokeWidth: borderWidth,
                     x: overlapPos.x,
-                    y: overlapPos.y
+                    y: overlapPos.y,
+                    scaleX: isNewUnit ? 1 / newUnitZoom : 1,
+                    scaleY: isNewUnit ? 1 / newUnitZoom : 1
                 });
                 unit.circle = circle;
             }
@@ -193,6 +196,16 @@ var CocaineCartels;
                 this.shapesWithEvents.push(unit.circle);
             }
             this.unitsLayer.add(unit.circle);
+            if (isNewUnit) {
+                var newUnitTween = new Konva.Tween({
+                    node: unit.circle,
+                    duration: 0.5,
+                    scaleX: 1,
+                    scaleY: 1,
+                    easing: Konva.Easings.ElasticEaseOut
+                });
+                newUnitTween.play();
+            }
         };
         Canvas.prototype.drawUnits = function () {
             var _this = this;
@@ -231,6 +244,14 @@ var CocaineCartels;
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
+        };
+        Canvas.prototype.replayLastTurn = function () {
+            throw "Not implemented.";
+            // Activate all the tweens here.
+            // 1. Show new units.
+            // 2. Show moves.
+            // 3. Show battles.
+            // 4. Show points.
         };
         Canvas.prototype.setUpUnitDragEvents = function () {
             var _this = this;
@@ -1157,6 +1178,9 @@ var CocaineCartels;
         };
         Main.prototype.reloadPage = function () {
             window.location.reload();
+        };
+        Main.prototype.replayLastTurn = function () {
+            this.canvas4.replayLastTurn();
         };
         Main.prototype.resetGame = function () {
             var _this = this;
