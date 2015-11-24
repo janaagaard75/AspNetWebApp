@@ -312,6 +312,10 @@ namespace CocaineCartels.BusinessLogic
             // Assign new units to the players, add points to them and set their ready state to false.
             Players.ForEach(player =>
             {
+                NextTurn.AllUnits.ForEach(unit =>
+                {
+                    unit.NoLongerNewUnit();
+                });
                 NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
                 AddPointsToPlayer(player);
                 player.CommandsSentOn = null;
