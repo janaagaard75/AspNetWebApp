@@ -270,36 +270,45 @@ namespace CocaineCartels.BusinessLogic
 
         private void PerformPlanMovesTurn()
         {
-            // Place all new units.
+            // Place all new units, removing the place commands.
             List<Unit> unitsToPlace = NextTurn.NewUnits.Where(newUnit => newUnit.PlaceCommand != null).ToList();
-            unitsToPlace.ForEach(unit =>
+            unitsToPlace.ForEach(unitToPlace =>
             {
-                NextTurn.NewUnits.Remove(unit);
-                unit.PlaceCommand.On.AddUnit(unit);
+                NextTurn.NewUnits.Remove(unitToPlace);
+                unitToPlace.PlaceCommand.On.AddUnit(unitToPlace);
+                unitToPlace.RemovePlaceCommand();
             });
+
+            // Move all the units, keeping the move commands.
+            List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
+            unitsToMove.ForEach(unitToMove =>
+            {
+                unitToMove.Cell.RemoveUnit(unitToMove);
+                unitToMove.MoveCommand.To.AddUnit(unitToMove);
+            });
+
+            // Mark the units as killed.
+            NextTurn.Fight();
+
             PreviousTurn = NextTurn.Clone();
 
-            // Remove the place commands, move all the units, keeping the move commands.
-            NextTurn.AllUnits.ForEach(unit => { unit.RemovePlaceCommand(); });
-            List<Unit> unitsToMove = NextTurn.UnitsOnCells.Where(unit => unit.MoveCommand != null).ToList();
-            unitsToMove.ForEach(unit =>
+            // Remove killed units.
+            IEnumerable<Unit> unitsToRemove = NextTurn.UnitsOnCells.Where(unit => unit.Killed);
+            unitsToRemove.ForEach(unitToRemove =>
             {
-                unit.Cell.RemoveUnit(unit);
-                unit.MoveCommand.To.AddUnit(unit);
+                unitToRemove.Cell.RemoveUnit(unitToRemove);
             });
 
-            // Remove the move commands on the final board.
-            NextTurn.UnitsOnCells.ForEach(unit => { unit.RemoveMoveCommand(); });
-
-            NextTurn.Fight();
+            // Remove new unit flags and the move commands.
+            NextTurn.AllUnits.ForEach(unit =>
+            {
+                unit.NoLongerNewUnit();
+                unit.RemoveMoveCommand();
+            });
 
             // Assign new units to the players, add points to them and set their ready state to false.
             Players.ForEach(player =>
             {
-                NextTurn.AllUnits.ForEach(unit =>
-                {
-                    unit.NoLongerNewUnit();
-                });
                 NextTurn.AddNewUnitsToPlayer(player, GetNumberOfNewUnitsForPlayer(player));
                 AddPointsToPlayer(player);
                 player.CommandsSentOn = null;

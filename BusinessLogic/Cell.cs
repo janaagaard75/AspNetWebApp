@@ -77,8 +77,8 @@ namespace CocaineCartels.BusinessLogic
                 IEnumerable<Player> allies = Turn.Alliances.GetAllies(player);
                 IEnumerable<Player> enemies = playersOnCell.Except(allies).Except(new[] { player });
 
-                double numberOfPlayersUnits = UnitsList.Count(unit => unit.Player.Color == player.Color);
-                double damagePerEnemy = numberOfPlayersUnits / enemies.Count();
+                double playersNumberOfUnits = UnitsList.Count(unit => unit.Player.Color == player.Color && !unit.Killed);
+                double damagePerEnemy = playersNumberOfUnits / enemies.Count();
 
                 foreach (Player enemy in enemies)
                 {
@@ -103,10 +103,22 @@ namespace CocaineCartels.BusinessLogic
                     somebodyDied = true;
                 }
 
-                RemoveUnitsFromPlayer(player, unitsToRemove);
+                MarkUnitsKilled(player, unitsToRemove);
             }
 
             return somebodyDied;
+        }
+
+        private void MarkUnitsKilled(Player player, int numberOfUnits)
+        {
+            for (var i = 0; i < numberOfUnits; i++)
+            {
+                Unit unitToMarkKilled = Units.FirstOrDefault(unit => unit.Player.Color == player.Color && !unit.Killed);
+                if (unitToMarkKilled != null)
+                {
+                    unitToMarkKilled.KillUnit();
+                }
+            }
         }
 
         private IEnumerable<Player> PlayersOnCell()

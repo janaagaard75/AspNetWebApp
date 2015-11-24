@@ -12,6 +12,7 @@ module CocaineCartels {
             this.board = board;
             this.cell = cell;
             this.circle = null;
+            this.killed = unitData.killed;
             this.newUnit = unitData.newUnit;
 
             this._color = unitData.player.color;
@@ -27,12 +28,10 @@ module CocaineCartels {
 
         /** The board that this units is located on. Never null. */
         public board: Turn;
-
         /** The cell that the unit is located on. Null if this is a new unit that has not yet been placed on the board. */
         public cell: Cell;
-
         public circle: Konva.Circle;
-
+        public killed: boolean;
         public newUnit: boolean;
 
         /** The color of the unit. Based on the color of the player who onws the unit. */
