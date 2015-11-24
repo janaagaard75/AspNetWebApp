@@ -217,7 +217,7 @@
                     }
 
                     this.interactiveCanvas = new Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
-                    this.replayCanvas = new Canvas(Main.game.previousTurnWithPlaceCommands, "replayCanvas", true, false);
+                    this.replayCanvas = new Canvas(Main.game.previousTurn, "replayCanvas", true, false);
 
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
@@ -466,9 +466,7 @@
         private updateGameState(): Promise<void> {
             return GameService.getGameState().then(gameState => {
                 Main.game = gameState.gameInstance;
-                //Main.game.initializeBoard(Main.game.previousTurn);
-                Main.game.initializeBoard(Main.game.previousTurnWithPlaceCommands);
-                //Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
+                Main.game.initializeBoard(Main.game.previousTurn);
                 Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
             });

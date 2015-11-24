@@ -5,7 +5,7 @@
         players: Array<IPlayer>;
 
         /** Null on first turn. */
-        previousTurnShowingPlaceCommands: ITurn;
+        previousTurn: ITurn;
 
         started: boolean;
     }

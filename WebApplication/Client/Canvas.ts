@@ -201,7 +201,7 @@
             const fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
             const borderWidth = CanvasSettings.unitBorderWidth;
-            const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitZoom : 1;
+            const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitScale : 1;
             const unitRadius = CanvasSettings.unitRadius;
 
             if (unit.circle === null) {

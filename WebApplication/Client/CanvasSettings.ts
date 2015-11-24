@@ -10,11 +10,11 @@ module CocaineCartels {
         public static cellBorderWidth: number;
         public static cellRadius: number;
         public static center: Pos;
-        public static delayAfterTween = 0.5;
+        public static delayAfterTween = 0.3;
         public static height: number;
         public static movedUnitTweenDuration = 1;
+        public static newUnitScale = 10;
         public static newUnitTweenDuration = 1;
-        public static newUnitZoom = 10;
         public static spaceToNewUnits: number;
         public static unitBorderWidth: number;
         public static unitRadius: number;

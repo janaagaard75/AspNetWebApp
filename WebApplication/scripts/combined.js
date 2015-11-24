@@ -160,7 +160,7 @@ var CocaineCartels;
             var fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
             var borderWidth = CocaineCartels.CanvasSettings.unitBorderWidth;
-            var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitZoom : 1;
+            var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitScale : 1;
             var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
                 var circle = new Konva.Circle({
@@ -468,10 +468,10 @@ var CocaineCartels;
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;
         CanvasSettings.arrowShadowBlurRadius = 10;
-        CanvasSettings.delayAfterTween = 0.5;
+        CanvasSettings.delayAfterTween = 0.3;
         CanvasSettings.movedUnitTweenDuration = 1;
+        CanvasSettings.newUnitScale = 10;
         CanvasSettings.newUnitTweenDuration = 1;
-        CanvasSettings.newUnitZoom = 10;
         return CanvasSettings;
     })();
     CocaineCartels.CanvasSettings = CanvasSettings;
@@ -690,11 +690,11 @@ var CocaineCartels;
                 var player = new CocaineCartels.Player(playerData);
                 _this.players.push(player);
             });
-            if (gameData.previousTurnShowingPlaceCommands === null) {
-                this.previousTurnWithPlaceCommands = null;
+            if (gameData.previousTurn === null) {
+                this.previousTurn = null;
             }
             else {
-                this.previousTurnWithPlaceCommands = new CocaineCartels.Turn(gameData.previousTurnShowingPlaceCommands);
+                this.previousTurn = new CocaineCartels.Turn(gameData.previousTurn);
             }
             this.currentTurn = new CocaineCartels.Turn(currentTurnData);
             this.started = gameData.started;
@@ -1150,7 +1150,7 @@ var CocaineCartels;
                         _this.replayCanvas.destroy();
                     }
                     _this.interactiveCanvas = new CocaineCartels.Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
-                    _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurnWithPlaceCommands, "replayCanvas", true, false);
+                    _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurn, "replayCanvas", true, false);
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
@@ -1364,9 +1364,7 @@ var CocaineCartels;
         Main.prototype.updateGameState = function () {
             return CocaineCartels.GameService.getGameState().then(function (gameState) {
                 Main.game = gameState.gameInstance;
-                //Main.game.initializeBoard(Main.game.previousTurn);
-                Main.game.initializeBoard(Main.game.previousTurnWithPlaceCommands);
-                //Main.game.initializeBoard(Main.game.previousTurnWithMoveCommands);
+                Main.game.initializeBoard(Main.game.previousTurn);
                 Main.game.initializeBoard(Main.game.currentTurn);
                 Main.currentPlayer = gameState.currentPlayer;
             });

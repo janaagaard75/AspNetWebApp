@@ -31,10 +31,10 @@ namespace CocaineCartels.BusinessLogic
         private readonly object StartGameLock = new object();
         private readonly object TurnLock = new object();
 
-        /// <summary>The board from the previous turn, with all the new units placed on the board, but no move commands have been executed. This board is <see cref="PreviousTurn"/> with place commands executed.</summary>
-        public Turn PreviousTurnShowingPlaceCommands { get; private set; }
+        /// <summary>The board containing the previous turn. New units are placed on the cells and have the newUnit flag set to true. Units aren't moved, but have move commands. Units that died in combat have the killed flag set to true.</summary>
+        public Turn PreviousTurn { get; private set; }
 
-        /// <summary>This board is the one used to store the player's commands for the next turn. It's <see cref="PreviousTurnShowingMoveCommands"/> with combat resolved.</summary>
+        /// <summary>This board is the one used to store the player's commands for the next turn.</summary>
         private Turn NextTurn { get; set; }
 
         public List<Player> Players { get; private set; }
@@ -277,7 +277,7 @@ namespace CocaineCartels.BusinessLogic
                 NextTurn.NewUnits.Remove(unit);
                 unit.PlaceCommand.On.AddUnit(unit);
             });
-            PreviousTurnShowingPlaceCommands = NextTurn.Clone();
+            PreviousTurn = NextTurn.Clone();
 
             // Remove the place commands, move all the units, keeping the move commands.
             NextTurn.AllUnits.ForEach(unit => { unit.RemovePlaceCommand(); });
@@ -393,7 +393,7 @@ namespace CocaineCartels.BusinessLogic
 
         public void ResetGame()
         {
-            PreviousTurnShowingPlaceCommands = null;
+            PreviousTurn = null;
             NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
             NextTurn.Mode = TurnMode.StartGame;
