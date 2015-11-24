@@ -288,6 +288,10 @@
             window.location.reload();
         }
 
+        public replayLastTurn() {
+            this.canvas4.replayLastTurn();
+        }
+
         private resetGame() {
             GameService.resetGame().then(() => {
                 this.reloadPage();
@@ -463,7 +467,7 @@
                     window.setTimeout(() => this.tick(), 1000);
                 })
                 .catch(e => {
-                    alert("Oh no! An internal error occurred. (╯°□°)╯︵ ┻━┻");
+                    alert("Oh noes! An internal error occurred. (╯°□°)╯︵ ┻━┻");
                     console.error(e);
                 });
         }

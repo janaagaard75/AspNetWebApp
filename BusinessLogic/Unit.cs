@@ -7,15 +7,22 @@ namespace CocaineCartels.BusinessLogic
         public Unit(Player player)
         {
             MoveCommand = null;
+            NewUnit = true;
             PlaceCommand = null;
             Player = player;
         }
 
         public ServerMoveCommand MoveCommand { get; private set; }
+        public bool NewUnit { get; private set; }
         public ServerPlaceCommand PlaceCommand { get; private set; }
         public readonly Player Player;
 
         internal Cell Cell;
+
+        internal void NoLongerNewUnit()
+        {
+            NewUnit = false;
+        }
 
         public void RemoveCommands()
         {

@@ -3,6 +3,7 @@
 
     export interface IUnit {
         moveCommand: IServerMoveCommand;
+        newUnit: boolean;
         placeCommand: IServerPlaceCommand;
         player: IPlayer;
     }

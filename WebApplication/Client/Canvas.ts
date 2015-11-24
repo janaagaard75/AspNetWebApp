@@ -194,8 +194,9 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
-            const isNewUnit = (unit.cell === null || unit.placeCommand !== null);
+            const isNewUnit = unit.newUnit;// (unit.cell === null || unit.placeCommand !== null);
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
+            const newUnitZoom = 10;
 
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
@@ -217,7 +218,9 @@
                     stroke: borderColor,
                     strokeWidth: borderWidth,
                     x: overlapPos.x,
-                    y: overlapPos.y
+                    y: overlapPos.y,
+                    scaleX: isNewUnit ? 1 / newUnitZoom : 1,
+                    scaleY: isNewUnit ? 1 / newUnitZoom : 1
                 });
 
                 unit.circle = circle;
@@ -248,6 +251,18 @@
             }
 
             this.unitsLayer.add(unit.circle);
+
+            if (isNewUnit) {
+                const newUnitTween = new Konva.Tween({
+                    node: unit.circle,
+                    duration: 0.5,
+                    scaleX: 1,
+                    scaleY: 1,
+                    easing: Konva.Easings.ElasticEaseOut
+                });
+
+                newUnitTween.play();
+            }
         }
 
         private drawUnits() {
@@ -293,6 +308,18 @@
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
+        }
+
+        public replayLastTurn() {
+            throw "Not implemented.";
+            // TODO j:
+            // Switch to the replayCanvas.
+            // Activate all the tweens.
+            // 1. Show new units.
+            // 2. Show moves.
+            // 3. Show battles.
+            // 4. Show points.
+            // Switch back to the interactive canvas.
         }
 
         private setUpUnitDragEvents() {
