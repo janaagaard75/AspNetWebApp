@@ -3,28 +3,23 @@
 
     export class Canvas {
         constructor(
-            board: Turn,
-            canvasId: string,
-            interactive: boolean
+            private turn: Turn,
+            private canvasId: string,
+            private animated: boolean,
+            private interactive: boolean
         ) {
-            this.shapesWithEvents = [];
-            Canvas.board = board;
-            this.canvasId = canvasId;
-            this.interactive = interactive;
-            if (board !== null) {
+            if (turn !== null) {
                 this.drawBoard();
             }
         }
 
-        private static board: Turn; // Has be to static to be accessible inside unitDragBound function.
-        private stage: Konva.Stage;
-
         private boardLayer: Konva.Layer;
-        private canvasId: string;
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
-        private interactive: boolean;
-        private shapesWithEvents: Array<Konva.Shape>;
+        private movedUnitTweens: Array<Konva.Tween> = [];
+        private newUnitTweens: Array<Konva.Tween> = [];
+        private shapesWithEvents: Array<Konva.Shape> = [];
+        private stage: Konva.Stage;
         private unitsLayer: Konva.Layer;
 
         private addLayers() {
@@ -122,7 +117,7 @@
         }
 
         private drawCells() {
-            Canvas.board.cells.forEach(cell => {
+            this.turn.cells.forEach(cell => {
                 this.drawCell(cell);
             });
         }
@@ -168,10 +163,10 @@
                 return command.from.hex.toString() + command.to.hex.toString();
             }
 
-            Canvas.board.cells.forEach(cell => {
+            this.turn.cells.forEach(cell => {
                 var groups = Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByFromAndTo);
                 groups.forEach(commands => {
-                    const oppositeCommands = Canvas.board.getMoveCommands(commands[0].to, commands[0].from);
+                    const oppositeCommands = this.turn.getMoveCommands(commands[0].to, commands[0].from);
                     const totalCommands = commands.length + oppositeCommands.length;
                     commands.forEach((command, index) => {
                         this.drawMoveCommand(command, index, totalCommands);
@@ -186,7 +181,7 @@
                 CanvasSettings.width + CanvasSettings.spaceToNewUnits
             );
 
-            Canvas.board.newUnitsForPlayer(player).forEach((unit, unitIndex, units) => {
+            this.turn.newUnitsForPlayer(player).forEach((unit, unitIndex, units) => {
                 if (unit.placeCommand === null) {
                     this.drawUnit(unit, pos, unitIndex, units.length);
                 }
@@ -194,16 +189,15 @@
         }
 
         private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
-            const isNewUnit = unit.newUnit;// (unit.cell === null || unit.placeCommand !== null);
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
-            const newUnitZoom = 10;
 
             const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
             const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const overlapPos = new Pos(x, pos.y);
             const fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
-            const borderWidth = isNewUnit ? CanvasSettings.newUnitBorderWidth : CanvasSettings.unitBorderWidth;
+            const borderWidth = (this.animated && unit.newUnit) ? CanvasSettings.newUnitBorderWidth : CanvasSettings.unitBorderWidth;
+            const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitZoom : 1;
             const unitRadius = CanvasSettings.unitRadius;
 
             if (unit.circle === null) {
@@ -211,6 +205,8 @@
                     draggable: this.interactive && ownedByThisPlayer,
                     fill: fillColor,
                     radius: unitRadius,
+                    scaleX: scale,
+                    scaleY: scale,
                     shadowBlur: 20,
                     shadowColor: "#000",
                     shadowEnabled: false,
@@ -218,9 +214,7 @@
                     stroke: borderColor,
                     strokeWidth: borderWidth,
                     x: overlapPos.x,
-                    y: overlapPos.y,
-                    scaleX: isNewUnit ? 1 / newUnitZoom : 1,
-                    scaleY: isNewUnit ? 1 / newUnitZoom : 1
+                    y: overlapPos.y
                 });
 
                 unit.circle = circle;
@@ -252,21 +246,21 @@
 
             this.unitsLayer.add(unit.circle);
 
-            if (isNewUnit) {
+            if (this.animated && unit.newUnit) {
                 const newUnitTween = new Konva.Tween({
                     node: unit.circle,
-                    duration: 0.5,
+                    duration: CanvasSettings.newUnitTweenDuration,
                     scaleX: 1,
                     scaleY: 1,
                     easing: Konva.Easings.ElasticEaseOut
                 });
 
-                newUnitTween.play();
+                this.newUnitTweens.push(newUnitTween);
             }
         }
 
         private drawUnits() {
-            Canvas.board.cells.forEach(cell => {
+            this.turn.cells.forEach(cell => {
                 this.drawUnitsOnCell(cell);
             });
 
@@ -310,16 +304,27 @@
             this.stage.draw();
         }
 
-        public replayLastTurn() {
-            throw "Not implemented.";
-            // TODO j:
-            // Switch to the replayCanvas.
-            // Activate all the tweens.
-            // 1. Show new units.
-            // 2. Show moves.
-            // 3. Show battles.
-            // 4. Show points.
+        public replayLastTurn(): Promise<void> {
+            // Animate new units.
+            this.newUnitTweens.forEach(tween => {
+                tween.reset();
+                tween.play();
+            });
+
+            // 2. Animate moves.
+            // 3. Animate battles.
+            // 4. Animate points.
+
+            const delay = 0.2;
+
             // Switch back to the interactive canvas.
+            var promise = new Promise<void>((resolve, reject) => {
+                window.setTimeout(() => {
+                    resolve();
+                }, (CanvasSettings.newUnitTweenDuration + delay) * 1000)
+            });
+
+            return promise;
         }
 
         private setUpUnitDragEvents() {
@@ -338,17 +343,17 @@
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
 
-                unit = Canvas.board.allUnits.filter(u => u.circle === e.target)[0];
+                unit = this.turn.allUnits.filter(u => u.circle === e.target)[0];
 
                 var allowedCells: Array<Cell>;
                 if (unit.cell === null) {
                     if (unit.placeCommand === null) {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                        allowedCells = this.turn.allowedCellsForPlace(unit);
                     } else {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                        allowedCells = this.turn.allowedCellsForPlace(unit).concat(this.turn.allowedCellsForMove(unit));
                     }
                 } else {
-                    allowedCells = Canvas.board.allowedCellsForMove(unit);
+                    allowedCells = this.turn.allowedCellsForMove(unit);
                 }
 
                 allowedCells.forEach(cell => {
@@ -358,7 +363,7 @@
 
                 this.unitsLayer.draw();
             });
-            
+
             this.stage.on("dragmove", () => {
                 const pos = this.stage.getPointerPosition();
                 currentHexagon = this.boardLayer.getIntersection(pos);
@@ -391,7 +396,7 @@
                 document.body.classList.remove("grabbing-cursor");
 
                 if (currentHexagon !== null) {
-                    const currentCell = Canvas.board.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+                    const currentCell = this.turn.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
 
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
@@ -401,7 +406,7 @@
                                 Main.setCurrentPlayerNotReadyIfNecessary();
                             } else {
                                 // This might be a re-place of a new unit.
-                                const cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit)
+                                const cellsAllowedForDrop = this.turn.allowedCellsForPlace(unit)
                                 if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
                                     // It's a re-place.
                                     unit.moveCommand = null;
@@ -441,7 +446,7 @@
                 currentHexagon = null;
                 previousHexagon = null;
 
-                Canvas.board.cells.forEach(cell => {
+                this.turn.cells.forEach(cell => {
                     cell.dropAllowed = false;
                     this.updateCellColor(cell);
                 });

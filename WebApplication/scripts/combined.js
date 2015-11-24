@@ -2,12 +2,15 @@ var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
     var Canvas = (function () {
-        function Canvas(board, canvasId, interactive) {
-            this.shapesWithEvents = [];
-            Canvas.board = board;
+        function Canvas(turn, canvasId, animated, interactive) {
+            this.turn = turn;
             this.canvasId = canvasId;
+            this.animated = animated;
             this.interactive = interactive;
-            if (board !== null) {
+            this.movedUnitTweens = [];
+            this.newUnitTweens = [];
+            this.shapesWithEvents = [];
+            if (turn !== null) {
                 this.drawBoard();
             }
         }
@@ -91,7 +94,7 @@ var CocaineCartels;
         };
         Canvas.prototype.drawCells = function () {
             var _this = this;
-            Canvas.board.cells.forEach(function (cell) {
+            this.turn.cells.forEach(function (cell) {
                 _this.drawCell(cell);
             });
         };
@@ -126,10 +129,10 @@ var CocaineCartels;
             var groupByFromAndTo = function (command) {
                 return command.from.hex.toString() + command.to.hex.toString();
             };
-            Canvas.board.cells.forEach(function (cell) {
+            this.turn.cells.forEach(function (cell) {
                 var groups = CocaineCartels.Utilities.groupByIntoArray(cell.moveCommandsFromCell, groupByFromAndTo);
                 groups.forEach(function (commands) {
-                    var oppositeCommands = Canvas.board.getMoveCommands(commands[0].to, commands[0].from);
+                    var oppositeCommands = _this.turn.getMoveCommands(commands[0].to, commands[0].from);
                     var totalCommands = commands.length + oppositeCommands.length;
                     commands.forEach(function (command, index) {
                         _this.drawMoveCommand(command, index, totalCommands);
@@ -140,28 +143,29 @@ var CocaineCartels;
         Canvas.prototype.drawNewUnitsForPlayer = function (player, playerIndex, numberOfPlayers) {
             var _this = this;
             var pos = new CocaineCartels.Pos((playerIndex + 1) * (CocaineCartels.CanvasSettings.width / (numberOfPlayers + 1)), CocaineCartels.CanvasSettings.width + CocaineCartels.CanvasSettings.spaceToNewUnits);
-            Canvas.board.newUnitsForPlayer(player).forEach(function (unit, unitIndex, units) {
+            this.turn.newUnitsForPlayer(player).forEach(function (unit, unitIndex, units) {
                 if (unit.placeCommand === null) {
                     _this.drawUnit(unit, pos, unitIndex, units.length);
                 }
             });
         };
         Canvas.prototype.drawUnit = function (unit, pos, unitIndex, numberOfUnits) {
-            var isNewUnit = unit.newUnit; // (unit.cell === null || unit.placeCommand !== null);
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
-            var newUnitZoom = 10;
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / numberOfUnits;
             var x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             var overlapPos = new CocaineCartels.Pos(x, pos.y);
             var fillColor = unit.moveCommand === null ? unit.color : unit.placedColor;
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
-            var borderWidth = isNewUnit ? CocaineCartels.CanvasSettings.newUnitBorderWidth : CocaineCartels.CanvasSettings.unitBorderWidth;
+            var borderWidth = (this.animated && unit.newUnit) ? CocaineCartels.CanvasSettings.newUnitBorderWidth : CocaineCartels.CanvasSettings.unitBorderWidth;
+            var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitZoom : 1;
             var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
                 var circle = new Konva.Circle({
                     draggable: this.interactive && ownedByThisPlayer,
                     fill: fillColor,
                     radius: unitRadius,
+                    scaleX: scale,
+                    scaleY: scale,
                     shadowBlur: 20,
                     shadowColor: "#000",
                     shadowEnabled: false,
@@ -169,9 +173,7 @@ var CocaineCartels;
                     stroke: borderColor,
                     strokeWidth: borderWidth,
                     x: overlapPos.x,
-                    y: overlapPos.y,
-                    scaleX: isNewUnit ? 1 / newUnitZoom : 1,
-                    scaleY: isNewUnit ? 1 / newUnitZoom : 1
+                    y: overlapPos.y
                 });
                 unit.circle = circle;
             }
@@ -196,20 +198,20 @@ var CocaineCartels;
                 this.shapesWithEvents.push(unit.circle);
             }
             this.unitsLayer.add(unit.circle);
-            if (isNewUnit) {
+            if (this.animated && unit.newUnit) {
                 var newUnitTween = new Konva.Tween({
                     node: unit.circle,
-                    duration: 0.5,
+                    duration: CocaineCartels.CanvasSettings.newUnitTweenDuration,
                     scaleX: 1,
                     scaleY: 1,
                     easing: Konva.Easings.ElasticEaseOut
                 });
-                newUnitTween.play();
+                this.newUnitTweens.push(newUnitTween);
             }
         };
         Canvas.prototype.drawUnits = function () {
             var _this = this;
-            Canvas.board.cells.forEach(function (cell) {
+            this.turn.cells.forEach(function (cell) {
                 _this.drawUnitsOnCell(cell);
             });
             CocaineCartels.Main.game.players.forEach(function (player, index, players) {
@@ -246,15 +248,22 @@ var CocaineCartels;
             this.stage.draw();
         };
         Canvas.prototype.replayLastTurn = function () {
-            throw "Not implemented.";
-            // TODO j:
-            // Switch to the replayCanvas.
-            // Activate all the tweens.
-            // 1. Show new units.
-            // 2. Show moves.
-            // 3. Show battles.
-            // 4. Show points.
+            // Animate new units.
+            this.newUnitTweens.forEach(function (tween) {
+                tween.reset();
+                tween.play();
+            });
+            // 2. Animate moves.
+            // 3. Animate battles.
+            // 4. Animate points.
+            var delay = 0.2;
             // Switch back to the interactive canvas.
+            var promise = new Promise(function (resolve, reject) {
+                window.setTimeout(function () {
+                    resolve();
+                }, (CocaineCartels.CanvasSettings.newUnitTweenDuration + delay) * 1000);
+            });
+            return promise;
         };
         Canvas.prototype.setUpUnitDragEvents = function () {
             var _this = this;
@@ -269,18 +278,18 @@ var CocaineCartels;
                 e.target.shadowEnabled(true);
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
-                unit = Canvas.board.allUnits.filter(function (u) { return u.circle === e.target; })[0];
+                unit = _this.turn.allUnits.filter(function (u) { return u.circle === e.target; })[0];
                 var allowedCells;
                 if (unit.cell === null) {
                     if (unit.placeCommand === null) {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit);
+                        allowedCells = _this.turn.allowedCellsForPlace(unit);
                     }
                     else {
-                        allowedCells = Canvas.board.allowedCellsForPlace(unit).concat(Canvas.board.allowedCellsForMove(unit));
+                        allowedCells = _this.turn.allowedCellsForPlace(unit).concat(_this.turn.allowedCellsForMove(unit));
                     }
                 }
                 else {
-                    allowedCells = Canvas.board.allowedCellsForMove(unit);
+                    allowedCells = _this.turn.allowedCellsForMove(unit);
                 }
                 allowedCells.forEach(function (cell) {
                     cell.dropAllowed = true;
@@ -317,7 +326,7 @@ var CocaineCartels;
                 e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");
                 if (currentHexagon !== null) {
-                    var currentCell = Canvas.board.nearestCell(new CocaineCartels.Pos(currentHexagon.x(), currentHexagon.y()));
+                    var currentCell = _this.turn.nearestCell(new CocaineCartels.Pos(currentHexagon.x(), currentHexagon.y()));
                     if (currentCell.dropAllowed) {
                         if (unit.cell === null) {
                             if (unit.placeCommand === null) {
@@ -327,7 +336,7 @@ var CocaineCartels;
                             }
                             else {
                                 // This might be a re-place of a new unit.
-                                var cellsAllowedForDrop = Canvas.board.allowedCellsForPlace(unit);
+                                var cellsAllowedForDrop = _this.turn.allowedCellsForPlace(unit);
                                 if (cellsAllowedForDrop.filter(function (c) { return c === currentCell; }).length > 0) {
                                     // It's a re-place.
                                     unit.moveCommand = null;
@@ -364,7 +373,7 @@ var CocaineCartels;
                 CocaineCartels.Main.printNumberOfMovesLeft();
                 currentHexagon = null;
                 previousHexagon = null;
-                Canvas.board.cells.forEach(function (cell) {
+                _this.turn.cells.forEach(function (cell) {
                     cell.dropAllowed = false;
                     _this.updateCellColor(cell);
                 });
@@ -429,7 +438,8 @@ var CocaineCartels;
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;
         CanvasSettings.arrowShadowBlurRadius = 10;
-        CanvasSettings.canvasIdTemplate = "canvas";
+        CanvasSettings.newUnitTweenDuration = 1;
+        CanvasSettings.newUnitZoom = 10;
         return CanvasSettings;
     })();
     CocaineCartels.CanvasSettings = CanvasSettings;
@@ -979,10 +989,6 @@ var CocaineCartels;
             var inDemoMode = mode === "demo";
             return inDemoMode;
         };
-        Main.prototype.getCanvasId = function (canvasNumber) {
-            var canvasId = "" + CocaineCartels.CanvasSettings.canvasIdTemplate + canvasNumber;
-            return canvasId;
-        };
         Main.getPlayerLabel = function (player, emptyIfNotReady) {
             if (emptyIfNotReady && !player.ready) {
                 return "<span class=\"label label-border\" style=\"border-color: " + player.color + ";\">&nbsp;&nbsp;&nbsp;</span>";
@@ -1124,16 +1130,12 @@ var CocaineCartels;
             this.updateGameState().then(function () {
                 var widthInPixels = CocaineCartels.CanvasSettings.width + "px";
                 if (Main.game.started) {
-                    if (_this.canvas1 !== undefined) {
-                        _this.canvas1.destroy();
-                        _this.canvas2.destroy();
-                        _this.canvas3.destroy();
+                    if (_this.canvas4 !== undefined) {
                         _this.canvas4.destroy();
+                        _this.replayCanvas.destroy();
                     }
-                    _this.canvas1 = new CocaineCartels.Canvas(Main.game.previousTurn, _this.getCanvasId(1), false);
-                    _this.canvas2 = new CocaineCartels.Canvas(Main.game.previousTurnWithPlaceCommands, _this.getCanvasId(2), false);
-                    _this.canvas3 = new CocaineCartels.Canvas(Main.game.previousTurnWithMoveCommands, _this.getCanvasId(3), false);
-                    _this.canvas4 = new CocaineCartels.Canvas(Main.game.currentTurn, _this.getCanvasId(4), Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
+                    _this.canvas4 = new CocaineCartels.Canvas(Main.game.currentTurn, "canvas4", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
+                    _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurnWithMoveCommands, "replayCanvas", true, false);
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
@@ -1158,7 +1160,7 @@ var CocaineCartels;
                     Main.printAllAlliances();
                     Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
-                    _this.setActiveBoard(4);
+                    _this.setActiveCanvas("canvas4");
                     var enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
                     for (var i = 1; i <= 3; i++) {
                         var boardButtonId = "#boardButton" + i;
@@ -1183,7 +1185,11 @@ var CocaineCartels;
             window.location.reload();
         };
         Main.prototype.replayLastTurn = function () {
-            this.canvas4.replayLastTurn();
+            var _this = this;
+            this.setActiveCanvas("replayCanvas");
+            this.replayCanvas.replayLastTurn().then(function () {
+                _this.setActiveCanvas("canvas4");
+            });
         };
         Main.prototype.resetGame = function () {
             var _this = this;
@@ -1253,20 +1259,17 @@ var CocaineCartels;
             var commands = new CocaineCartels.ClientCommands(null, moveCommands, placeCommands);
             return commands;
         };
-        Main.prototype.setActiveBoard = function (activeBoard) {
-            this.activeBoard = activeBoard;
-            for (var i = 1; i <= 4; i++) {
-                var canvasElement = document.getElementById(this.getCanvasId(i));
-                var buttonElement = document.getElementById("boardButton" + i);
-                if (i === this.activeBoard) {
-                    canvasElement.classList.remove("hidden");
-                    buttonElement.classList.add("active");
+        Main.prototype.setActiveCanvas = function (canvasId) {
+            var canvasIds = ["canvas4", "replayCanvas"];
+            canvasIds.forEach(function (id) {
+                var canvasElement = $("#" + id);
+                if (id === canvasId) {
+                    canvasElement.removeClass("hidden");
                 }
                 else {
-                    canvasElement.classList.add("hidden");
-                    buttonElement.classList.remove("active");
+                    canvasElement.addClass("hidden");
                 }
-            }
+            });
         };
         Main.setCurrentPlayerNotReady = function () {
             var readyButtonElement = document.getElementById("readyButton");

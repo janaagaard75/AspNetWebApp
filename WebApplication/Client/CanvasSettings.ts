@@ -7,12 +7,13 @@ module CocaineCartels {
         public static arrowPointerWidth = 5;
         public static arrowShadowBlurRadius = 10;
         public static arrowWidth: number;
-        public static canvasIdTemplate = "canvas";
         public static cellBorderWidth: number;
         public static cellRadius: number;
         public static center: Pos;
         public static height: number;
         public static newUnitBorderWidth: number;
+        public static newUnitTweenDuration = 1;
+        public static newUnitZoom = 10;
         public static spaceToNewUnits: number;
         public static unitBorderWidth: number;
         public static unitRadius: number;

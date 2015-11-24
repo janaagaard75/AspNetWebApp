@@ -7,10 +7,8 @@
             this.refreshGame();
         }
 
-        private canvas1: Canvas;
-        private canvas2: Canvas;
-        private canvas3: Canvas;
         private canvas4: Canvas;
+        private replayCanvas: Canvas;
 
         public activeBoard: number;
 
@@ -51,11 +49,6 @@
             const mode = paramters["mode"];
             const inDemoMode = mode === "demo";
             return inDemoMode;
-        }
-
-        private getCanvasId(canvasNumber: number) {
-            const canvasId = `${CanvasSettings.canvasIdTemplate}${canvasNumber}`;
-            return canvasId;
         }
 
         private static getPlayerLabel(player: Player, emptyIfNotReady: boolean): string {
@@ -218,17 +211,13 @@
                 const widthInPixels = `${CanvasSettings.width}px`;
 
                 if (Main.game.started) {
-                    if (this.canvas1 !== undefined) {
-                        this.canvas1.destroy();
-                        this.canvas2.destroy();
-                        this.canvas3.destroy();
+                    if (this.canvas4 !== undefined) {
                         this.canvas4.destroy();
+                        this.replayCanvas.destroy();
                     }
 
-                    this.canvas1 = new Canvas(Main.game.previousTurn, this.getCanvasId(1), false);
-                    this.canvas2 = new Canvas(Main.game.previousTurnWithPlaceCommands, this.getCanvasId(2), false);
-                    this.canvas3 = new Canvas(Main.game.previousTurnWithMoveCommands, this.getCanvasId(3), false);
-                    this.canvas4 = new Canvas(Main.game.currentTurn, this.getCanvasId(4), Main.game.currentTurn.mode === TurnMode.PlanMoves);
+                    this.canvas4 = new Canvas(Main.game.currentTurn, "canvas4", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
+                    this.replayCanvas = new Canvas(Main.game.previousTurnWithMoveCommands, "replayCanvas", true, false);
 
                     $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
@@ -257,7 +246,7 @@
                     Main.printOwnAlliances();
                     Main.printAllianceCheckboxes();
 
-                    this.setActiveBoard(4);
+                    this.setActiveCanvas("canvas4");
 
                     const enableFirstThreeBoards = (Main.game.currentTurn.turnNumber >= 2);
                     for (let i = 1; i <= 3; i++) {
@@ -289,7 +278,11 @@
         }
 
         public replayLastTurn() {
-            this.canvas4.replayLastTurn();
+            this.setActiveCanvas("replayCanvas");
+            
+            this.replayCanvas.replayLastTurn().then(() => {
+                this.setActiveCanvas("canvas4");
+            });
         }
 
         private resetGame() {
@@ -375,21 +368,16 @@
             return commands;
         }
 
-        public setActiveBoard(activeBoard: number) {
-            this.activeBoard = activeBoard;
-
-            for (let i = 1; i <= 4; i++) {
-                const canvasElement = document.getElementById(this.getCanvasId(i));
-                const buttonElement = document.getElementById(`boardButton${i}`);
-
-                if (i === this.activeBoard) {
-                    canvasElement.classList.remove("hidden");
-                    buttonElement.classList.add("active");
+        private setActiveCanvas(canvasId) {
+            const canvasIds = ["canvas4", "replayCanvas"];
+            canvasIds.forEach(id => {
+                const canvasElement = $(`#${id}`);
+                if (id === canvasId) {
+                    canvasElement.removeClass("hidden");
                 } else {
-                    canvasElement.classList.add("hidden");
-                    buttonElement.classList.remove("active");
+                    canvasElement.addClass("hidden");
                 }
-            }
+            });
         }
 
         private static setCurrentPlayerNotReady() {
