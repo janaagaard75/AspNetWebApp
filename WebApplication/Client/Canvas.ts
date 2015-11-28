@@ -27,7 +27,7 @@
         private boardLayer: Konva.Layer;
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
-        private movedUnitTweens: Array<Konva.Tween> = [];
+        private moveTweens: Array<Konva.Tween> = [];
         private newUnitTweens: Array<Konva.Tween> = [];
         private shapesWithEvents: Array<Konva.Shape> = [];
         private stage: Konva.Stage;
@@ -58,21 +58,21 @@
 
             switch (state) {
                 case AnimationState.BeforeMove:
-                    cell = unit.cellBeforeMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellBeforeMove === cell);
+                    cell = unit.cellBeforePlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellBeforePlaceAndMove === cell);
                     break;
 
                 case AnimationState.AfterMove:
-                    cell = unit.cellAfterMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellAfterMove === cell);
+                    cell = unit.cellAfterPlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellAfterPlaceAndMove === cell);
                     break;
 
                 case AnimationState.AfterBattle:
                     if (unit.killed) {
                         return null;
                     }
-                    cell = unit.cellAfterMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(u => !u.killed && u.cellAfterMove === cell);
+                    cell = unit.cellAfterPlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => !u.killed && u.cellAfterPlaceAndMove === cell);
                     break;
 
                 default:
@@ -329,7 +329,9 @@
                     y: positionAfterMove.y
                 });
 
-                this.movedUnitTweens.push(movedUnitTween);
+                this.moveTweens.push(movedUnitTween);
+
+                // TODO j: Add tweens for moving after battle.
             }
         }
 
@@ -345,36 +347,37 @@
 
         private drawUnitsOnCell(cell: Cell) {
             if (this.animated) {
-                const units = cell.board.allUnits.filter(unit => unit.cellBeforeMove === cell);
+                const units = cell.board.allUnits.filter(unit => unit.cellBeforePlaceAndMove === cell);
                 units.forEach((unit, index) => {
-                    this.drawUnit(unit, unit.cellBeforeMove.hex.pos, index, units.length);
+                    this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, units.length);
                 });
             } else {
-                const staying = cell.unitsStaying;
-                const toBeMovedHere = cell.unitsToBeMovedToHere;
-                const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
+                //const staying = cell.unitsStaying;
+                //const toBeMovedHere = cell.unitsToBeMovedToHere;
+                //const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
 
-                const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
+                //const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
 
-                staying.forEach((unit, index) => {
-                    this.drawUnit(unit, cell.hex.pos, index, total);
-                });
-
-                const movingHereStartIndex = staying.length;
-                toBeMovedHere.forEach((unit, index) => {
-                    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-                });
-
-                const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-                toBePlacedHere.forEach((unit, index) => {
-                    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
-                });
-
-                // TODO j: Replace above with simpler code below.
-                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
-                //unitsOnCell.forEach((unit, index) => {
-                //    this.drawUnit();
+                //staying.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, index, total);
                 //});
+
+                //const movingHereStartIndex = staying.length;
+                //toBeMovedHere.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
+                //});
+
+                //const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
+                //toBePlacedHere.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+                //});
+
+                const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellAfterPlaceAndMove === cell);
+
+                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
+                unitsOnCell.forEach((unit, index) => {
+                    this.drawUnit(unit, cell.hex.pos, index, unitsOnCell.length);
+                });
             }
         }
 
@@ -387,7 +390,7 @@
 
         public replayLastTurn(): Promise<void> {
             // Reset all the tweens.
-            this.newUnitTweens.concat(this.movedUnitTweens).forEach(tween => {
+            this.newUnitTweens.concat(this.moveTweens).forEach(tween => {
                 tween.reset();
             });
 
@@ -398,7 +401,7 @@
 
             setTimeout(() => {
                 // Animate moves.
-                this.movedUnitTweens.forEach(tween => {
+                this.moveTweens.forEach(tween => {
                     tween.play();
                 });
             }, CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween * 1000)

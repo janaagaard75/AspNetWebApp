@@ -14,7 +14,7 @@ var CocaineCartels;
             this.canvasId = canvasId;
             this.animated = animated;
             this.interactive = interactive;
-            this.movedUnitTweens = [];
+            this.moveTweens = [];
             this.newUnitTweens = [];
             this.shapesWithEvents = [];
             if (animated === true && interactive === true) {
@@ -43,19 +43,19 @@ var CocaineCartels;
             var unitsOnCell;
             switch (state) {
                 case AnimationState.BeforeMove:
-                    cell = unit.cellBeforeMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellBeforeMove === cell; });
+                    cell = unit.cellBeforePlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellBeforePlaceAndMove === cell; });
                     break;
                 case AnimationState.AfterMove:
-                    cell = unit.cellAfterMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellAfterMove === cell; });
+                    cell = unit.cellAfterPlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellAfterPlaceAndMove === cell; });
                     break;
                 case AnimationState.AfterBattle:
                     if (unit.killed) {
                         return null;
                     }
-                    cell = unit.cellAfterMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return !u.killed && u.cellAfterMove === cell; });
+                    cell = unit.cellAfterPlaceAndMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return !u.killed && u.cellAfterPlaceAndMove === cell; });
                     break;
                 default:
                     throw "The state " + state + " is not supported.";
@@ -264,7 +264,7 @@ var CocaineCartels;
                     x: positionAfterMove.x,
                     y: positionAfterMove.y
                 });
-                this.movedUnitTweens.push(movedUnitTween);
+                this.moveTweens.push(movedUnitTween);
             }
         };
         Canvas.prototype.drawUnits = function () {
@@ -279,26 +279,31 @@ var CocaineCartels;
         Canvas.prototype.drawUnitsOnCell = function (cell) {
             var _this = this;
             if (this.animated) {
-                var units = cell.board.allUnits.filter(function (unit) { return unit.cellBeforeMove === cell; });
+                var units = cell.board.allUnits.filter(function (unit) { return unit.cellBeforePlaceAndMove === cell; });
                 units.forEach(function (unit, index) {
-                    _this.drawUnit(unit, unit.cellBeforeMove.hex.pos, index, units.length);
+                    _this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, units.length);
                 });
             }
             else {
-                var staying = cell.unitsStaying;
-                var toBeMovedHere = cell.unitsToBeMovedToHere;
-                var toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
-                var total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
-                staying.forEach(function (unit, index) {
-                    _this.drawUnit(unit, cell.hex.pos, index, total);
-                });
-                var movingHereStartIndex = staying.length;
-                toBeMovedHere.forEach(function (unit, index) {
-                    _this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-                });
-                var toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-                toBePlacedHere.forEach(function (unit, index) {
-                    _this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+                //const staying = cell.unitsStaying;
+                //const toBeMovedHere = cell.unitsToBeMovedToHere;
+                //const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
+                //const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
+                //staying.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, index, total);
+                //});
+                //const movingHereStartIndex = staying.length;
+                //toBeMovedHere.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
+                //});
+                //const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
+                //toBePlacedHere.forEach((unit, index) => {
+                //    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
+                //});
+                var unitsOnCell = cell.board.allUnits.filter(function (unit) { return unit.cellAfterPlaceAndMove === cell; });
+                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
+                unitsOnCell.forEach(function (unit, index) {
+                    _this.drawUnit(unit, cell.hex.pos, index, unitsOnCell.length);
                 });
             }
         };
@@ -311,7 +316,7 @@ var CocaineCartels;
         Canvas.prototype.replayLastTurn = function () {
             var _this = this;
             // Reset all the tweens.
-            this.newUnitTweens.concat(this.movedUnitTweens).forEach(function (tween) {
+            this.newUnitTweens.concat(this.moveTweens).forEach(function (tween) {
                 tween.reset();
             });
             // Animate new units.
@@ -320,7 +325,7 @@ var CocaineCartels;
             });
             setTimeout(function () {
                 // Animate moves.
-                _this.movedUnitTweens.forEach(function (tween) {
+                _this.moveTweens.forEach(function (tween) {
                     tween.play();
                 });
             }, CocaineCartels.CanvasSettings.newUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween * 1000);
@@ -565,7 +570,7 @@ var CocaineCartels;
         Object.defineProperty(Cell.prototype, "unitsAfterMove", {
             get: function () {
                 var _this = this;
-                var unitsAfterMove = this.board.allUnits.filter(function (unit) { return unit.cellAfterMove === _this; });
+                var unitsAfterMove = this.board.allUnits.filter(function (unit) { return unit.cellAfterPlaceAndMove === _this; });
                 return unitsAfterMove;
             },
             enumerable: true,
@@ -1705,22 +1710,25 @@ var CocaineCartels;
             this._color = unitData.player.color;
             this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
         }
-        Object.defineProperty(Unit.prototype, "cellBeforeMove", {
+        Object.defineProperty(Unit.prototype, "cellBeforePlaceAndMove", {
             get: function () {
-                if (this.moveCommand === null) {
-                    return this.cell;
+                if (this.moveCommand !== null) {
+                    return this.moveCommand.from;
                 }
-                return this.moveCommand.from;
+                return this.cell;
             },
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Unit.prototype, "cellAfterMove", {
+        Object.defineProperty(Unit.prototype, "cellAfterPlaceAndMove", {
             get: function () {
-                if (this.moveCommand === null) {
-                    return this.cell;
+                if (this.moveCommand !== null) {
+                    return this.moveCommand.to;
                 }
-                return this.moveCommand.to;
+                if (this.placeCommand !== null) {
+                    return this.placeCommand.on;
+                }
+                return this.cell;
             },
             enumerable: true,
             configurable: true

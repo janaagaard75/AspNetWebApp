@@ -34,20 +34,24 @@ module CocaineCartels {
         public killed: boolean;
         public newUnit: boolean;
 
-        public get cellBeforeMove(): Cell {
-            if (this.moveCommand === null) {
-                return this.cell;
+        public get cellBeforePlaceAndMove(): Cell {
+            if (this.moveCommand !== null) {
+                return this.moveCommand.from;
             }
 
-            return this.moveCommand.from;
+            return this.cell;
         }
 
-        public get cellAfterMove(): Cell {
-            if (this.moveCommand === null) {
-                return this.cell;
+        public get cellAfterPlaceAndMove(): Cell {
+            if (this.moveCommand !== null) {
+                return this.moveCommand.to;
             }
 
-            return this.moveCommand.to;
+            if (this.placeCommand !== null) {
+                return this.placeCommand.on;
+            }
+
+            return this.cell;
         }
 
         /** The color of the unit. Based on the color of the player who onws the unit. */

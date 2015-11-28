@@ -47,7 +47,7 @@ module CocaineCartels {
         }
 
         public get unitsAfterMove(): Array<Unit> {
-            const unitsAfterMove = this.board.allUnits.filter(unit => unit.cellAfterMove === this);
+            const unitsAfterMove = this.board.allUnits.filter(unit => unit.cellAfterPlaceAndMove === this);
             return unitsAfterMove;
         }
 
