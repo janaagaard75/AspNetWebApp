@@ -41,7 +41,7 @@ module CocaineCartels {
         }
 
         public toString(): string {
-            const stringValue = `(${this.r},${this.s}${this.t})`;
+            const stringValue = `(${this.r},${this.s},${this.t})`;
             return stringValue;
         }
     }

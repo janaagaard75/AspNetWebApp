@@ -458,7 +458,7 @@
                     window.setTimeout(() => this.tick(), 1000);
                 })
                 .catch(e => {
-                    alert("Oh noes! An internal error occurred. (╯°□°)╯︵ ┻━┻");
+                    alert("Oh noes! An internal error occurred. (╯°□°)╯︵ ┻━┻\n\n(Refresh the browser window and hope for the best.)");
                     console.error(e);
                 });
         }

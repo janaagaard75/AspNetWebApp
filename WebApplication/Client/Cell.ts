@@ -46,6 +46,11 @@ module CocaineCartels {
             return this._units;
         }
 
+        public get unitsAfterMove(): Array<Unit> {
+            const unitsAfterMove = this.board.allUnits.filter(unit => unit.cellAfterMove === this);
+            return unitsAfterMove;
+        }
+
         /** Returns the units that were already here or to be placed on this cell. Units might be moved to another cell. */
         public get unitsAlreadyHereOrToBePlacedHere(): Array<Unit> {
             const unitsAlreadyHereOrToBePlacedHere = this.units.concat(this.unitsToBePlacedHere);
@@ -54,7 +59,10 @@ module CocaineCartels {
 
         /** Returns the units that have been moved from this cell. */
         public get unitsMovedAwayFromHere(): Array<Unit> {
-            const unitsMovedAwayFromHere = this.moveCommandsFromCell.map(command => command.unit);
+            const unitsMovedAwayFromHere = this.board.allUnits
+                .filter(unit => unit.moveCommand !== null)
+                .filter(unit => unit.moveCommand.from === this);
+
             return unitsMovedAwayFromHere;
         }
 

@@ -1,6 +1,13 @@
 ﻿module CocaineCartels {
     "use strict";
 
+    enum AnimationState {
+        Undefined,
+        BeforeMove,
+        AfterMove,
+        AfterBattle
+    }
+
     export class Canvas {
         constructor(
             private turn: Turn,
@@ -42,6 +49,53 @@
             this.dragLayer = new Konva.Layer();
             this.dragLayer.hitGraphEnabled(false);
             this.stage.add(this.dragLayer);
+        }
+
+        /** Return's the unit's posistion including offset calculations. If the unit is killed then null is returned. */
+        private getAnimatedUnitPosition(unit: Unit, state: AnimationState): Pos {
+            let cell: Cell;
+            let unitsOnCell: Array<Unit>;
+
+            switch (state) {
+                case AnimationState.BeforeMove:
+                    cell = unit.cellBeforeMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellBeforeMove === cell);
+                    break;
+
+                case AnimationState.AfterMove:
+                    cell = unit.cellAfterMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellAfterMove === cell);
+                    break;
+
+                case AnimationState.AfterBattle:
+                    if (unit.killed) {
+                        return null;
+                    }
+                    cell = unit.cellAfterMove;
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => !u.killed && u.cellAfterMove === cell);
+                    break;
+
+                default:
+                    throw `The state ${state} is not supported.`;
+            }
+
+            const unitIndex = unitsOnCell.indexOf(unit);
+            if (unitIndex === -1) {
+                throw "The unit was not found on the cell. Don't know where to draw it then.";
+            }
+
+            const position = this.getPositionOnCell(cell, unitIndex, unitsOnCell.length);
+            return position;
+        }
+
+        private getPositionOnCell(cell: Cell, unitIndex: number, unitsOnCell: number): Pos {
+            const distanceBetweenUnits = CanvasSettings.cellRadius / unitsOnCell;
+            const x = cell.hex.pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            const position = new Pos(
+                x,
+                cell.hex.pos.y
+            );
+            return position;
         }
 
         public destroy() {
@@ -192,11 +246,13 @@
             });
         }
 
-        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, numberOfUnits: number) {
+        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, unitsOnCell: number) {
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
 
-            const distanceBetweenUnits = CanvasSettings.cellRadius / numberOfUnits;
-            const x = pos.x - (numberOfUnits - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            // TODO j: Remove the offset calculation from this method.
+
+            const distanceBetweenUnits = CanvasSettings.cellRadius / unitsOnCell;
+            const x = pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const overlapPos = new Pos(x, pos.y);
             const fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
@@ -263,19 +319,17 @@
                     this.newUnitTweens.push(newUnitTween);
                 }
 
-                if (unit.moveCommand !== null) {
-                    const newPos = unit.moveCommand.to.hex.pos;
+                const positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
 
-                    const movedUnitTween = new Konva.Tween({
-                        duration: CanvasSettings.movedUnitTweenDuration,
-                        node: unit.circle,
-                        easing: Konva.Easings.ElasticEaseInOut, // Konva.Easings.BackEaseIn,
-                        x: newPos.x,
-                        y: newPos.y
-                    });
+                const movedUnitTween = new Konva.Tween({
+                    duration: CanvasSettings.movedUnitTweenDuration,
+                    node: unit.circle,
+                    easing: Konva.Easings.ElasticEaseInOut,
+                    x: positionAfterMove.x,
+                    y: positionAfterMove.y
+                });
 
-                    this.movedUnitTweens.push(movedUnitTween);
-                }
+                this.movedUnitTweens.push(movedUnitTween);
             }
         }
 
@@ -291,18 +345,9 @@
 
         private drawUnitsOnCell(cell: Cell) {
             if (this.animated) {
-                const staying = cell.unitsStaying;
-                const movedAwayFromHere = cell.unitsMovedAwayFromHere;
-
-                const total = staying.length + movedAwayFromHere.length;
-
-                staying.forEach((unit, index) => {
-                    this.drawUnit(unit, cell.hex.pos, index, total);
-                });
-
-                const movedAwayFromHereStartIndex = staying.length;
-                movedAwayFromHere.forEach((unit, index) => {
-                    this.drawUnit(unit, unit.moveCommand.from.hex.pos, movedAwayFromHereStartIndex + index, total);
+                const units = cell.board.allUnits.filter(unit => unit.cellBeforeMove === cell);
+                units.forEach((unit, index) => {
+                    this.drawUnit(unit, unit.cellBeforeMove.hex.pos, index, units.length);
                 });
             } else {
                 const staying = cell.unitsStaying;
@@ -315,7 +360,7 @@
                     this.drawUnit(unit, cell.hex.pos, index, total);
                 });
 
-                const movingHereStartIndex = staying.length; //movedHereStartIndex + movedHere.length;
+                const movingHereStartIndex = staying.length;
                 toBeMovedHere.forEach((unit, index) => {
                     this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
                 });
@@ -324,6 +369,12 @@
                 toBePlacedHere.forEach((unit, index) => {
                     this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
                 });
+
+                // TODO j: Replace above with simpler code below.
+                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
+                //unitsOnCell.forEach((unit, index) => {
+                //    this.drawUnit();
+                //});
             }
         }
 
