@@ -12,6 +12,8 @@ module CocaineCartels {
         public static center: Pos;
         public static delayAfterTween = 0.3;
         public static height: number;
+        public static killedTweenDuration = 1;
+        public static killedTweenScale = 10;
         public static movedUnitTweenDuration = 1;
         public static newUnitScale = 10;
         public static newUnitTweenDuration = 1;

@@ -27,6 +27,7 @@
         private boardLayer: Konva.Layer;
         private commandsLayer: Konva.Layer;
         private dragLayer: Konva.Layer;
+        private killedTweens: Array<Konva.Tween> = [];
         private moveTweens: Array<Konva.Tween> = [];
         private newUnitTweens: Array<Konva.Tween> = [];
         private shapesWithEvents: Array<Konva.Shape> = [];
@@ -49,6 +50,11 @@
             this.dragLayer = new Konva.Layer();
             this.dragLayer.hitGraphEnabled(false);
             this.stage.add(this.dragLayer);
+        }
+
+        private get allTweens(): Array<Konva.Tween> {
+            const allTweens = this.newUnitTweens.concat(this.moveTweens).concat(this.killedTweens);
+            return allTweens;
         }
 
         /** Return's the unit's posistion including offset calculations. If the unit is killed then null is returned. */
@@ -321,17 +327,28 @@
 
                 const positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
 
-                const movedUnitTween = new Konva.Tween({
+                const moveTween = new Konva.Tween({
                     duration: CanvasSettings.movedUnitTweenDuration,
-                    node: unit.circle,
                     easing: Konva.Easings.ElasticEaseInOut,
+                    node: unit.circle,
                     x: positionAfterMove.x,
                     y: positionAfterMove.y
                 });
 
-                this.moveTweens.push(movedUnitTween);
+                this.moveTweens.push(moveTween);
 
-                // TODO j: Add tweens for moving after battle.
+                if (unit.killed) {
+                    const killedTween = new Konva.Tween({
+                        duration: CanvasSettings.killedTweenDuration,
+                        easing: Konva.Easings.EaseOut,
+                        node: unit.circle,
+                        opacity: 0,
+                        scaleX: CanvasSettings.killedTweenScale,
+                        scaleY: CanvasSettings.killedTweenScale
+                    });
+
+                    this.killedTweens.push(killedTween);
+                }
             }
         }
 
@@ -368,7 +385,7 @@
 
         public replayLastTurn(): Promise<void> {
             // Reset all the tweens.
-            this.newUnitTweens.concat(this.moveTweens).forEach(tween => {
+            this.allTweens.forEach(tween => {
                 tween.reset();
             });
 
@@ -377,22 +394,30 @@
                 tween.play();
             });
 
+            const moveDelay = CanvasSettings.delayAfterTween + CanvasSettings.newUnitTweenDuration;
             setTimeout(() => {
                 // Animate moves.
                 this.moveTweens.forEach(tween => {
                     tween.play();
                 });
-            }, CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween * 1000)
+            }, moveDelay * 1000);
 
-            // 3. Animate battles.
+            const killedDelay = moveDelay + CanvasSettings.delayAfterTween + CanvasSettings.movedUnitTweenDuration;
+            setTimeout(() => {
+                // Animate killed units.
+                this.killedTweens.forEach(tween => {
+                    tween.play();
+                });
+            }, killedDelay * 1000);
+
             // 4. Animate points.
 
             // Switch back to the interactive canvas.
-            const totalDelay = CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween + CanvasSettings.movedUnitTweenDuration + CanvasSettings.delayAfterTween;
+            const switchBackDeplay = killedDelay + CanvasSettings.delayAfterTween;
             var promise = new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     resolve();
-                }, totalDelay * 1000);
+                }, switchBackDeplay * 1000);
             });
 
             return promise;

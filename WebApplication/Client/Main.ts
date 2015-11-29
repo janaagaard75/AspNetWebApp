@@ -7,7 +7,7 @@
             this.refreshGame();
         }
 
-        private interactiveCanvas: Canvas; // TODO j: Rename to interactiveOrStaticCanvas.
+        private interactiveCanvas: Canvas; // The canvas is actually static when in 'propose alliances' turn mode.
         private replayCanvas: Canvas;
 
         public activeBoard: number;
