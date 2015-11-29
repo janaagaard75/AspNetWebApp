@@ -34,9 +34,13 @@ module CocaineCartels {
         public killed: boolean;
         public newUnit: boolean;
 
-        public get cellBeforePlaceAndMove(): Cell {
+        public get cellAfterPlaceBeforeMove(): Cell {
             if (this.moveCommand !== null) {
                 return this.moveCommand.from;
+            }
+
+            if (this.placeCommand !== null) {
+                return this.placeCommand.on;
             }
 
             return this.cell;

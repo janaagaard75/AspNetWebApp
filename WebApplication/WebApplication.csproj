@@ -259,6 +259,7 @@
     <TypeScriptCompile Include="Client\Interfaces\IAlliances.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IAlliancePair.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IAllianceProposal.ts" />
+    <TypeScriptCompile Include="Client\Interfaces\ITweenSettings.ts" />
     <TypeScriptCompile Include="Client\Turn.ts" />
     <TypeScriptCompile Include="Client\Canvas.ts" />
     <TypeScriptCompile Include="Client\Cell.ts" />
@@ -295,6 +296,7 @@
     <TypeScriptCompile Include="Client\Player.ts" />
     <TypeScriptCompile Include="Client\Pos.ts" />
     <TypeScriptCompile Include="Client\Settings.ts" />
+    <TypeScriptCompile Include="Client\TweenCreator.ts" />
     <TypeScriptCompile Include="Client\Unit.ts" />
     <TypeScriptCompile Include="Client\Utilities.ts" />
     <TypeScriptCompile Include="scripts\typings\es6-promise\es6-promise.d.ts" />

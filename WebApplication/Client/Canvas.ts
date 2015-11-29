@@ -30,6 +30,7 @@
         private killedTweens: Array<Konva.Tween> = [];
         private moveTweens: Array<Konva.Tween> = [];
         private newUnitTweens: Array<Konva.Tween> = [];
+        //private repositionTweens: Array<TweenCreator> = [];
         private shapesWithEvents: Array<Konva.Shape> = [];
         private stage: Konva.Stage;
         private unitsLayer: Konva.Layer;
@@ -57,15 +58,18 @@
             return allTweens;
         }
 
-        /** Return's the unit's posistion including offset calculations. If the unit is killed then null is returned. */
+        /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         private getAnimatedUnitPosition(unit: Unit, state: AnimationState): Pos {
             let cell: Cell;
             let unitsOnCell: Array<Unit>;
 
             switch (state) {
                 case AnimationState.BeforeMove:
-                    cell = unit.cellBeforePlaceAndMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellBeforePlaceAndMove === cell);
+                    cell = unit.cellAfterPlaceBeforeMove;
+                    if (cell === null) {
+                        return null;
+                    }
+                    unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellAfterPlaceBeforeMove === cell);
                     break;
 
                 case AnimationState.AfterMove:
@@ -315,7 +319,7 @@
             if (this.animated) {
                 if (unit.newUnit) {
                     const newUnitTween = new Konva.Tween({
-                        duration: CanvasSettings.newUnitTweenDuration,
+                        duration: CanvasSettings.tweenDuration,
                         easing: Konva.Easings.ElasticEaseOut,
                         node: unit.circle,
                         scaleX: 1,
@@ -328,7 +332,7 @@
                 const positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
 
                 const moveTween = new Konva.Tween({
-                    duration: CanvasSettings.movedUnitTweenDuration,
+                    duration: CanvasSettings.tweenDuration,
                     easing: Konva.Easings.ElasticEaseInOut,
                     node: unit.circle,
                     x: positionAfterMove.x,
@@ -340,7 +344,7 @@
                 if (unit.killed) {
                     // Can't set scale here, because this screws up the new unit tween.
                     const killedTween = new Konva.Tween({
-                        duration: CanvasSettings.killedTweenDuration,
+                        duration: CanvasSettings.tweenDuration,
                         easing: Konva.Easings.EaseOut,
                         node: unit.circle,
                         opacity: 0
@@ -348,6 +352,20 @@
 
                     this.killedTweens.push(killedTween);
                 }
+
+                //const positionAfterKilled = this.getAnimatedUnitPosition(unit, AnimationState.AfterBattle);
+                //if (positionAfterKilled !== null) {
+                //    const repositionTween = new TweenCreator(
+                //        unit.circle,
+                //        {
+                //            easing: Konva.Easings.ElasticEaseInOut,
+                //            x: positionAfterKilled.x,
+                //            y: positionAfterKilled.y
+                //        }
+                //    );
+
+                //    this.repositionTweens.push(repositionTween);
+                //}
             }
         }
 
@@ -363,9 +381,9 @@
 
         private drawUnitsOnCell(cell: Cell) {
             if (this.animated) {
-                const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellBeforePlaceAndMove === cell);
+                const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellAfterPlaceBeforeMove === cell);
                 unitsOnCell.forEach((unit, index) => {
-                    this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, unitsOnCell.length);
+                    this.drawUnit(unit, unit.cellAfterPlaceBeforeMove.hex.pos, index, unitsOnCell.length);
                 });
             } else {
                 const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellAfterPlaceAndMove === cell);
@@ -393,7 +411,7 @@
                 tween.play();
             });
 
-            const moveDelay = CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween;
+            const moveDelay = CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             setTimeout(() => {
                 // Animate moves.
                 this.moveTweens.forEach(tween => {
@@ -401,7 +419,7 @@
                 });
             }, moveDelay * 1000);
 
-            const killedDelay = moveDelay + CanvasSettings.movedUnitTweenDuration + CanvasSettings.delayAfterTween;
+            const killedDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             setTimeout(() => {
                 // Animate killed units.
                 this.killedTweens.forEach(tween => {
@@ -409,14 +427,22 @@
                 });
             }, killedDelay * 1000);
 
-            // 4. Animate points.
+            //const repositionDelay = killedDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
+            //setTimeout(() => {
+            //    this.repositionTweens.forEach(tween => {
+            //        //tween.createAndPlay();
+            //    });
+            //}, repositionDelay * 1000);
 
             // Switch back to the interactive canvas.
-            const switchBackDeplay = killedDelay + CanvasSettings.killedTweenDuration + CanvasSettings.delayAfterTween;
+            const allDoneDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             var promise = new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     resolve();
-                }, switchBackDeplay * 1000);
+                    //this.repositionTweens.forEach(tween => {
+                    //    //tween.destroy();
+                    //});
+                }, allDoneDelay * 1000);
             });
 
             return promise;
@@ -554,9 +580,9 @@
             var backgroundColor: string;
             if (cell.dropAllowed) {
                 if (cell.hovered) {
-                    backgroundColor = "#afa";
+                    backgroundColor = CanvasSettings.dropAllowedAndHoveredColor;
                 } else {
-                    backgroundColor = "#dfd";
+                    backgroundColor = CanvasSettings.dropAllowedNotHoveredColor;
                 }
             } else {
                 backgroundColor = null;

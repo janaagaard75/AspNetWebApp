@@ -17,6 +17,7 @@ var CocaineCartels;
             this.killedTweens = [];
             this.moveTweens = [];
             this.newUnitTweens = [];
+            //private repositionTweens: Array<TweenCreator> = [];
             this.shapesWithEvents = [];
             if (animated === true && interactive === true) {
                 throw "A canvas cannot be both animated and interactive.";
@@ -46,14 +47,17 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        /** Return's the unit's posistion including offset calculations. If the unit is killed then null is returned. */
+        /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         Canvas.prototype.getAnimatedUnitPosition = function (unit, state) {
             var cell;
             var unitsOnCell;
             switch (state) {
                 case AnimationState.BeforeMove:
-                    cell = unit.cellBeforePlaceAndMove;
-                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellBeforePlaceAndMove === cell; });
+                    cell = unit.cellAfterPlaceBeforeMove;
+                    if (cell === null) {
+                        return null;
+                    }
+                    unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellAfterPlaceBeforeMove === cell; });
                     break;
                 case AnimationState.AfterMove:
                     cell = unit.cellAfterPlaceAndMove;
@@ -257,7 +261,7 @@ var CocaineCartels;
             if (this.animated) {
                 if (unit.newUnit) {
                     var newUnitTween = new Konva.Tween({
-                        duration: CocaineCartels.CanvasSettings.newUnitTweenDuration,
+                        duration: CocaineCartels.CanvasSettings.tweenDuration,
                         easing: Konva.Easings.ElasticEaseOut,
                         node: unit.circle,
                         scaleX: 1,
@@ -267,7 +271,7 @@ var CocaineCartels;
                 }
                 var positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
                 var moveTween = new Konva.Tween({
-                    duration: CocaineCartels.CanvasSettings.movedUnitTweenDuration,
+                    duration: CocaineCartels.CanvasSettings.tweenDuration,
                     easing: Konva.Easings.ElasticEaseInOut,
                     node: unit.circle,
                     x: positionAfterMove.x,
@@ -277,7 +281,7 @@ var CocaineCartels;
                 if (unit.killed) {
                     // Can't set scale here, because this screws up the new unit tween.
                     var killedTween = new Konva.Tween({
-                        duration: CocaineCartels.CanvasSettings.killedTweenDuration,
+                        duration: CocaineCartels.CanvasSettings.tweenDuration,
                         easing: Konva.Easings.EaseOut,
                         node: unit.circle,
                         opacity: 0
@@ -298,9 +302,9 @@ var CocaineCartels;
         Canvas.prototype.drawUnitsOnCell = function (cell) {
             var _this = this;
             if (this.animated) {
-                var unitsOnCell = cell.board.allUnits.filter(function (unit) { return unit.cellBeforePlaceAndMove === cell; });
+                var unitsOnCell = cell.board.allUnits.filter(function (unit) { return unit.cellAfterPlaceBeforeMove === cell; });
                 unitsOnCell.forEach(function (unit, index) {
-                    _this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, unitsOnCell.length);
+                    _this.drawUnit(unit, unit.cellAfterPlaceBeforeMove.hex.pos, index, unitsOnCell.length);
                 });
             }
             else {
@@ -326,27 +330,35 @@ var CocaineCartels;
             this.newUnitTweens.forEach(function (tween) {
                 tween.play();
             });
-            var moveDelay = CocaineCartels.CanvasSettings.newUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+            var moveDelay = CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             setTimeout(function () {
                 // Animate moves.
                 _this.moveTweens.forEach(function (tween) {
                     tween.play();
                 });
             }, moveDelay * 1000);
-            var killedDelay = moveDelay + CocaineCartels.CanvasSettings.movedUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+            var killedDelay = moveDelay + CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             setTimeout(function () {
                 // Animate killed units.
                 _this.killedTweens.forEach(function (tween) {
                     tween.play();
                 });
             }, killedDelay * 1000);
-            // 4. Animate points.
+            //const repositionDelay = killedDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
+            //setTimeout(() => {
+            //    this.repositionTweens.forEach(tween => {
+            //        //tween.createAndPlay();
+            //    });
+            //}, repositionDelay * 1000);
             // Switch back to the interactive canvas.
-            var switchBackDeplay = killedDelay + CocaineCartels.CanvasSettings.killedTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+            var allDoneDelay = moveDelay + CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             var promise = new Promise(function (resolve, reject) {
                 setTimeout(function () {
                     resolve();
-                }, switchBackDeplay * 1000);
+                    //this.repositionTweens.forEach(tween => {
+                    //    //tween.destroy();
+                    //});
+                }, allDoneDelay * 1000);
             });
             return promise;
         };
@@ -469,10 +481,10 @@ var CocaineCartels;
             var backgroundColor;
             if (cell.dropAllowed) {
                 if (cell.hovered) {
-                    backgroundColor = "#afa";
+                    backgroundColor = CocaineCartels.CanvasSettings.dropAllowedAndHoveredColor;
                 }
                 else {
-                    backgroundColor = "#dfd";
+                    backgroundColor = CocaineCartels.CanvasSettings.dropAllowedNotHoveredColor;
                 }
             }
             else {
@@ -522,12 +534,12 @@ var CocaineCartels;
         CanvasSettings.arrowPointerLength = 4;
         CanvasSettings.arrowPointerWidth = 5;
         CanvasSettings.arrowShadowBlurRadius = 10;
+        CanvasSettings.dropAllowedAndHoveredColor = "#afa";
+        CanvasSettings.dropAllowedNotHoveredColor = "#dfd";
         CanvasSettings.delayAfterTween = 0.3;
-        CanvasSettings.killedTweenDuration = 1;
         CanvasSettings.killedTweenScale = 10;
-        CanvasSettings.movedUnitTweenDuration = 1;
         CanvasSettings.newUnitScale = 10;
-        CanvasSettings.newUnitTweenDuration = 1;
+        CanvasSettings.tweenDuration = 1;
         return CanvasSettings;
     })();
     CocaineCartels.CanvasSettings = CanvasSettings;
@@ -973,6 +985,16 @@ var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
 })(CocaineCartels || (CocaineCartels = {}));
+//module CocaineCartels {
+//    "use strict";
+//    export interface ITweenSettings {
+//        easing: Konva.Easings;
+//        scaleX?: number;
+//        scaleY?: number;
+//        x?: number;
+//        y?: number;
+//    }
+//}
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
@@ -1657,6 +1679,29 @@ var CocaineCartels;
     })();
     CocaineCartels.Turn = Turn;
 })(CocaineCartels || (CocaineCartels = {}));
+//module CocaineCartels {
+//    "use strict";
+//    export class TweenCreator {
+//        constructor(
+//            node: Konva.Node,
+//            settings: ITweenSettings
+//        ) {
+//            this.settings = settings;
+//            this.settings.node = node;
+//            this.settings.duration = CanvasSettings.tweenDuration;
+//        }
+//        private settings: any;
+//        private tween: Konva.Tween;
+//        public createAndPlay() {
+//            this.tween = new Konva.Tween(this.settings);
+//            this.tween.play();
+//        }
+//        public destroy() {
+//            this.tween.reset();
+//            this.tween.destroy();
+//        }
+//    }
+//}
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
@@ -1675,10 +1720,13 @@ var CocaineCartels;
             this._color = unitData.player.color;
             this._movedColor = tinycolor(unitData.player.color).lighten(35).toString("hex6");
         }
-        Object.defineProperty(Unit.prototype, "cellBeforePlaceAndMove", {
+        Object.defineProperty(Unit.prototype, "cellAfterPlaceBeforeMove", {
             get: function () {
                 if (this.moveCommand !== null) {
                     return this.moveCommand.from;
+                }
+                if (this.placeCommand !== null) {
+                    return this.placeCommand.on;
                 }
                 return this.cell;
             },
