@@ -192,21 +192,17 @@ namespace CocaineCartels.BusinessLogic
         {
             var currentTurn = NextTurn.Clone();
 
-            currentTurn.UnitsOnCells.ForEach(unit =>
+            var playersUnitsOnCells = currentTurn.UnitsOnCells.Where(unit => unit.Player.Color != player.Color);
+            foreach (var unit in playersUnitsOnCells)
             {
-                if (unit.Player.Color != player.Color)
-                {
-                    unit.RemoveMoveCommand();
-                }
-            });
+                unit.RemoveMoveCommand();
+            }
 
-            currentTurn.NewUnits.ForEach(unit =>
+            var playersNewUnits = currentTurn.NewUnits.Where(unit => unit.Player.Color != player.Color);
+            foreach (var unit in playersNewUnits)
             {
-                if (unit.Player.Color != player.Color)
-                {
-                    unit.RemovePlaceCommand();
-                }
-            });
+                unit.RemovePlaceCommand();
+            }
 
             currentTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color != player.Color);
 
@@ -244,7 +240,10 @@ namespace CocaineCartels.BusinessLogic
             IEnumerable<Unit> unitsOnBoard = NextTurn.UnitsOnCells.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> newUnits = NextTurn.NewUnits.Where(unit => unit.Player.Color == playerColor);
             IEnumerable<Unit> unitsBelongingToPlayer = unitsOnBoard.Concat(newUnits);
-            unitsBelongingToPlayer.ForEach(unit => { unit.RemoveCommands(); });
+            foreach (var unit in unitsBelongingToPlayer)
+            {
+                unit.RemoveCommands();
+            }
 
             NextTurn.AllianceProposals.RemoveWhere(proposal => proposal.FromPlayer.Color == playerColor);
         }
@@ -294,17 +293,17 @@ namespace CocaineCartels.BusinessLogic
 
             // Remove killed units.
             IEnumerable<Unit> unitsToRemove = NextTurn.UnitsOnCells.Where(unit => unit.Killed);
-            unitsToRemove.ForEach(unitToRemove =>
+            foreach (var unitToRemove in unitsToRemove)
             {
                 unitToRemove.Cell.RemoveUnit(unitToRemove);
-            });
+            }
 
             // Remove new unit flags and the move commands.
-            NextTurn.AllUnits.ForEach(unit =>
+            foreach (var unit in NextTurn.AllUnits)
             {
                 unit.NoLongerNewUnit();
                 unit.RemoveMoveCommand();
-            });
+            }
 
             // Assign new units to the players, add points to them and set their ready state to false.
             Players.ForEach(player =>
@@ -338,14 +337,12 @@ namespace CocaineCartels.BusinessLogic
             // Loop through each player's alliance proposals. See if there is a reverse proposal. If so, then create an alliance between the two players.
             Players.ForEach(player =>
             {
-                IEnumerable<AllianceProposal> proposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer.Color == player.Color);
-                proposals.ForEach(proposal =>
+                IEnumerable<AllianceProposal> playersProposals = NextTurn.AllianceProposals.Where(proposal => proposal.FromPlayer.Color == player.Color);
+                IEnumerable<AllianceProposal> acceptedProposals = playersProposals.Where(proposal => NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0);
+                foreach (var proposal in acceptedProposals)
                 {
-                    if (NextTurn.AllianceProposals.Count(reverseProposal => reverseProposal.FromPlayer == proposal.ToPlayer && reverseProposal.ToPlayer == proposal.FromPlayer) > 0)
-                    {
-                        NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
-                    }
-                });
+                    NextTurn.Alliances.AddAlliance(proposal.FromPlayer, proposal.ToPlayer);
+                }
             });
 
             // Remove all alliance proposals.
@@ -423,7 +420,8 @@ namespace CocaineCartels.BusinessLogic
 
         public void SetPlayerReadyStatus(string playerColor, bool isReady)
         {
-            Players.Where(player => player.Color == playerColor).ForEach(player => { player.Ready = isReady; });
+            Player player = Players.Single(p => p.Color == playerColor);
+            player.Ready = isReady;
 
             PerformTurnIfAllPlayersAreReady();
         }

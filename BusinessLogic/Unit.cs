@@ -33,8 +33,8 @@ namespace CocaineCartels.BusinessLogic
 
         public void RemoveCommands()
         {
-            RemovePlaceCommand();
             RemoveMoveCommand();
+            RemovePlaceCommand();
         }
 
         public void RemoveMoveCommand()

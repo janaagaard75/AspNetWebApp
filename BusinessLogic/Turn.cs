@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CocaineCartels.BusinessLogic.Extensions;
 
 namespace CocaineCartels.BusinessLogic
 {
@@ -55,10 +54,10 @@ namespace CocaineCartels.BusinessLogic
         /// <summary>Resolve combats on cells.</summary>
         internal void Fight()
         {
-            Cells.ForEach(cell =>
+            foreach (var cell in Cells)
             {
                 cell.Fight();
-            });
+            }
         }
 
         public void IncreaseTurnNumber()

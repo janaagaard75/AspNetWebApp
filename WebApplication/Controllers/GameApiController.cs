@@ -62,20 +62,29 @@ namespace CocaineCartels.WebApplication.Controllers
 
             Game.Instance.DeleteNextTurnCommands(currentPlayerColor);
 
-            commands.PlaceCommands?.ForEach(placeCommand =>
+            if (commands.PlaceCommands != null)
             {
-                Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
-            });
+                foreach (var placeCommand in commands.PlaceCommands)
+                {
+                    Game.Instance.AddPlaceCommand(currentPlayerColor, placeCommand.On.ToHex());
+                }
+            }
 
-            commands.MoveCommands?.ForEach(moveCommand =>
+            if (commands.MoveCommands != null)
             {
-                Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
-            });
+                foreach (var moveCommand in commands.MoveCommands)
+                {
+                    Game.Instance.AddMoveCommand(currentPlayerColor, moveCommand.From.ToHex(), moveCommand.To.ToHex());
+                }
+            }
 
-            commands.AllianceProposals?.ForEach(proposal =>
+            if (commands.AllianceProposals != null)
             {
-                Game.Instance.AddAllianceProposal(currentPlayerColor, proposal.ToPlayer);
-            });
+                foreach (var proposal in commands.AllianceProposals)
+                {
+                    Game.Instance.AddAllianceProposal(currentPlayerColor, proposal.ToPlayer);
+                }
+            }
 
             Game.Instance.UpdateCommandsSentOn(currentPlayerColor);
             Game.Instance.SetPlayerReadyStatus(currentPlayerColor, true);

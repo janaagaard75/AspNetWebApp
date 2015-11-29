@@ -56,7 +56,6 @@
     <Compile Include="PlayerData.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hex.cs" />
-    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="ServerMoveCommand.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="ServerPlaceCommand.cs" />
