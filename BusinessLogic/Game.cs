@@ -292,7 +292,7 @@ namespace CocaineCartels.BusinessLogic
             PreviousTurn = NextTurn.Clone();
 
             // Remove killed units.
-            IEnumerable<Unit> unitsToRemove = NextTurn.UnitsOnCells.Where(unit => unit.Killed);
+            IEnumerable<Unit> unitsToRemove = NextTurn.UnitsOnCells.Where(unit => unit.Killed).ToList();
             foreach (var unitToRemove in unitsToRemove)
             {
                 unitToRemove.Cell.RemoveUnit(unitToRemove);

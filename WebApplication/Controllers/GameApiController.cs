@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using CocaineCartels.BusinessLogic;
-using CocaineCartels.BusinessLogic.Extensions;
 using CocaineCartels.WebApplication.Models;
 
 namespace CocaineCartels.WebApplication.Controllers
