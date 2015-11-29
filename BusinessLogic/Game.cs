@@ -314,19 +314,7 @@ namespace CocaineCartels.BusinessLogic
                 player.Ready = false;
             });
 
-            switch (Settings.GameMode)
-            {
-                case GameMode.NoAlliances:
-                    // Nothing to do here - keep the turn mode to PlanMoves.
-                    break;
-
-                case GameMode.AlliancesInSeparateTurns:
-                    NextTurn.Mode = TurnMode.ProposeAlliances;
-                    break;
-
-                default:
-                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
-            }
+            NextTurn.Mode = TurnMode.ProposeAlliances;
         }
 
         private void PerformProposeAlliancesTurn()
@@ -354,15 +342,7 @@ namespace CocaineCartels.BusinessLogic
                 player.Ready = false;
             });
 
-            switch (Settings.GameMode)
-            {
-                case GameMode.AlliancesInSeparateTurns:
-                    NextTurn.Mode = TurnMode.PlanMoves;
-                    break;
-
-                default:
-                    throw new NotSupportedException($"Game mode {Settings.GameMode} is not supported.");
-            }
+            NextTurn.Mode = TurnMode.PlanMoves;
         }
 
         /// <summary>Executes the commands, updating the boards. Resolves combats. Assigns new units.</summary>

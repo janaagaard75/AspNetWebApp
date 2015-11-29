@@ -33,35 +33,15 @@ namespace CocaineCartels.BusinessLogic
 
         internal void Fight()
         {
-            switch (Settings.GameMode)
-            {
-                case GameMode.AlliancesInSeparateTurns:
-                    FightWithAlliances();
-                    break;
-
-                case GameMode.NoAlliances:
-                    while (PlayersOnCell().Count() > 1)
-                    {
-                        RemoveAUnitFromEachPlayer();
-                    }
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void FightWithAlliances()
-        {
             bool somebodyDied;
             do
             {
-                somebodyDied = FightWithAlliances2();
+                somebodyDied = FightWithAlliances();
             }
             while (somebodyDied);
         }
 
-        private bool FightWithAlliances2()
+        private bool FightWithAlliances()
         {
             IEnumerable<Player> playersOnCell = PlayersOnCell();
 
@@ -123,28 +103,8 @@ namespace CocaineCartels.BusinessLogic
 
         private IEnumerable<Player> PlayersOnCell()
         {
-            IEnumerable<Player> players = UnitsList.GroupBy(unit => unit.Player.Color).Select(g => Game.Instance.GetPlayer(g.Key));
+            IEnumerable<Player> players = UnitsList.Where(unit => !unit.Killed).GroupBy(unit => unit.Player.Color).Select(g => Game.Instance.GetPlayer(g.Key));
             return players;
-        }
-
-        private void RemoveUnitsFromPlayer(Player player, int numberOfUnits)
-        {
-            for (int i = 0; i < numberOfUnits; i++)
-            {
-                Unit unitToRemove = Units.FirstOrDefault(unit => unit.Player.Color == player.Color);
-                if (unitToRemove != null)
-                {
-                    RemoveUnit(unitToRemove);
-                }
-            }
-        }
-
-        private void RemoveAUnitFromEachPlayer()
-        {
-            Game.Instance.Players.ForEach(player =>
-            {
-                RemoveUnitsFromPlayer(player, 1);
-            });
         }
 
         internal void RemoveUnit(Unit unit)
