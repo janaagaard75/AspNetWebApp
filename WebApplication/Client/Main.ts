@@ -146,7 +146,15 @@
                 case TurnMode.PlanMoves:
                     const ownAlliances = Main.game.currentTurn.alliances.alliancePairs
                         .map(pair => {
-                            return `<div><span style="color: ${pair.playerA}">${pair.playerA}</span> & <span style="color: ${pair.playerB}">${pair.playerB}</span></div>`;
+                            const html = [
+                                "<div>",
+                                ` <span style="color: ${pair.playerA.color}">${pair.playerA.name}</span>`,
+                                " & ",
+                                ` <span style="color: ${pair.playerB.color}">${pair.playerB.name}</span>`,
+                                "</div>"
+                            ].join("");
+
+                            return html;
                         });
 
                     let ownAlliancesText: string;
