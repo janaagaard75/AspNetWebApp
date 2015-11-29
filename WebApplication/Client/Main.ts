@@ -51,11 +51,18 @@
             return inDemoMode;
         }
 
-        private static getPlayerLabel(player: Player, emptyIfNotReady: boolean): string {
-            if (emptyIfNotReady && !player.ready) {
-                return `<span class="label label-border" style="border-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`;
+        private static getPlayerBadge(player: Player, emptyIfNotReady: boolean): string {
+            const label = Main.getPlayerLabel(player, "&nbsp;&nbsp;&nbsp;", !emptyIfNotReady || player.ready);
+            return label;
+        }
+
+        private static getPlayerLabel(player: Player, content: string, filledBackground: boolean) {
+            if (filledBackground) {
+                const label = `<span class="label label-border" style="border-color: ${player.color}; background-color: ${player.color};">${content}</span>`;
+                return label;
             } else {
-                return `<span class="label label-border" style="border-color: ${player.color}; background-color: ${player.color};">&nbsp;&nbsp;&nbsp;</span>`;
+                const label = `<span class="label label-border" style="border-color: ${player.color};">${content}</span>`;
+                return label;
             }
         }
 
@@ -159,27 +166,43 @@
         }
 
         private static printPlayersPoints(showLastTurnsPoints: boolean) {
-            const playersPoints = Main.game.players.map(player => {
-                let points: number;
-                let addedPoints: string;
-                if (showLastTurnsPoints) {
-                    points = player.points - player.pointsLastTurn;
-                    addedPoints = "";
-                } else {
-                    points = player.points;
-                    addedPoints = `+${player.pointsLastTurn}`;
-                }
+            const playerPointsRows = Main.game.players
+                // Sort decending.
+                .sort((playerA, playerB) => playerB.points - playerA.points)
+                .map(player => {
+                    let points: number;
+                    let addedPoints: string;
+                    if (showLastTurnsPoints) {
+                        points = player.points - player.pointsLastTurn;
+                        addedPoints = "";
+                    } else {
+                        points = player.points;
+                        addedPoints = `+${player.pointsLastTurn}`;
+                    }
 
-                const playerPoints = `<table style="display: inline-block"><tr><td><span class="label" style="background-color: ${player.color}; color: #fff;">${points}</span></td></tr><tr><td>${addedPoints}</td></tr></table>`;
-                return playerPoints;
-            });
-            $("#playersPoints").html(playersPoints.join(" "));
+                    const playerPoints = [
+                        "<p>",
+                        Main.getPlayerLabel(player, points.toString(), true),
+                        `  ${addedPoints}`,
+                        "</p>"
+                    ].join("");
+
+                    return playerPoints;
+                });
+
+            const playersPoints = [
+                "<table>",
+                playerPointsRows.join(""),
+                "</table>"
+            ].join("");
+
+            $("#playersPoints").html(playersPoints);
         }
 
         private static printPlayersStatus() {
             const playersStatus = Main.game.players
                 .map(player => {
-                    return Main.getPlayerLabel(player, true);
+                    return Main.getPlayerBadge(player, true);
                 })
                 .join(" ");
             document.getElementById("playersStatus").innerHTML = playersStatus;
@@ -187,12 +210,12 @@
 
         private printStartPage() {
             $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-            $("#startPlayerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
+            $("#startPlayerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
             this.printStartPlayersReady();
         }
 
         private printStartPlayersReady() {
-            const playersColors = Main.game.players.map(player => Main.getPlayerLabel(player, true)).join(" ");
+            const playersColors = Main.game.players.map(player => Main.getPlayerBadge(player, true)).join(" ");
             $("#startPlayersColors").html(playersColors);
         }
 
@@ -219,7 +242,7 @@
                     this.interactiveCanvas = new Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
                     this.replayCanvas = new Canvas(Main.game.previousTurn, "replayCanvas", true, false);
 
-                    $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
+                    $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);
@@ -281,7 +304,7 @@
             $("#replayButton").prop("disabled", true);
 
             this.setActiveCanvas("replayCanvas");
-            
+
             this.replayCanvas.replayLastTurn().then(() => {
                 this.setActiveCanvas("interactiveCanvas");
                 $("#replayButton").prop("disabled", false);

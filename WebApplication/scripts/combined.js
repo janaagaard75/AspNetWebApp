@@ -1081,12 +1081,18 @@ var CocaineCartels;
             var inDemoMode = mode === "demo";
             return inDemoMode;
         };
-        Main.getPlayerLabel = function (player, emptyIfNotReady) {
-            if (emptyIfNotReady && !player.ready) {
-                return "<span class=\"label label-border\" style=\"border-color: " + player.color + ";\">&nbsp;&nbsp;&nbsp;</span>";
+        Main.getPlayerBadge = function (player, emptyIfNotReady) {
+            var label = Main.getPlayerLabel(player, "&nbsp;&nbsp;&nbsp;", !emptyIfNotReady || player.ready);
+            return label;
+        };
+        Main.getPlayerLabel = function (player, content, filledBackground) {
+            if (filledBackground) {
+                var label = "<span class=\"label label-border\" style=\"border-color: " + player.color + "; background-color: " + player.color + ";\">" + content + "</span>";
+                return label;
             }
             else {
-                return "<span class=\"label label-border\" style=\"border-color: " + player.color + "; background-color: " + player.color + ";\">&nbsp;&nbsp;&nbsp;</span>";
+                var label = "<span class=\"label label-border\" style=\"border-color: " + player.color + ";\">" + content + "</span>";
+                return label;
             }
         };
         Main.getTurnModeString = function (turnMode) {
@@ -1176,7 +1182,9 @@ var CocaineCartels;
             }
         };
         Main.printPlayersPoints = function (showLastTurnsPoints) {
-            var playersPoints = Main.game.players.map(function (player) {
+            var playerPointsRows = Main.game.players
+                .sort(function (playerA, playerB) { return playerB.points - playerA.points; })
+                .map(function (player) {
                 var points;
                 var addedPoints;
                 if (showLastTurnsPoints) {
@@ -1187,26 +1195,36 @@ var CocaineCartels;
                     points = player.points;
                     addedPoints = "+" + player.pointsLastTurn;
                 }
-                var playerPoints = "<table style=\"display: inline-block\"><tr><td><span class=\"label\" style=\"background-color: " + player.color + "; color: #fff;\">" + points + "</span></td></tr><tr><td>" + addedPoints + "</td></tr></table>";
+                var playerPoints = [
+                    "<p>",
+                    Main.getPlayerLabel(player, points.toString(), true),
+                    ("  " + addedPoints),
+                    "</p>"
+                ].join("");
                 return playerPoints;
             });
-            $("#playersPoints").html(playersPoints.join(" "));
+            var playersPoints = [
+                "<table>",
+                playerPointsRows.join(""),
+                "</table>"
+            ].join("");
+            $("#playersPoints").html(playersPoints);
         };
         Main.printPlayersStatus = function () {
             var playersStatus = Main.game.players
                 .map(function (player) {
-                return Main.getPlayerLabel(player, true);
+                return Main.getPlayerBadge(player, true);
             })
                 .join(" ");
             document.getElementById("playersStatus").innerHTML = playersStatus;
         };
         Main.prototype.printStartPage = function () {
             $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-            $("#startPlayerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
+            $("#startPlayerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
             this.printStartPlayersReady();
         };
         Main.prototype.printStartPlayersReady = function () {
-            var playersColors = Main.game.players.map(function (player) { return Main.getPlayerLabel(player, true); }).join(" ");
+            var playersColors = Main.game.players.map(function (player) { return Main.getPlayerBadge(player, true); }).join(" ");
             $("#startPlayersColors").html(playersColors);
         };
         Main.prototype.printTurnMode = function () {
@@ -1228,7 +1246,7 @@ var CocaineCartels;
                     }
                     _this.interactiveCanvas = new CocaineCartels.Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
                     _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurn, "replayCanvas", true, false);
-                    $("#playerColor").html(Main.getPlayerLabel(Main.currentPlayer, false));
+                    $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
                         $("#readyButton").prop("disabled", false);
