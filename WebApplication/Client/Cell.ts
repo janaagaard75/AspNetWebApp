@@ -46,36 +46,10 @@ module CocaineCartels {
             return this._units;
         }
 
-        public get unitsAfterMove(): Array<Unit> {
-            const unitsAfterMove = this.board.allUnits.filter(unit => unit.cellAfterPlaceAndMove === this);
-            return unitsAfterMove;
-        }
-
         /** Returns the units that were already here or to be placed on this cell. Units might be moved to another cell. */
         public get unitsAlreadyHereOrToBePlacedHere(): Array<Unit> {
             const unitsAlreadyHereOrToBePlacedHere = this.units.concat(this.unitsToBePlacedHere);
             return unitsAlreadyHereOrToBePlacedHere;
-        }
-
-        /** Returns the units that have been moved from this cell. */
-        public get unitsMovedAwayFromHere(): Array<Unit> {
-            const unitsMovedAwayFromHere = this.board.allUnits
-                .filter(unit => unit.moveCommand !== null)
-                .filter(unit => unit.moveCommand.from === this);
-
-            return unitsMovedAwayFromHere;
-        }
-
-        /** Units already on the cell and not moved away. Does not include units that will be placed here. */
-        public get unitsStaying(): Array<Unit> {
-            const unitsStaying = this.units.filter(unit => unit.moveCommand === null);
-            return unitsStaying;
-        }
-
-        /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
-        public get unitsToBeMovedToHere(): Array<Unit> {
-            const unitsToBeMovedToHere = this.moveCommandsToCell.map(command => command.unit);
-            return unitsToBeMovedToHere;
         }
 
         /** Returns the units to be placed on this cell. Units might be moved to another cell. */
@@ -86,11 +60,6 @@ module CocaineCartels {
             return unitsToBeplacedHere;
         }
 
-        public get unitsToBePlacedHereAndNotMovedAway(): Array<Unit> {
-            const unitsToBePlacedHereAndNotMovedAway = this.unitsToBePlacedHere.filter(unit => unit.moveCommand === null);
-            return unitsToBePlacedHereAndNotMovedAway;
-        }
-        
         public addUnit(unit: Unit) {
             if (unit.cell !== null && unit.cell !== this) {
                 throw "The unit is already placed on another cell.";

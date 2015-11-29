@@ -1,6 +1,161 @@
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    var ClientAllianceProposal = (function () {
+        function ClientAllianceProposal(toPlayer) {
+            this.toPlayer = toPlayer;
+        }
+        return ClientAllianceProposal;
+    })();
+    CocaineCartels.ClientAllianceProposal = ClientAllianceProposal;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+    var Turn = (function () {
+        /** Call initializeUnits after the board has been initialized. */
+        function Turn(turnData) {
+            var _this = this;
+            this.allianceProposals = turnData.allianceProposals;
+            this.alliances = turnData.alliances;
+            // No units and commands initialized yet.
+            this.cells = [];
+            turnData.cells.forEach(function (cellData) {
+                var cell = new CocaineCartels.Cell(cellData, _this);
+                _this.cells.push(cell);
+            });
+            this.mode = turnData.mode;
+            this.newUnits = [];
+            turnData.newUnits.forEach(function (unitData) {
+                var newUnit = new CocaineCartels.Unit(unitData, _this, null);
+                _this.newUnits.push(newUnit);
+            });
+            this.turnNumber = turnData.turnNumber;
+        }
+        Object.defineProperty(Turn.prototype, "allUnits", {
+            get: function () {
+                var allUnits = this.unitsOnBoard.concat(this.newUnits);
+                return allUnits;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Turn.prototype, "moveCommands", {
+            get: function () {
+                var moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
+                    .map(function (unit) { return unit.moveCommand; })
+                    .filter(function (moveCommand) { return moveCommand !== null; });
+                return moveCommands;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Turn.prototype, "unitsOnBoard", {
+            /** Returns the list of units placed on the board, i.e. units to be placed on the board are not included. */
+            get: function () {
+                var unitsDoubleArray = this.cells.map(function (cell) { return cell.units; });
+                var units = CocaineCartels.Utilities.flatten(unitsDoubleArray);
+                return units;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Turn.prototype, "unitsOnBoardOrToBePlacedOnBoard", {
+            get: function () {
+                var unitsOnBoardOrToBePlacedOnBoard = this.unitsOnBoard.concat(this.unitsToBePlacedOnBoard);
+                return unitsOnBoardOrToBePlacedOnBoard;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Turn.prototype, "unitsToBePlacedOnBoard", {
+            get: function () {
+                var unitsToBePlacedOnBoard = this.newUnits.filter(function (unit) { return unit.placeCommand !== null; });
+                return unitsToBePlacedOnBoard;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Turn.prototype.allowedCellsForMove = function (unit) {
+            if (unit.cell === null && unit.placeCommand === null) {
+                throw "It's not allowed to move a cell that is not on the board or to be placed on the board.";
+            }
+            var fromCell;
+            if (unit.cell !== null) {
+                fromCell = unit.cell;
+            }
+            else {
+                fromCell = unit.placeCommand.on;
+            }
+            var allowedCells = this.cells.filter(function (cell) {
+                var allowed = cell.distance(fromCell) <= unit.maximumMoveDistance;
+                return allowed;
+            });
+            return allowedCells;
+        };
+        Turn.prototype.allowedCellsForPlace = function (unit) {
+            var cellsWithUnits = this.cells.filter(function (cell) {
+                var cellHasUnitsBelongingToCurrentPlayer = cell.units
+                    .filter(function (u) { return u.moveCommand === null; })
+                    .filter(function (u) { return u.player === unit.player; })
+                    .length > 0;
+                return cellHasUnitsBelongingToCurrentPlayer;
+            });
+            var moveFromCells = this.moveCommands
+                .filter(function (mc) { return mc.unit.player === unit.player; })
+                .map(function (mc) { return mc.from; });
+            var allowedCells = CocaineCartels.Utilities.union(cellsWithUnits, moveFromCells);
+            return allowedCells;
+        };
+        Turn.prototype.getCell = function (hex) {
+            var cell = this.cells.filter(function (c) { return c.hex.equals(hex); })[0];
+            return cell;
+        };
+        Turn.prototype.getMoveCommands = function (from, to) {
+            var moveCommands = this.moveCommands.filter(function (moveCommand) { return moveCommand.from === from && moveCommand.to === to; });
+            return moveCommands;
+        };
+        Turn.prototype.nearestCell = function (pos) {
+            var minDist = null;
+            var nearestCell;
+            this.cells.forEach(function (cell) {
+                var dist = cell.hex.pos.distance(pos);
+                if (dist < minDist || minDist === null) {
+                    minDist = dist;
+                    nearestCell = cell;
+                }
+            });
+            return nearestCell;
+        };
+        Turn.prototype.newUnitsForPlayer = function (player) {
+            var newUnits = this.newUnits.filter(function (u) { return u.player.color === player.color; });
+            return newUnits;
+        };
+        Turn.prototype.placeUnit = function (unit, on) {
+            if (unit.cell !== null) {
+                throw "The unit is already placed on a cell.";
+            }
+            on.addUnit(unit);
+        };
+        return Turn;
+    })();
+    CocaineCartels.Turn = Turn;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
     var AnimationState;
     (function (AnimationState) {
         AnimationState[AnimationState["Undefined"] = 0] = "Undefined";
@@ -279,29 +434,13 @@ var CocaineCartels;
         Canvas.prototype.drawUnitsOnCell = function (cell) {
             var _this = this;
             if (this.animated) {
-                var units = cell.board.allUnits.filter(function (unit) { return unit.cellBeforePlaceAndMove === cell; });
-                units.forEach(function (unit, index) {
-                    _this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, units.length);
+                var unitsOnCell = cell.board.allUnits.filter(function (unit) { return unit.cellBeforePlaceAndMove === cell; });
+                unitsOnCell.forEach(function (unit, index) {
+                    _this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, unitsOnCell.length);
                 });
             }
             else {
-                //const staying = cell.unitsStaying;
-                //const toBeMovedHere = cell.unitsToBeMovedToHere;
-                //const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
-                //const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
-                //staying.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, index, total);
-                //});
-                //const movingHereStartIndex = staying.length;
-                //toBeMovedHere.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-                //});
-                //const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-                //toBePlacedHere.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
-                //});
                 var unitsOnCell = cell.board.allUnits.filter(function (unit) { return unit.cellAfterPlaceAndMove === cell; });
-                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
                 unitsOnCell.forEach(function (unit, index) {
                     _this.drawUnit(unit, cell.hex.pos, index, unitsOnCell.length);
                 });
@@ -477,52 +616,6 @@ var CocaineCartels;
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
-    // All these settings are related to the canvas.
-    var CanvasSettings = (function () {
-        function CanvasSettings() {
-        }
-        CanvasSettings.initialize = function (gridSize) {
-            if (gridSize == null) {
-                throw "gridSize must be defined.";
-            }
-            var gridGutterWidth = 30; // Also defined in variables.scss.
-            var canvasButtonsRowHeight = 43; // Hard coded here, since it might be hidden.
-            var availableHeight = $(window).height() - ($("#headerContainer").height() + canvasButtonsRowHeight);
-            var availableWidth = $(document).width() / 2 - gridGutterWidth;
-            var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
-            var neededWidthToMatchFullHeight = Math.round(availableHeight * aspectRatio);
-            if (neededWidthToMatchFullHeight <= availableWidth) {
-                this.height = availableHeight;
-                this.width = neededWidthToMatchFullHeight;
-            }
-            else {
-                var neededHeightToMatchFullWidth = Math.round(availableWidth / aspectRatio);
-                this.height = neededHeightToMatchFullWidth;
-                this.width = availableWidth;
-            }
-            var boardSize = Math.min(this.height, this.width);
-            this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
-            this.cellBorderWidth = 1 + boardSize / 1000;
-            this.spaceToNewUnits = 0;
-            this.arrowWidth = 2 * this.cellBorderWidth;
-            this.center = new CocaineCartels.Pos(this.width / 2, this.width / 2 - this.cellRadius / 3);
-            this.unitBorderWidth = this.cellBorderWidth;
-            this.unitRadius = this.cellRadius / 3;
-        };
-        CanvasSettings.arrowPointerLength = 4;
-        CanvasSettings.arrowPointerWidth = 5;
-        CanvasSettings.arrowShadowBlurRadius = 10;
-        CanvasSettings.delayAfterTween = 0.3;
-        CanvasSettings.movedUnitTweenDuration = 1;
-        CanvasSettings.newUnitScale = 10;
-        CanvasSettings.newUnitTweenDuration = 1;
-        return CanvasSettings;
-    })();
-    CocaineCartels.CanvasSettings = CanvasSettings;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
     var Cell = (function () {
         function Cell(cellData, board) {
             this._units = undefined;
@@ -567,50 +660,11 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Cell.prototype, "unitsAfterMove", {
-            get: function () {
-                var _this = this;
-                var unitsAfterMove = this.board.allUnits.filter(function (unit) { return unit.cellAfterPlaceAndMove === _this; });
-                return unitsAfterMove;
-            },
-            enumerable: true,
-            configurable: true
-        });
         Object.defineProperty(Cell.prototype, "unitsAlreadyHereOrToBePlacedHere", {
             /** Returns the units that were already here or to be placed on this cell. Units might be moved to another cell. */
             get: function () {
                 var unitsAlreadyHereOrToBePlacedHere = this.units.concat(this.unitsToBePlacedHere);
                 return unitsAlreadyHereOrToBePlacedHere;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Cell.prototype, "unitsMovedAwayFromHere", {
-            /** Returns the units that have been moved from this cell. */
-            get: function () {
-                var _this = this;
-                var unitsMovedAwayFromHere = this.board.allUnits
-                    .filter(function (unit) { return unit.moveCommand !== null; })
-                    .filter(function (unit) { return unit.moveCommand.from === _this; });
-                return unitsMovedAwayFromHere;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Cell.prototype, "unitsStaying", {
-            /** Units already on the cell and not moved away. Does not include units that will be placed here. */
-            get: function () {
-                var unitsStaying = this.units.filter(function (unit) { return unit.moveCommand === null; });
-                return unitsStaying;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Cell.prototype, "unitsToBeMovedToHere", {
-            /** Units that have a move commands to this cell. Units might be new units that also have a place command. */
-            get: function () {
-                var unitsToBeMovedToHere = this.moveCommandsToCell.map(function (command) { return command.unit; });
-                return unitsToBeMovedToHere;
             },
             enumerable: true,
             configurable: true
@@ -623,14 +677,6 @@ var CocaineCartels;
                     return unit.placeCommand !== null && unit.placeCommand.on === _this;
                 });
                 return unitsToBeplacedHere;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Cell.prototype, "unitsToBePlacedHereAndNotMovedAway", {
-            get: function () {
-                var unitsToBePlacedHereAndNotMovedAway = this.unitsToBePlacedHere.filter(function (unit) { return unit.moveCommand === null; });
-                return unitsToBePlacedHereAndNotMovedAway;
             },
             enumerable: true,
             configurable: true
@@ -664,53 +710,6 @@ var CocaineCartels;
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
-    var ClientAllianceProposal = (function () {
-        function ClientAllianceProposal(toPlayer) {
-            this.toPlayer = toPlayer;
-        }
-        return ClientAllianceProposal;
-    })();
-    CocaineCartels.ClientAllianceProposal = ClientAllianceProposal;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    var ClientCommands = (function () {
-        function ClientCommands(allianceProposals, moveCommands, placeCommands) {
-            this.allianceProposals = allianceProposals;
-            this.moveCommands = moveCommands;
-            this.placeCommands = placeCommands;
-        }
-        return ClientCommands;
-    })();
-    CocaineCartels.ClientCommands = ClientCommands;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    var ClientMoveCommand = (function () {
-        function ClientMoveCommand(from, to) {
-            this.from = from;
-            this.to = to;
-        }
-        return ClientMoveCommand;
-    })();
-    CocaineCartels.ClientMoveCommand = ClientMoveCommand;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    var ClientPlaceCommand = (function () {
-        function ClientPlaceCommand(on) {
-            this.on = on;
-        }
-        return ClientPlaceCommand;
-    })();
-    CocaineCartels.ClientPlaceCommand = ClientPlaceCommand;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
     (function (CommandType) {
         CommandType[CommandType["MoveCommand"] = 0] = "MoveCommand";
         CommandType[CommandType["PlaceCommand"] = 1] = "PlaceCommand";
@@ -738,56 +737,6 @@ var CocaineCartels;
         return Command;
     })();
     CocaineCartels.Command = Command;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    var Game = (function () {
-        function Game(currentTurnData, gameData) {
-            var _this = this;
-            this.players = [];
-            gameData.players.forEach(function (playerData) {
-                var player = new CocaineCartels.Player(playerData);
-                _this.players.push(player);
-            });
-            if (gameData.previousTurn === null) {
-                this.previousTurn = null;
-            }
-            else {
-                this.previousTurn = new CocaineCartels.Turn(gameData.previousTurn);
-            }
-            this.currentTurn = new CocaineCartels.Turn(currentTurnData);
-            this.started = gameData.started;
-        }
-        /** Returns the player with the specified color. Returns null if the player wasn't found. */
-        Game.prototype.getPlayer = function (playerColor) {
-            var players = this.players.filter(function (p) { return p.color === playerColor; });
-            if (players.length === 0) {
-                return null;
-            }
-            return players[0];
-        };
-        /** Hacky solution for initializing the boards. */
-        Game.prototype.initializeBoard = function (board) {
-            if (board === null) {
-                return;
-            }
-            // Initialize the units on the board.
-            // ReSharper disable once QualifiedExpressionMaybeNull
-            board.cells.forEach(function (cell) {
-                cell.units.forEach(function (unit) {
-                    // ReSharper disable once WrongExpressionStatement
-                    unit.player;
-                });
-            });
-            board.newUnits.forEach(function (unit) {
-                // ReSharper disable once WrongExpressionStatement
-                unit.player;
-            });
-        };
-        return Game;
-    })();
-    CocaineCartels.Game = Game;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -831,52 +780,6 @@ var CocaineCartels;
         return GameState;
     })();
     CocaineCartels.GameState = GameState;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    /** Hexagon coordinates with r, s and t. */
-    var Hex = (function () {
-        function Hex(r, s, t) {
-            this.r = r;
-            this.s = s;
-            this.t = t;
-            this._pos = null;
-            var sum = r + s + t;
-            if (sum !== 0) {
-                throw "The sum of r, s and t must be equal to 0. " + r + " + " + s + " + " + t + " is " + sum + ".";
-            }
-        }
-        Object.defineProperty(Hex.prototype, "pos", {
-            get: function () {
-                if (this._pos === null) {
-                    this._pos = Hex.hexToPos(this);
-                }
-                return this._pos;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Hex.prototype.equals = function (other) {
-            var equals = (this.r === other.r && this.s === other.s && this.t === other.t);
-            return equals;
-        };
-        Hex.hexToPos = function (hex) {
-            if (CocaineCartels.CanvasSettings.width == null || CocaineCartels.CanvasSettings.height == null || CocaineCartels.CanvasSettings.cellRadius == null) {
-                throw "CanvasSettings haven't been initialized.";
-            }
-            var x = CocaineCartels.CanvasSettings.center.x + Math.sqrt(3) * CocaineCartels.CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CocaineCartels.CanvasSettings.cellRadius * hex.t;
-            var y = CocaineCartels.CanvasSettings.center.y + 1.5 * CocaineCartels.CanvasSettings.cellRadius * hex.t;
-            var pos = new CocaineCartels.Pos(x, y);
-            return pos;
-        };
-        Hex.prototype.toString = function () {
-            var stringValue = "(" + this.r + "," + this.s + "," + this.t + ")";
-            return stringValue;
-        };
-        return Hex;
-    })();
-    CocaineCartels.Hex = Hex;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -991,6 +894,38 @@ var CocaineCartels;
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    var ClientCommands = (function () {
+        function ClientCommands(allianceProposals, moveCommands, placeCommands) {
+            this.allianceProposals = allianceProposals;
+            this.moveCommands = moveCommands;
+            this.placeCommands = placeCommands;
+        }
+        return ClientCommands;
+    })();
+    CocaineCartels.ClientCommands = ClientCommands;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+    var ClientMoveCommand = (function () {
+        function ClientMoveCommand(from, to) {
+            this.from = from;
+            this.to = to;
+        }
+        return ClientMoveCommand;
+    })();
+    CocaineCartels.ClientMoveCommand = ClientMoveCommand;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+    var ClientPlaceCommand = (function () {
+        function ClientPlaceCommand(on) {
+            this.on = on;
+        }
+        return ClientPlaceCommand;
+    })();
+    CocaineCartels.ClientPlaceCommand = ClientPlaceCommand;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -1007,10 +942,144 @@ var CocaineCartels;
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    // All these settings are related to the canvas.
+    var CanvasSettings = (function () {
+        function CanvasSettings() {
+        }
+        CanvasSettings.initialize = function (gridSize) {
+            if (gridSize == null) {
+                throw "gridSize must be defined.";
+            }
+            var gridGutterWidth = 30; // Also defined in variables.scss.
+            var canvasButtonsRowHeight = 43; // Hard coded here, since it might be hidden.
+            var availableHeight = $(window).height() - ($("#headerContainer").height() + canvasButtonsRowHeight);
+            var availableWidth = $(document).width() / 2 - gridGutterWidth;
+            var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
+            var neededWidthToMatchFullHeight = Math.round(availableHeight * aspectRatio);
+            if (neededWidthToMatchFullHeight <= availableWidth) {
+                this.height = availableHeight;
+                this.width = neededWidthToMatchFullHeight;
+            }
+            else {
+                var neededHeightToMatchFullWidth = Math.round(availableWidth / aspectRatio);
+                this.height = neededHeightToMatchFullWidth;
+                this.width = availableWidth;
+            }
+            var boardSize = Math.min(this.height, this.width);
+            this.cellRadius = boardSize / (2 * gridSize + 1) * 0.55;
+            this.cellBorderWidth = 1 + boardSize / 1000;
+            this.spaceToNewUnits = 0;
+            this.arrowWidth = 2 * this.cellBorderWidth;
+            this.center = new CocaineCartels.Pos(this.width / 2, this.width / 2 - this.cellRadius / 3);
+            this.unitBorderWidth = this.cellBorderWidth;
+            this.unitRadius = this.cellRadius / 3;
+        };
+        CanvasSettings.arrowPointerLength = 4;
+        CanvasSettings.arrowPointerWidth = 5;
+        CanvasSettings.arrowShadowBlurRadius = 10;
+        CanvasSettings.delayAfterTween = 0.3;
+        CanvasSettings.movedUnitTweenDuration = 1;
+        CanvasSettings.newUnitScale = 10;
+        CanvasSettings.newUnitTweenDuration = 1;
+        return CanvasSettings;
+    })();
+    CocaineCartels.CanvasSettings = CanvasSettings;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
     "use strict";
+    var Game = (function () {
+        function Game(currentTurnData, gameData) {
+            var _this = this;
+            this.players = [];
+            gameData.players.forEach(function (playerData) {
+                var player = new CocaineCartels.Player(playerData);
+                _this.players.push(player);
+            });
+            if (gameData.previousTurn === null) {
+                this.previousTurn = null;
+            }
+            else {
+                this.previousTurn = new CocaineCartels.Turn(gameData.previousTurn);
+            }
+            this.currentTurn = new CocaineCartels.Turn(currentTurnData);
+            this.started = gameData.started;
+        }
+        /** Returns the player with the specified color. Returns null if the player wasn't found. */
+        Game.prototype.getPlayer = function (playerColor) {
+            var players = this.players.filter(function (p) { return p.color === playerColor; });
+            if (players.length === 0) {
+                return null;
+            }
+            return players[0];
+        };
+        /** Hacky solution for initializing the boards. */
+        Game.prototype.initializeBoard = function (board) {
+            if (board === null) {
+                return;
+            }
+            // Initialize the units on the board.
+            // ReSharper disable once QualifiedExpressionMaybeNull
+            board.cells.forEach(function (cell) {
+                cell.units.forEach(function (unit) {
+                    // ReSharper disable once WrongExpressionStatement
+                    unit.player;
+                });
+            });
+            board.newUnits.forEach(function (unit) {
+                // ReSharper disable once WrongExpressionStatement
+                unit.player;
+            });
+        };
+        return Game;
+    })();
+    CocaineCartels.Game = Game;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+    /** Hexagon coordinates with r, s and t. */
+    var Hex = (function () {
+        function Hex(r, s, t) {
+            this.r = r;
+            this.s = s;
+            this.t = t;
+            this._pos = null;
+            var sum = r + s + t;
+            if (sum !== 0) {
+                throw "The sum of r, s and t must be equal to 0. " + r + " + " + s + " + " + t + " is " + sum + ".";
+            }
+        }
+        Object.defineProperty(Hex.prototype, "pos", {
+            get: function () {
+                if (this._pos === null) {
+                    this._pos = Hex.hexToPos(this);
+                }
+                return this._pos;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Hex.prototype.equals = function (other) {
+            var equals = (this.r === other.r && this.s === other.s && this.t === other.t);
+            return equals;
+        };
+        Hex.hexToPos = function (hex) {
+            if (CocaineCartels.CanvasSettings.width == null || CocaineCartels.CanvasSettings.height == null || CocaineCartels.CanvasSettings.cellRadius == null) {
+                throw "CanvasSettings haven't been initialized.";
+            }
+            var x = CocaineCartels.CanvasSettings.center.x + Math.sqrt(3) * CocaineCartels.CanvasSettings.cellRadius * hex.r + Math.sqrt(3) / 2 * CocaineCartels.CanvasSettings.cellRadius * hex.t;
+            var y = CocaineCartels.CanvasSettings.center.y + 1.5 * CocaineCartels.CanvasSettings.cellRadius * hex.t;
+            var pos = new CocaineCartels.Pos(x, y);
+            return pos;
+        };
+        Hex.prototype.toString = function () {
+            var stringValue = "(" + this.r + "," + this.s + "," + this.t + ")";
+            return stringValue;
+        };
+        return Hex;
+    })();
+    CocaineCartels.Hex = Hex;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -1559,138 +1628,6 @@ var CocaineCartels;
         return Settings;
     })();
     CocaineCartels.Settings = Settings;
-})(CocaineCartels || (CocaineCartels = {}));
-var CocaineCartels;
-(function (CocaineCartels) {
-    "use strict";
-    var Turn = (function () {
-        /** Call initializeUnits after the board has been initialized. */
-        function Turn(turnData) {
-            var _this = this;
-            this.allianceProposals = turnData.allianceProposals;
-            this.alliances = turnData.alliances;
-            // No units and commands initialized yet.
-            this.cells = [];
-            turnData.cells.forEach(function (cellData) {
-                var cell = new CocaineCartels.Cell(cellData, _this);
-                _this.cells.push(cell);
-            });
-            this.mode = turnData.mode;
-            this.newUnits = [];
-            turnData.newUnits.forEach(function (unitData) {
-                var newUnit = new CocaineCartels.Unit(unitData, _this, null);
-                _this.newUnits.push(newUnit);
-            });
-            this.turnNumber = turnData.turnNumber;
-        }
-        Object.defineProperty(Turn.prototype, "allUnits", {
-            get: function () {
-                var allUnits = this.unitsOnBoard.concat(this.newUnits);
-                return allUnits;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Turn.prototype, "moveCommands", {
-            get: function () {
-                var moveCommands = this.unitsOnBoardOrToBePlacedOnBoard
-                    .map(function (unit) { return unit.moveCommand; })
-                    .filter(function (moveCommand) { return moveCommand !== null; });
-                return moveCommands;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Turn.prototype, "unitsOnBoard", {
-            /** Returns the list of units placed on the board, i.e. units to be placed on the board are not included. */
-            get: function () {
-                var unitsDoubleArray = this.cells.map(function (cell) { return cell.units; });
-                var units = CocaineCartels.Utilities.flatten(unitsDoubleArray);
-                return units;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Turn.prototype, "unitsOnBoardOrToBePlacedOnBoard", {
-            get: function () {
-                var unitsOnBoardOrToBePlacedOnBoard = this.unitsOnBoard.concat(this.unitsToBePlacedOnBoard);
-                return unitsOnBoardOrToBePlacedOnBoard;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Turn.prototype, "unitsToBePlacedOnBoard", {
-            get: function () {
-                var unitsToBePlacedOnBoard = this.newUnits.filter(function (unit) { return unit.placeCommand !== null; });
-                return unitsToBePlacedOnBoard;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Turn.prototype.allowedCellsForMove = function (unit) {
-            if (unit.cell === null && unit.placeCommand === null) {
-                throw "It's not allowed to move a cell that is not on the board or to be placed on the board.";
-            }
-            var fromCell;
-            if (unit.cell !== null) {
-                fromCell = unit.cell;
-            }
-            else {
-                fromCell = unit.placeCommand.on;
-            }
-            var allowedCells = this.cells.filter(function (cell) {
-                var allowed = cell.distance(fromCell) <= unit.maximumMoveDistance;
-                return allowed;
-            });
-            return allowedCells;
-        };
-        Turn.prototype.allowedCellsForPlace = function (unit) {
-            var cellsWithUnits = this.cells.filter(function (cell) {
-                var cellHasUnitsBelongingToCurrentPlayer = cell.units
-                    .filter(function (u) { return u.moveCommand === null; })
-                    .filter(function (u) { return u.player === unit.player; })
-                    .length > 0;
-                return cellHasUnitsBelongingToCurrentPlayer;
-            });
-            var moveFromCells = this.moveCommands
-                .filter(function (mc) { return mc.unit.player === unit.player; })
-                .map(function (mc) { return mc.from; });
-            var allowedCells = CocaineCartels.Utilities.union(cellsWithUnits, moveFromCells);
-            return allowedCells;
-        };
-        Turn.prototype.getCell = function (hex) {
-            var cell = this.cells.filter(function (c) { return c.hex.equals(hex); })[0];
-            return cell;
-        };
-        Turn.prototype.getMoveCommands = function (from, to) {
-            var moveCommands = this.moveCommands.filter(function (moveCommand) { return moveCommand.from === from && moveCommand.to === to; });
-            return moveCommands;
-        };
-        Turn.prototype.nearestCell = function (pos) {
-            var minDist = null;
-            var nearestCell;
-            this.cells.forEach(function (cell) {
-                var dist = cell.hex.pos.distance(pos);
-                if (dist < minDist || minDist === null) {
-                    minDist = dist;
-                    nearestCell = cell;
-                }
-            });
-            return nearestCell;
-        };
-        Turn.prototype.newUnitsForPlayer = function (player) {
-            var newUnits = this.newUnits.filter(function (u) { return u.player.color === player.color; });
-            return newUnits;
-        };
-        Turn.prototype.placeUnit = function (unit, on) {
-            if (unit.cell !== null) {
-                throw "The unit is already placed on a cell.";
-            }
-            on.addUnit(unit);
-        };
-        return Turn;
-    })();
-    CocaineCartels.Turn = Turn;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {

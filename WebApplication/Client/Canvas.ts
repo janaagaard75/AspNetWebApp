@@ -347,34 +347,12 @@
 
         private drawUnitsOnCell(cell: Cell) {
             if (this.animated) {
-                const units = cell.board.allUnits.filter(unit => unit.cellBeforePlaceAndMove === cell);
-                units.forEach((unit, index) => {
-                    this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, units.length);
+                const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellBeforePlaceAndMove === cell);
+                unitsOnCell.forEach((unit, index) => {
+                    this.drawUnit(unit, unit.cellBeforePlaceAndMove.hex.pos, index, unitsOnCell.length);
                 });
             } else {
-                //const staying = cell.unitsStaying;
-                //const toBeMovedHere = cell.unitsToBeMovedToHere;
-                //const toBePlacedHere = cell.unitsToBePlacedHereAndNotMovedAway;
-
-                //const total = staying.length + toBeMovedHere.length + toBePlacedHere.length;
-
-                //staying.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, index, total);
-                //});
-
-                //const movingHereStartIndex = staying.length;
-                //toBeMovedHere.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, movingHereStartIndex + index, total);
-                //});
-
-                //const toBePlacedHereStartIndex = movingHereStartIndex + toBeMovedHere.length;
-                //toBePlacedHere.forEach((unit, index) => {
-                //    this.drawUnit(unit, cell.hex.pos, toBePlacedHereStartIndex + index, total);
-                //});
-
                 const unitsOnCell = cell.board.allUnits.filter(unit => unit.cellAfterPlaceAndMove === cell);
-
-                //const unitsOnCell = cell.unitsStaying.concat(cell.unitsToBeMovedToHere).concat(cell.unitsToBePlacedHereAndNotMovedAway);
                 unitsOnCell.forEach((unit, index) => {
                     this.drawUnit(unit, cell.hex.pos, index, unitsOnCell.length);
                 });
