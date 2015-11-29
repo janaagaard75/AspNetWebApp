@@ -8,6 +8,13 @@ var CocaineCartels;
         AnimationState[AnimationState["AfterMove"] = 2] = "AfterMove";
         AnimationState[AnimationState["AfterBattle"] = 3] = "AfterBattle";
     })(AnimationState || (AnimationState = {}));
+    var DragMode;
+    (function (DragMode) {
+        DragMode[DragMode["Undefined"] = 0] = "Undefined";
+        DragMode[DragMode["None"] = 1] = "None";
+        DragMode[DragMode["NewUnits"] = 2] = "NewUnits";
+        DragMode[DragMode["UnitsOnBoard"] = 3] = "UnitsOnBoard";
+    })(DragMode || (DragMode = {}));
     var Canvas = (function () {
         function Canvas(turn, canvasId, animated, interactive) {
             this.turn = turn;
@@ -47,6 +54,22 @@ var CocaineCartels;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Canvas.prototype, "dragMode", {
+            get: function () {
+                if (!this.interactive) {
+                    return DragMode.None;
+                }
+                var newUnitsNotYetPlaced = this.turn.newUnits.filter(function (unit) { return unit.player.color === CocaineCartels.Main.currentPlayer.color && unit.placeCommand === null; });
+                if (newUnitsNotYetPlaced.length > 0) {
+                    return DragMode.NewUnits;
+                }
+                else {
+                    return DragMode.UnitsOnBoard;
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
         /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         Canvas.prototype.getAnimatedUnitPosition = function (unit, state) {
             var cell;
@@ -77,13 +100,13 @@ var CocaineCartels;
             if (unitIndex === -1) {
                 throw "The unit was not found on the cell. Don't know where to draw it then.";
             }
-            var position = this.getPositionOnCell(cell, unitIndex, unitsOnCell.length);
+            var position = this.getOffsetPosition(cell.hex.pos, unitIndex, unitsOnCell.length);
             return position;
         };
-        Canvas.prototype.getPositionOnCell = function (cell, unitIndex, unitsOnCell) {
+        Canvas.prototype.getOffsetPosition = function (basePosition, unitIndex, unitsOnCell) {
             var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / unitsOnCell;
-            var x = cell.hex.pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-            var position = new CocaineCartels.Pos(x, cell.hex.pos.y);
+            var x = basePosition.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            var position = new CocaineCartels.Pos(x, basePosition.y);
             return position;
         };
         Canvas.prototype.destroy = function () {
@@ -208,15 +231,12 @@ var CocaineCartels;
                 }
             });
         };
-        Canvas.prototype.drawUnit = function (unit, pos, unitIndex, unitsOnCell) {
+        Canvas.prototype.drawUnit = function (unit, basePosition, unitIndex, unitsOnCell) {
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
-            // TODO j: Remove the offset calculation from this method.
-            var distanceBetweenUnits = CocaineCartels.CanvasSettings.cellRadius / unitsOnCell;
-            var x = pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-            var overlapPos = new CocaineCartels.Pos(x, pos.y);
-            var fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
             var borderWidth = CocaineCartels.CanvasSettings.unitBorderWidth;
+            var offsetPostion = this.getOffsetPosition(basePosition, unitIndex, unitsOnCell);
+            var fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             var scale = (this.animated && unit.newUnit) ? 1 / CocaineCartels.CanvasSettings.newUnitScale : 1;
             var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
@@ -232,16 +252,16 @@ var CocaineCartels;
                     shadowOpacity: 0.7,
                     stroke: borderColor,
                     strokeWidth: borderWidth,
-                    x: overlapPos.x,
-                    y: overlapPos.y
+                    x: offsetPostion.x,
+                    y: offsetPostion.y
                 });
                 unit.circle = circle;
             }
             else {
                 unit.circle.fill(fillColor);
                 unit.circle.stroke(borderColor);
-                unit.circle.x(overlapPos.x);
-                unit.circle.y(overlapPos.y);
+                unit.circle.x(offsetPostion.x);
+                unit.circle.y(offsetPostion.y);
                 unit.circle.moveToTop();
             }
             /** Currently hovered hexagon. */

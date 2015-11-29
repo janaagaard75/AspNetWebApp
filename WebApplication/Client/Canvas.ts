@@ -8,6 +8,13 @@
         AfterBattle
     }
 
+    enum DragMode {
+        Undefined,
+        None,
+        NewUnits,
+        UnitsOnBoard
+    }
+
     export class Canvas {
         constructor(
             private turn: Turn,
@@ -58,6 +65,20 @@
             return allTweens;
         }
 
+        private get dragMode(): DragMode {
+            if (!this.interactive) {
+                return DragMode.None;
+            }
+
+            const newUnitsNotYetPlaced = this.turn.newUnits.filter(unit => unit.player.color === Main.currentPlayer.color && unit.placeCommand === null);
+
+            if (newUnitsNotYetPlaced.length > 0) {
+                return DragMode.NewUnits;
+            } else {
+                return DragMode.UnitsOnBoard;
+            }
+        }
+
         /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         private getAnimatedUnitPosition(unit: Unit, state: AnimationState): Pos {
             let cell: Cell;
@@ -94,16 +115,16 @@
                 throw "The unit was not found on the cell. Don't know where to draw it then.";
             }
 
-            const position = this.getPositionOnCell(cell, unitIndex, unitsOnCell.length);
+            const position = this.getOffsetPosition(cell.hex.pos, unitIndex, unitsOnCell.length);
             return position;
         }
 
-        private getPositionOnCell(cell: Cell, unitIndex: number, unitsOnCell: number): Pos {
+        private getOffsetPosition(basePosition: Pos, unitIndex: number, unitsOnCell: number): Pos {
             const distanceBetweenUnits = CanvasSettings.cellRadius / unitsOnCell;
-            const x = cell.hex.pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
+            const x = basePosition.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
             const position = new Pos(
                 x,
-                cell.hex.pos.y
+                basePosition.y
             );
             return position;
         }
@@ -256,17 +277,13 @@
             });
         }
 
-        private drawUnit(unit: Unit, pos: Pos, unitIndex: number, unitsOnCell: number) {
+        private drawUnit(unit: Unit, basePosition: Pos, unitIndex: number, unitsOnCell: number) {
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
 
-            // TODO j: Remove the offset calculation from this method.
-
-            const distanceBetweenUnits = CanvasSettings.cellRadius / unitsOnCell;
-            const x = pos.x - (unitsOnCell - 1) * distanceBetweenUnits / 2 + unitIndex * distanceBetweenUnits;
-            const overlapPos = new Pos(x, pos.y);
-            const fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
             const borderWidth = CanvasSettings.unitBorderWidth;
+            const offsetPostion = this.getOffsetPosition(basePosition, unitIndex, unitsOnCell);
+            const fillColor = (!this.animated && unit.moveCommand !== null) ? unit.movedColor : unit.color;
             const scale = (this.animated && unit.newUnit) ? 1 / CanvasSettings.newUnitScale : 1;
             const unitRadius = CanvasSettings.unitRadius;
 
@@ -283,16 +300,16 @@
                     shadowOpacity: 0.7,
                     stroke: borderColor,
                     strokeWidth: borderWidth,
-                    x: overlapPos.x,
-                    y: overlapPos.y
+                    x: offsetPostion.x,
+                    y: offsetPostion.y
                 });
 
                 unit.circle = circle;
             } else {
                 unit.circle.fill(fillColor);
                 unit.circle.stroke(borderColor);
-                unit.circle.x(overlapPos.x);
-                unit.circle.y(overlapPos.y);
+                unit.circle.x(offsetPostion.x);
+                unit.circle.y(offsetPostion.y);
                 unit.circle.moveToTop();
             }
 
