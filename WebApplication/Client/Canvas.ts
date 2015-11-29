@@ -280,6 +280,20 @@
         private drawUnit(unit: Unit, basePosition: Pos, unitIndex: number, unitsOnCell: number) {
             const ownedByThisPlayer = (unit.player.color === Main.currentPlayer.color);
 
+            let draggable: boolean;
+            switch (this.dragMode) {
+                case DragMode.NewUnits:
+                    draggable = ownedByThisPlayer && unit.newUnit && unit.placeCommand === null;
+                    break;
+
+                case DragMode.UnitsOnBoard:
+                    draggable = ownedByThisPlayer;
+                    break;
+
+                default:
+                    draggable: false;
+            }
+
             const borderColor = ownedByThisPlayer ? "#000" : "#999";
             const borderWidth = CanvasSettings.unitBorderWidth;
             const offsetPostion = this.getOffsetPosition(basePosition, unitIndex, unitsOnCell);
@@ -289,7 +303,7 @@
 
             if (unit.circle === null) {
                 const circle = new Konva.Circle({
-                    draggable: this.interactive && ownedByThisPlayer,
+                    draggable: draggable,
                     fill: fillColor,
                     radius: unitRadius,
                     scaleX: scale,
@@ -306,6 +320,7 @@
 
                 unit.circle = circle;
             } else {
+                unit.circle.draggable(draggable);
                 unit.circle.fill(fillColor);
                 unit.circle.stroke(borderColor);
                 unit.circle.x(offsetPostion.x);
@@ -313,13 +328,10 @@
                 unit.circle.moveToTop();
             }
 
-            /** Currently hovered hexagon. */
-            var currentHexagon: Konva.Shape = null;
-            
-            /** Previously hovered hexagon.*/
-            var previousHexagon: Konva.Shape = null;
+            var currentlyHoveredHexagon: Konva.Shape = null;
+            var previouslyHoveredHexagon: Konva.Shape = null;
 
-            if (this.interactive && ownedByThisPlayer) {
+            if (draggable) {
                 unit.circle.on("mouseover", () => {
                     document.body.classList.add("grab-cursor");
                 });

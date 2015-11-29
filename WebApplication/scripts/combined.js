@@ -233,6 +233,17 @@ var CocaineCartels;
         };
         Canvas.prototype.drawUnit = function (unit, basePosition, unitIndex, unitsOnCell) {
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
+            var draggable;
+            switch (this.dragMode) {
+                case DragMode.NewUnits:
+                    draggable = ownedByThisPlayer && unit.newUnit && unit.placeCommand === null;
+                    break;
+                case DragMode.UnitsOnBoard:
+                    draggable = ownedByThisPlayer;
+                    break;
+                default:
+                    draggable: false;
+            }
             var borderColor = ownedByThisPlayer ? "#000" : "#999";
             var borderWidth = CocaineCartels.CanvasSettings.unitBorderWidth;
             var offsetPostion = this.getOffsetPosition(basePosition, unitIndex, unitsOnCell);
@@ -241,7 +252,7 @@ var CocaineCartels;
             var unitRadius = CocaineCartels.CanvasSettings.unitRadius;
             if (unit.circle === null) {
                 var circle = new Konva.Circle({
-                    draggable: this.interactive && ownedByThisPlayer,
+                    draggable: draggable,
                     fill: fillColor,
                     radius: unitRadius,
                     scaleX: scale,
@@ -258,17 +269,16 @@ var CocaineCartels;
                 unit.circle = circle;
             }
             else {
+                unit.circle.draggable(draggable);
                 unit.circle.fill(fillColor);
                 unit.circle.stroke(borderColor);
                 unit.circle.x(offsetPostion.x);
                 unit.circle.y(offsetPostion.y);
                 unit.circle.moveToTop();
             }
-            /** Currently hovered hexagon. */
-            var currentHexagon = null;
-            /** Previously hovered hexagon.*/
-            var previousHexagon = null;
-            if (this.interactive && ownedByThisPlayer) {
+            var currentlyHoveredHexagon = null;
+            var previouslyHoveredHexagon = null;
+            if (draggable) {
                 unit.circle.on("mouseover", function () {
                     document.body.classList.add("grab-cursor");
                 });
