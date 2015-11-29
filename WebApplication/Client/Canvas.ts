@@ -338,13 +338,12 @@
                 this.moveTweens.push(moveTween);
 
                 if (unit.killed) {
+                    // Can't set scale here, because this screws up the new unit tween.
                     const killedTween = new Konva.Tween({
                         duration: CanvasSettings.killedTweenDuration,
                         easing: Konva.Easings.EaseOut,
                         node: unit.circle,
-                        opacity: 0,
-                        scaleX: CanvasSettings.killedTweenScale,
-                        scaleY: CanvasSettings.killedTweenScale
+                        opacity: 0
                     });
 
                     this.killedTweens.push(killedTween);
