@@ -326,14 +326,14 @@ var CocaineCartels;
             this.newUnitTweens.forEach(function (tween) {
                 tween.play();
             });
-            var moveDelay = CocaineCartels.CanvasSettings.delayAfterTween + CocaineCartels.CanvasSettings.newUnitTweenDuration;
+            var moveDelay = CocaineCartels.CanvasSettings.newUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             setTimeout(function () {
                 // Animate moves.
                 _this.moveTweens.forEach(function (tween) {
                     tween.play();
                 });
             }, moveDelay * 1000);
-            var killedDelay = moveDelay + CocaineCartels.CanvasSettings.delayAfterTween + CocaineCartels.CanvasSettings.movedUnitTweenDuration;
+            var killedDelay = moveDelay + CocaineCartels.CanvasSettings.movedUnitTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             setTimeout(function () {
                 // Animate killed units.
                 _this.killedTweens.forEach(function (tween) {
@@ -342,7 +342,7 @@ var CocaineCartels;
             }, killedDelay * 1000);
             // 4. Animate points.
             // Switch back to the interactive canvas.
-            var switchBackDeplay = killedDelay + CocaineCartels.CanvasSettings.delayAfterTween;
+            var switchBackDeplay = killedDelay + CocaineCartels.CanvasSettings.killedTweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             var promise = new Promise(function (resolve, reject) {
                 setTimeout(function () {
                     resolve();

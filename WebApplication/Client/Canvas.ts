@@ -393,7 +393,7 @@
                 tween.play();
             });
 
-            const moveDelay = CanvasSettings.delayAfterTween + CanvasSettings.newUnitTweenDuration;
+            const moveDelay = CanvasSettings.newUnitTweenDuration + CanvasSettings.delayAfterTween;
             setTimeout(() => {
                 // Animate moves.
                 this.moveTweens.forEach(tween => {
@@ -401,7 +401,7 @@
                 });
             }, moveDelay * 1000);
 
-            const killedDelay = moveDelay + CanvasSettings.delayAfterTween + CanvasSettings.movedUnitTweenDuration;
+            const killedDelay = moveDelay + CanvasSettings.movedUnitTweenDuration + CanvasSettings.delayAfterTween;
             setTimeout(() => {
                 // Animate killed units.
                 this.killedTweens.forEach(tween => {
@@ -412,7 +412,7 @@
             // 4. Animate points.
 
             // Switch back to the interactive canvas.
-            const switchBackDeplay = killedDelay + CanvasSettings.delayAfterTween;
+            const switchBackDeplay = killedDelay + CanvasSettings.killedTweenDuration + CanvasSettings.delayAfterTween;
             var promise = new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     resolve();
