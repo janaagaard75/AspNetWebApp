@@ -439,8 +439,10 @@
             this.newUnitTweens.forEach(tween => {
                 tween.play();
             });
+            let allDoneDelay = CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
 
             const moveDelay = CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
+            allDoneDelay += moveDelay;
             setTimeout(() => {
                 // Animate moves.
                 this.moveTweens.forEach(tween => {
@@ -448,13 +450,16 @@
                 });
             }, moveDelay * 1000);
 
-            const killedDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
-            setTimeout(() => {
-                // Animate killed units.
-                this.killedTweens.forEach(tween => {
-                    tween.play();
-                });
-            }, killedDelay * 1000);
+            if (this.killedTweens.length > 0) {
+                const killedDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
+                allDoneDelay += killedDelay;
+                setTimeout(() => {
+                    // Animate killed units.
+                    this.killedTweens.forEach(tween => {
+                        tween.play();
+                    });
+                }, killedDelay * 1000);
+            }
 
             //const repositionDelay = killedDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             //setTimeout(() => {
@@ -464,7 +469,7 @@
             //}, repositionDelay * 1000);
 
             // Switch back to the interactive canvas.
-            const allDoneDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
+            //const allDoneDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             var promise = new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     resolve();

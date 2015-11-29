@@ -360,20 +360,25 @@ var CocaineCartels;
             this.newUnitTweens.forEach(function (tween) {
                 tween.play();
             });
+            var allDoneDelay = CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
             var moveDelay = CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+            allDoneDelay += moveDelay;
             setTimeout(function () {
                 // Animate moves.
                 _this.moveTweens.forEach(function (tween) {
                     tween.play();
                 });
             }, moveDelay * 1000);
-            var killedDelay = moveDelay + CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
-            setTimeout(function () {
-                // Animate killed units.
-                _this.killedTweens.forEach(function (tween) {
-                    tween.play();
-                });
-            }, killedDelay * 1000);
+            if (this.killedTweens.length > 0) {
+                var killedDelay = moveDelay + CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+                allDoneDelay += killedDelay;
+                setTimeout(function () {
+                    // Animate killed units.
+                    _this.killedTweens.forEach(function (tween) {
+                        tween.play();
+                    });
+                }, killedDelay * 1000);
+            }
             //const repositionDelay = killedDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             //setTimeout(() => {
             //    this.repositionTweens.forEach(tween => {
@@ -381,7 +386,7 @@ var CocaineCartels;
             //    });
             //}, repositionDelay * 1000);
             // Switch back to the interactive canvas.
-            var allDoneDelay = moveDelay + CocaineCartels.CanvasSettings.tweenDuration + CocaineCartels.CanvasSettings.delayAfterTween;
+            //const allDoneDelay = moveDelay + CanvasSettings.tweenDuration + CanvasSettings.delayAfterTween;
             var promise = new Promise(function (resolve, reject) {
                 setTimeout(function () {
                     resolve();
