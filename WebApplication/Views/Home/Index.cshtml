@@ -30,17 +30,16 @@
         <div class="col-sm-3">
             <div class="row">
                 <div class="col-xs-12">
-                    
-                    <p>Turn number: <span id="turnNumber"></span></p>
-                    <h3>Points</h3>
+                    <h4>Points</h4>
                     <p id="playersPoints"></p>
+                    <p style="margin-top: 30px">Turn number: <span id="turnNumber"></span></p>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-height">
             <div id="canvasButtonsRow" class="row">
                 <div class="col-xs-9">
-                    <p>
+                    <p id="replayButtonWrapper">
                         <button id="replayButton" onclick="cocaineCartels.replayLastTurn();" class="btn btn-default">Replay last turn <span class="glyphicon glyphicon-repeat"></span></button>
                     </p>
                 </div>
@@ -58,7 +57,7 @@
         <div class="col-sm-3 col-height">
             <div id="ownAlliances" class="row hidden">
                 <div class="col-xs-12 text-right">
-                    <h4>In the upcoming turn, you are allied with:</h4>
+                    <h4>Alliances</h4>
                     <div id="ownAlliancesList"></div>
                 </div>
             </div>
@@ -76,12 +75,17 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 text-right">
-                    <p>Are ready: <span id="playersStatus"></span></p>
-                    <p>
+                    <div id="resetButton">
+                        <h4 style="margin-top: 50px">Reset</h4>
+                        <p>
+                            <button class="btn btn-default" onclick="cocaineCartels.resetMoves();">Reset moves</button>
+                        </p>
+                    </div>
+                    <h4 style="margin-top: 50px">Ready</h4>
+                    <p>Players who are ready:<br/>
+                    <span id="playersStatus"></span></p>
+                    <p style="margin-top: 30px">
                         <button id="readyButton" class="btn btn-default btn-lg" onclick="cocaineCartels.readyButtonClicked();">I'm ready</button>
-                    </p>
-                    <p id="resetButton">
-                        <button class="btn btn-default" onclick="cocaineCartels.resetMoves();">Reset moves</button>
                     </p>
                 </div>
             </div>
@@ -89,7 +93,7 @@
     </div>
 </div>
 <div id="administratorCommands" class="container-fluid administrator-commands">
-    <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default btn-sm">Reset game</button>
+    <button onclick="cocaineCartels.confirmResetGame();" class="btn btn-default btn-xs">Reset game</button>
 </div>
 
 @section beforeBundledScripts
