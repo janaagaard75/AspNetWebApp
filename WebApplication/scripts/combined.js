@@ -397,6 +397,13 @@ var CocaineCartels;
             });
             return promise;
         };
+        Canvas.prototype.resetMoves = function () {
+            this.turn.allUnits.forEach(function (unit) {
+                unit.moveCommand = null;
+                unit.placeCommand = null;
+            });
+            this.redrawBoard();
+        };
         Canvas.prototype.setUpUnitDragEvents = function () {
             var _this = this;
             /** Currently hovered hexagon. */
@@ -1315,12 +1322,6 @@ var CocaineCartels;
                 $("#replayButton").prop("disabled", false);
             });
         };
-        Main.prototype.resetGame = function () {
-            var _this = this;
-            CocaineCartels.GameService.resetGame().then(function () {
-                _this.reloadPage();
-            });
-        };
         Main.prototype.readyButtonClicked = function () {
             if (Main.currentPlayer.ready) {
                 Main.setCurrentPlayerNotReady();
@@ -1337,6 +1338,15 @@ var CocaineCartels;
                 readyButtonElement.blur();
                 this.sendCommands();
             }
+        };
+        Main.prototype.resetGame = function () {
+            var _this = this;
+            CocaineCartels.GameService.resetGame().then(function () {
+                _this.reloadPage();
+            });
+        };
+        Main.prototype.resetMoves = function () {
+            this.interactiveCanvas.resetMoves();
         };
         Main.prototype.sendCommands = function () {
             var commands;

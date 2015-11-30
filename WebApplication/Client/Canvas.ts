@@ -482,6 +482,15 @@
             return promise;
         }
 
+        public resetMoves() {
+            this.turn.allUnits.forEach(unit => {
+                unit.moveCommand = null;
+                unit.placeCommand = null;
+            });
+
+            this.redrawBoard();
+        }
+
         private setUpUnitDragEvents() {
             /** Currently hovered hexagon. */
             var currentHexagon: Konva.Shape = null;

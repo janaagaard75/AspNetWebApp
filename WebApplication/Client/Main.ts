@@ -319,12 +319,6 @@
             });
         }
 
-        private resetGame() {
-            GameService.resetGame().then(() => {
-                this.reloadPage();
-            });
-        }
-
         public readyButtonClicked() {
             if (Main.currentPlayer.ready) {
                 Main.setCurrentPlayerNotReady();
@@ -343,6 +337,16 @@
 
                 this.sendCommands();
             }
+        }
+
+        private resetGame() {
+            GameService.resetGame().then(() => {
+                this.reloadPage();
+            });
+        }
+
+        public resetMoves() {
+            this.interactiveCanvas.resetMoves();
         }
 
         public sendCommands() {
