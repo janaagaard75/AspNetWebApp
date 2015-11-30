@@ -153,11 +153,11 @@
         public static printNumberOfMovesLeft() {
             const numberOfMovesLeft = Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
             document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
-            const movesElement = document.getElementById("moves");
+            const movesElement = $("#movesLeft");
             if (numberOfMovesLeft < 0) {
-                movesElement.classList.add("label", "label-danger");
+                movesElement.addClass("label label-danger");
             } else {
-                movesElement.classList.remove("label", "label-danger");
+                movesElement.removeClass("label label-danger");
             }
         }
 

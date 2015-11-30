@@ -169,6 +169,8 @@
             this.setUpUnitDragEvents();
 
             this.stage.draw();
+
+            this.showOrHideMovesLeft();
         }
 
         private drawCell(cell: Cell) {
@@ -423,7 +425,8 @@
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
-            Main.printTurnMode(this.dragMode);
+            Main.printTurnMode(this.dragMode); // Not necessary to call this in drawBoard() because the job's already done by Main.ts.
+            this.showOrHideMovesLeft();
         }
 
         public replayLastTurn(): Promise<void> {
@@ -609,6 +612,10 @@
 
                 this.redrawBoard();
             });
+        }
+
+        private showOrHideMovesLeft() {
+            $("#movesLeft").toggleClass("hidden", this.dragMode !== DragMode.UnitsOnBoard);
         }
 
         private updateCellColor(cell: Cell) {

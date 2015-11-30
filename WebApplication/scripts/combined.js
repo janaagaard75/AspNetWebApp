@@ -143,6 +143,7 @@ var CocaineCartels;
             this.drawMoveCommands();
             this.setUpUnitDragEvents();
             this.stage.draw();
+            this.showOrHideMovesLeft();
         };
         Canvas.prototype.drawCell = function (cell) {
             var _this = this;
@@ -346,7 +347,8 @@ var CocaineCartels;
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
-            CocaineCartels.Main.printTurnMode(this.dragMode);
+            CocaineCartels.Main.printTurnMode(this.dragMode); // Not necessary to call this in drawBoard() because the job's already done by Main.ts.
+            this.showOrHideMovesLeft();
         };
         Canvas.prototype.replayLastTurn = function () {
             var _this = this;
@@ -513,6 +515,9 @@ var CocaineCartels;
                 });
                 _this.redrawBoard();
             });
+        };
+        Canvas.prototype.showOrHideMovesLeft = function () {
+            $("#movesLeft").toggleClass("hidden", this.dragMode !== CocaineCartels.DragMode.UnitsOnBoard);
         };
         Canvas.prototype.updateCellColor = function (cell) {
             var backgroundColor;
@@ -1177,12 +1182,12 @@ var CocaineCartels;
         Main.printNumberOfMovesLeft = function () {
             var numberOfMovesLeft = CocaineCartels.Settings.movesPerTurn - Main.currentPlayer.numberOfMoveCommands;
             document.getElementById("numberOfMovesLeft").innerHTML = numberOfMovesLeft.toString();
-            var movesElement = document.getElementById("moves");
+            var movesElement = $("#movesLeft");
             if (numberOfMovesLeft < 0) {
-                movesElement.classList.add("label", "label-danger");
+                movesElement.addClass("label label-danger");
             }
             else {
-                movesElement.classList.remove("label", "label-danger");
+                movesElement.removeClass("label label-danger");
             }
         };
         Main.printOwnAlliances = function () {
