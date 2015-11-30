@@ -275,16 +275,15 @@
                     $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
                     if (Main.game.started) {
+                        const hideReplayButton = (Main.game.previousTurn === null);
+                        $("#replayButtonWrapper").toggleClass("hidden", hideReplayButton);
+
                         $("#readyButton").prop("disabled", false);
 
                         $("#startGameButton").prop("disabled", true);
                         $("#startGameButton").attr("title", "The game is already started.");
 
-                        if (Main.currentPlayer.ready) {
-                            $("#readyButton").addClass("active");
-                        } else {
-                            $("#readyButton").removeClass("active");
-                        }
+                        $("#readyButton").toggleClass("active", Main.currentPlayer.ready);
                     } else {
                         $("#readyButton").prop("disabled", true);
 
