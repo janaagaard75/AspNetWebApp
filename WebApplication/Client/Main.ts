@@ -3,7 +3,6 @@
 
     export class Main {
         constructor() {
-            CanvasSettings.initialize(Settings.gridSize);
             this.refreshGame();
         }
 
@@ -261,6 +260,9 @@
 
         private refreshGame() {
             this.updateGameState().then(() => {
+                // It's actually not necessary to call this every single time the game state is updated.
+                CanvasSettings.initialize(Main.game.gridSize);
+
                 const widthInPixels = `${CanvasSettings.width}px`;
 
                 if (Main.game.started) {

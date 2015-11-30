@@ -16,13 +16,14 @@ module CocaineCartels {
             }
 
             this.currentTurn = new Turn(currentTurnData);
-
+            this.gridSize = gameData.gridSize;
             this.started = gameData.started;
         }
 
         private _players: Array<Player>;
 
         public currentTurn: Turn;
+        public gridSize: number;
         public previousTurn: Turn;
         public started: boolean;
 

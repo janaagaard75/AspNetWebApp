@@ -24,7 +24,10 @@ module CocaineCartels {
 
         public static initialize(gridSize: number) {
             if (gridSize == null) {
-                throw "gridSize must be defined.";
+                throw "gridSize must be defined";
+            }
+            if (gridSize <= 0) {
+                throw "gridSize must be positive.";
             }
 
             const gridGutterWidth = 30; // Also defined in variables.scss.

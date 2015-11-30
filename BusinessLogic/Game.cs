@@ -31,6 +31,8 @@ namespace CocaineCartels.BusinessLogic
         private readonly object StartGameLock = new object();
         private readonly object TurnLock = new object();
 
+        public int GridSize { get; set; }
+
         /// <summary>The board containing the previous turn. New units are placed on the cells and have the newUnit flag set to true. Units aren't moved, but have move commands. Units that died in combat have the killed flag set to true.</summary>
         public Turn PreviousTurn { get; private set; }
 
@@ -99,12 +101,12 @@ namespace CocaineCartels.BusinessLogic
 
         private void AddStartingUnitsToTheBoard(Player player, int playerNumber, int numberOfUnits, int numberOfPlayers)
         {
-            Hex ne = new Hex(Settings.GridSize, 0, -Settings.GridSize);
-            Hex e = new Hex(Settings.GridSize, -Settings.GridSize, 0);
-            Hex se = new Hex(0, -Settings.GridSize, Settings.GridSize);
-            Hex sw = new Hex(-Settings.GridSize, 0, Settings.GridSize);
-            Hex w = new Hex(-Settings.GridSize, Settings.GridSize, 0);
-            Hex nw = new Hex(0, Settings.GridSize, -Settings.GridSize);
+            Hex ne = new Hex(GridSize, 0, -GridSize);
+            Hex e = new Hex(GridSize, -GridSize, 0);
+            Hex se = new Hex(0, -GridSize, GridSize);
+            Hex sw = new Hex(-GridSize, 0, GridSize);
+            Hex w = new Hex(-GridSize, GridSize, 0);
+            Hex nw = new Hex(0, GridSize, -GridSize);
 
             Hex startingHex;
             switch (playerNumber)
@@ -380,8 +382,9 @@ namespace CocaineCartels.BusinessLogic
         public void ResetGame()
         {
             PreviousTurn = null;
-            NextTurn = new Turn(Settings.GridSize);
             Players = new List<Player>();
+            GridSize = 1; // Necessary to avoid an error in CanvasSettings.initialize().
+            NextTurn = new Turn(GridSize); // Necessary to avoid a null reference exception.
             NextTurn.Mode = TurnMode.StartGame;
         }
 
@@ -415,15 +418,34 @@ namespace CocaineCartels.BusinessLogic
                     throw new ApplicationException("The game is already started.");
                 }
 
+                switch (NumberOfPlayers)
+                {
+                    case 1:
+                    case 2:
+                    case 3:
+                        GridSize = 1;
+                        break;
+
+                    case 4:
+                    case 5:
+                    case 6:
+                        GridSize = 2;
+                        break;
+
+                    default:
+                        throw new IndexOutOfRangeException($"The games does not support {NumberOfPlayers} playeres.");
+                }
+
+                NextTurn = new Turn(GridSize);
+                NextTurn.Mode = TurnMode.PlanMoves;
+                NextTurn.IncreaseTurnNumber();
+
                 for (int i = 0; i < NumberOfPlayers; i++)
                 {
                     Player player = Players[i];
                     AddStartingUnitsToTheBoard(player, i, Settings.NumberOfStartingUnits, NumberOfPlayers);
                     player.Ready = false;
                 }
-
-                NextTurn.Mode = TurnMode.PlanMoves;
-                NextTurn.IncreaseTurnNumber();
             }
         }
 
