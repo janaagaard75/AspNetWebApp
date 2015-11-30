@@ -551,7 +551,8 @@ var CocaineCartels;
             }
             var gridGutterWidth = 30; // Also defined in variables.scss.
             var canvasButtonsRowHeight = 43; // Hard coded here, since it might be hidden.
-            var availableHeight = $(window).height() - ($("#headerContainer").height() + canvasButtonsRowHeight);
+            var headerContainerHeight = 105; // Not using $("#headerContainer").height() because that height changes when the text is added.
+            var availableHeight = $(window).height() - (headerContainerHeight + canvasButtonsRowHeight);
             var availableWidth = $(document).width() / 2 - gridGutterWidth;
             var aspectRatio = 10 / 11; // A bit higher than wide to make space for the new units below the board.
             var neededWidthToMatchFullHeight = Math.round(availableHeight * aspectRatio);
@@ -789,6 +790,17 @@ var CocaineCartels;
             this.currentTurn = new CocaineCartels.Turn(currentTurnData);
             this.started = gameData.started;
         }
+        Object.defineProperty(Game.prototype, "players", {
+            get: function () {
+                var sortedPlayers = this._players.sort(function (playerA, playerB) { return playerA.sortValue - playerB.sortValue; });
+                return sortedPlayers;
+            },
+            set: function (players) {
+                this._players = players;
+            },
+            enumerable: true,
+            configurable: true
+        });
         /** Returns the player with the specified color. Returns null if the player wasn't found. */
         Game.prototype.getPlayer = function (playerColor) {
             var players = this.players.filter(function (p) { return p.color === playerColor; });
@@ -1570,6 +1582,7 @@ var CocaineCartels;
             this.pointsLastTurn = playerData.pointsLastTurn;
             this.name = playerData.name;
             this.ready = playerData.ready;
+            this.sortValue = playerData.sortValue;
         }
         Object.defineProperty(Player.prototype, "numberOfMoveCommands", {
             /** Returns the number of move commands that the current has assigned. */

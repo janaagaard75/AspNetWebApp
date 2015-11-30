@@ -11,6 +11,7 @@ module CocaineCartels {
             this.pointsLastTurn = playerData.pointsLastTurn;
             this.name = playerData.name;
             this.ready = playerData.ready;
+            this.sortValue = playerData.sortValue;
         }
 
         public color: string;
@@ -19,6 +20,7 @@ module CocaineCartels {
         public points: number;
         public pointsLastTurn: number;
         public ready: boolean;
+        public sortValue: number;
 
         /** Returns the number of move commands that the current has assigned. */
         public get numberOfMoveCommands(): number {

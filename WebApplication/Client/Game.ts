@@ -20,10 +20,20 @@ module CocaineCartels {
             this.started = gameData.started;
         }
 
+        private _players: Array<Player>;
+
         public currentTurn: Turn;
-        public players: Array<Player>;
         public previousTurn: Turn;
         public started: boolean;
+
+        public get players(): Array<Player> {
+            const sortedPlayers = this._players.sort((playerA, playerB) => playerA.sortValue - playerB.sortValue);
+            return sortedPlayers;
+        }
+
+        public set players(players: Array<Player>) {
+            this._players = players;
+        }
 
         /** Returns the player with the specified color. Returns null if the player wasn't found. */
         public getPlayer(playerColor: string): Player {

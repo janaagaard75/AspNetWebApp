@@ -58,7 +58,7 @@ namespace CocaineCartels.BusinessLogic
                     throw new GameStartedException();
                 }
 
-                Player player = new Player(id, PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name);
+                Player player = new Player(id, PlayersData[NumberOfPlayers].Color, PlayersData[NumberOfPlayers].Name, NumberOfPlayers);
                 Players.Add(player);
 
                 return player;

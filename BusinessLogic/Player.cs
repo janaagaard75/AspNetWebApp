@@ -4,11 +4,12 @@ namespace CocaineCartels.BusinessLogic
 {
     public class Player
     {
-        internal Player(Guid id, string colors, string name)
+        internal Player(Guid id, string colors, string name, int sortValue)
         {
             Id = id;
             Color = colors;
             Name = name;
+            SortValue = sortValue;
 
             CommandsSentOn = null;
             Points = 0;
@@ -31,5 +32,7 @@ namespace CocaineCartels.BusinessLogic
 
         /// <summary>If the game hasn't started yet: The player believe that all players are here. If the game has started: The player has sent in commands and is thus ready for the next turn.</summary>
         public bool Ready { get; set; }
+
+        public int SortValue { get; set; }
     }
 }

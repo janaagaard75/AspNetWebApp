@@ -10,5 +10,6 @@
         points: number;
         pointsLastTurn: number;
         ready: boolean;
+        sortValue: number;
     }
 }
