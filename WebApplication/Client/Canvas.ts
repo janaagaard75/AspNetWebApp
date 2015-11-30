@@ -8,13 +8,6 @@
         AfterBattle
     }
 
-    enum DragMode {
-        Undefined,
-        None,
-        NewUnits,
-        UnitsOnBoard
-    }
-
     export class Canvas {
         constructor(
             private turn: Turn,
@@ -430,6 +423,7 @@
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
+            Main.printTurnMode(this.dragMode);
         }
 
         public replayLastTurn(): Promise<void> {
@@ -495,14 +489,9 @@
         }
 
         private setUpUnitDragEvents() {
-            /** Currently hovered hexagon. */
-            var currentHexagon: Konva.Shape = null;
-            
-            /** Previously hovered hexagon.*/
-            var previousHexagon: Konva.Shape = null;
-
-            /** The unit being dragged. */
-            var unit: Unit = null;
+            var currentlyHoveredHexagon: Konva.Shape = null;
+            var previouslyHoveredHexagon: Konva.Shape = null;
+            var unitBeingDragged: Unit = null;
 
             this.stage.on("dragstart", e => {
                 e.target.moveTo(this.dragLayer);
@@ -510,17 +499,17 @@
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
 
-                unit = this.turn.allUnits.filter(u => u.circle === e.target)[0];
+                unitBeingDragged = this.turn.allUnits.filter(u => u.circle === e.target)[0];
 
                 var allowedCells: Array<Cell>;
-                if (unit.cell === null) {
-                    if (unit.placeCommand === null) {
-                        allowedCells = this.turn.allowedCellsForPlace(unit);
+                if (unitBeingDragged.cell === null) {
+                    if (unitBeingDragged.placeCommand === null) {
+                        allowedCells = this.turn.allowedCellsForPlace(unitBeingDragged);
                     } else {
-                        allowedCells = this.turn.allowedCellsForPlace(unit).concat(this.turn.allowedCellsForMove(unit));
+                        allowedCells = this.turn.allowedCellsForPlace(unitBeingDragged).concat(this.turn.allowedCellsForMove(unitBeingDragged));
                     }
                 } else {
-                    allowedCells = this.turn.allowedCellsForMove(unit);
+                    allowedCells = this.turn.allowedCellsForMove(unitBeingDragged);
                 }
 
                 allowedCells.forEach(cell => {
@@ -533,28 +522,28 @@
 
             this.stage.on("dragmove", () => {
                 const pos = this.stage.getPointerPosition();
-                currentHexagon = this.boardLayer.getIntersection(pos);
+                currentlyHoveredHexagon = this.boardLayer.getIntersection(pos);
 
-                if (currentHexagon === previousHexagon) {
+                if (currentlyHoveredHexagon === previouslyHoveredHexagon) {
                     // Current same as previous: Don't change anything.
                     return;
                 }
 
-                if (currentHexagon === null) {
+                if (currentlyHoveredHexagon === null) {
                     // Only previous defined: Moving out of a cell.
-                    previousHexagon.fire(HexagonEvent.dragLeave);
+                    previouslyHoveredHexagon.fire(HexagonEvent.dragLeave);
                 } else {
-                    if (previousHexagon === null) {
+                    if (previouslyHoveredHexagon === null) {
                         // Only current defined: Moving into a cell.
-                        currentHexagon.fire(HexagonEvent.dragEnter);
+                        currentlyHoveredHexagon.fire(HexagonEvent.dragEnter);
                     } else {
                         // Both cells defined and different: Moving from one cell to another.
-                        previousHexagon.fire(HexagonEvent.dragLeave);
-                        currentHexagon.fire(HexagonEvent.dragEnter);
+                        previouslyHoveredHexagon.fire(HexagonEvent.dragLeave);
+                        currentlyHoveredHexagon.fire(HexagonEvent.dragEnter);
                     }
                 }
 
-                previousHexagon = currentHexagon;
+                previouslyHoveredHexagon = currentlyHoveredHexagon;
             });
 
             this.stage.on("dragend", e => {
@@ -562,44 +551,44 @@
                 e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");
 
-                if (currentHexagon !== null) {
-                    const currentCell = this.turn.nearestCell(new Pos(currentHexagon.x(), currentHexagon.y()));
+                if (currentlyHoveredHexagon !== null) {
+                    const currentCell = this.turn.nearestCell(new Pos(currentlyHoveredHexagon.x(), currentlyHoveredHexagon.y()));
 
                     if (currentCell.dropAllowed) {
-                        if (unit.cell === null) {
-                            if (unit.placeCommand === null) {
+                        if (unitBeingDragged.cell === null) {
+                            if (unitBeingDragged.placeCommand === null) {
                                 // It's a place.
-                                unit.setPlaceCommand(currentCell);
+                                unitBeingDragged.setPlaceCommand(currentCell);
                                 Main.setCurrentPlayerNotReadyIfNecessary();
                             } else {
                                 // This might be a re-place of a new unit.
-                                const cellsAllowedForDrop = this.turn.allowedCellsForPlace(unit)
+                                const cellsAllowedForDrop = this.turn.allowedCellsForPlace(unitBeingDragged)
                                 if (cellsAllowedForDrop.filter(c => c === currentCell).length > 0) {
                                     // It's a re-place.
-                                    unit.moveCommand = null;
-                                    unit.setPlaceCommand(currentCell);
+                                    unitBeingDragged.moveCommand = null;
+                                    unitBeingDragged.setPlaceCommand(currentCell);
                                 } else {
                                     // It's a move.
                                     let from: Cell;
-                                    if (unit.cell === null) {
-                                        from = unit.placeCommand.on;
+                                    if (unitBeingDragged.cell === null) {
+                                        from = unitBeingDragged.placeCommand.on;
                                     } else {
-                                        from = unit.cell;
+                                        from = unitBeingDragged.cell;
                                     }
 
-                                    unit.setMoveCommand(from, currentCell);
+                                    unitBeingDragged.setMoveCommand(from, currentCell);
                                 }
                             }
                         } else {
                             // It's a move.
                             let from: Cell;
-                            if (unit.cell === null) {
-                                from = unit.placeCommand.on;
+                            if (unitBeingDragged.cell === null) {
+                                from = unitBeingDragged.placeCommand.on;
                             } else {
-                                from = unit.cell;
+                                from = unitBeingDragged.cell;
                             }
 
-                            unit.setMoveCommand(from, currentCell);
+                            unitBeingDragged.setMoveCommand(from, currentCell);
                         }
 
                         Main.setCurrentPlayerNotReadyIfNecessary();
@@ -610,8 +599,8 @@
 
                 Main.printNumberOfMovesLeft();
 
-                currentHexagon = null;
-                previousHexagon = null;
+                currentlyHoveredHexagon = null;
+                previouslyHoveredHexagon = null;
 
                 this.turn.cells.forEach(cell => {
                     cell.dropAllowed = false;

@@ -256,6 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Client\ClientAllianceProposal.ts" />
+    <TypeScriptCompile Include="Client\DragMode.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IAlliances.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IAlliancePair.ts" />
     <TypeScriptCompile Include="Client\Interfaces\IAllianceProposal.ts" />

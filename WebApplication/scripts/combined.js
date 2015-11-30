@@ -8,13 +8,6 @@ var CocaineCartels;
         AnimationState[AnimationState["AfterMove"] = 2] = "AfterMove";
         AnimationState[AnimationState["AfterBattle"] = 3] = "AfterBattle";
     })(AnimationState || (AnimationState = {}));
-    var DragMode;
-    (function (DragMode) {
-        DragMode[DragMode["Undefined"] = 0] = "Undefined";
-        DragMode[DragMode["None"] = 1] = "None";
-        DragMode[DragMode["NewUnits"] = 2] = "NewUnits";
-        DragMode[DragMode["UnitsOnBoard"] = 3] = "UnitsOnBoard";
-    })(DragMode || (DragMode = {}));
     var Canvas = (function () {
         function Canvas(turn, canvasId, animated, interactive) {
             this.turn = turn;
@@ -57,14 +50,14 @@ var CocaineCartels;
         Object.defineProperty(Canvas.prototype, "dragMode", {
             get: function () {
                 if (!this.interactive) {
-                    return DragMode.None;
+                    return CocaineCartels.DragMode.None;
                 }
                 var newUnitsNotYetPlaced = this.turn.newUnits.filter(function (unit) { return unit.player.color === CocaineCartels.Main.currentPlayer.color && unit.placeCommand === null; });
                 if (newUnitsNotYetPlaced.length > 0) {
-                    return DragMode.NewUnits;
+                    return CocaineCartels.DragMode.NewUnits;
                 }
                 else {
-                    return DragMode.UnitsOnBoard;
+                    return CocaineCartels.DragMode.UnitsOnBoard;
                 }
             },
             enumerable: true,
@@ -235,10 +228,10 @@ var CocaineCartels;
             var ownedByThisPlayer = (unit.player.color === CocaineCartels.Main.currentPlayer.color);
             var draggable;
             switch (this.dragMode) {
-                case DragMode.NewUnits:
+                case CocaineCartels.DragMode.NewUnits:
                     draggable = ownedByThisPlayer && unit.newUnit && unit.placeCommand === null;
                     break;
-                case DragMode.UnitsOnBoard:
+                case CocaineCartels.DragMode.UnitsOnBoard:
                     draggable = ownedByThisPlayer;
                     break;
                 default:
@@ -353,6 +346,7 @@ var CocaineCartels;
             this.commandsLayer.destroyChildren();
             this.drawMoveCommands();
             this.stage.draw();
+            CocaineCartels.Main.printTurnMode(this.dragMode);
         };
         Canvas.prototype.replayLastTurn = function () {
             var _this = this;
@@ -410,29 +404,26 @@ var CocaineCartels;
         };
         Canvas.prototype.setUpUnitDragEvents = function () {
             var _this = this;
-            /** Currently hovered hexagon. */
-            var currentHexagon = null;
-            /** Previously hovered hexagon.*/
-            var previousHexagon = null;
-            /** The unit being dragged. */
-            var unit = null;
+            var currentlyHoveredHexagon = null;
+            var previouslyHoveredHexagon = null;
+            var unitBeingDragged = null;
             this.stage.on("dragstart", function (e) {
                 e.target.moveTo(_this.dragLayer);
                 e.target.shadowEnabled(true);
                 document.body.classList.remove("grab-cursor");
                 document.body.classList.add("grabbing-cursor");
-                unit = _this.turn.allUnits.filter(function (u) { return u.circle === e.target; })[0];
+                unitBeingDragged = _this.turn.allUnits.filter(function (u) { return u.circle === e.target; })[0];
                 var allowedCells;
-                if (unit.cell === null) {
-                    if (unit.placeCommand === null) {
-                        allowedCells = _this.turn.allowedCellsForPlace(unit);
+                if (unitBeingDragged.cell === null) {
+                    if (unitBeingDragged.placeCommand === null) {
+                        allowedCells = _this.turn.allowedCellsForPlace(unitBeingDragged);
                     }
                     else {
-                        allowedCells = _this.turn.allowedCellsForPlace(unit).concat(_this.turn.allowedCellsForMove(unit));
+                        allowedCells = _this.turn.allowedCellsForPlace(unitBeingDragged).concat(_this.turn.allowedCellsForMove(unitBeingDragged));
                     }
                 }
                 else {
-                    allowedCells = _this.turn.allowedCellsForMove(unit);
+                    allowedCells = _this.turn.allowedCellsForMove(unitBeingDragged);
                 }
                 allowedCells.forEach(function (cell) {
                     cell.dropAllowed = true;
@@ -442,80 +433,80 @@ var CocaineCartels;
             });
             this.stage.on("dragmove", function () {
                 var pos = _this.stage.getPointerPosition();
-                currentHexagon = _this.boardLayer.getIntersection(pos);
-                if (currentHexagon === previousHexagon) {
+                currentlyHoveredHexagon = _this.boardLayer.getIntersection(pos);
+                if (currentlyHoveredHexagon === previouslyHoveredHexagon) {
                     // Current same as previous: Don't change anything.
                     return;
                 }
-                if (currentHexagon === null) {
+                if (currentlyHoveredHexagon === null) {
                     // Only previous defined: Moving out of a cell.
-                    previousHexagon.fire(CocaineCartels.HexagonEvent.dragLeave);
+                    previouslyHoveredHexagon.fire(CocaineCartels.HexagonEvent.dragLeave);
                 }
                 else {
-                    if (previousHexagon === null) {
+                    if (previouslyHoveredHexagon === null) {
                         // Only current defined: Moving into a cell.
-                        currentHexagon.fire(CocaineCartels.HexagonEvent.dragEnter);
+                        currentlyHoveredHexagon.fire(CocaineCartels.HexagonEvent.dragEnter);
                     }
                     else {
                         // Both cells defined and different: Moving from one cell to another.
-                        previousHexagon.fire(CocaineCartels.HexagonEvent.dragLeave);
-                        currentHexagon.fire(CocaineCartels.HexagonEvent.dragEnter);
+                        previouslyHoveredHexagon.fire(CocaineCartels.HexagonEvent.dragLeave);
+                        currentlyHoveredHexagon.fire(CocaineCartels.HexagonEvent.dragEnter);
                     }
                 }
-                previousHexagon = currentHexagon;
+                previouslyHoveredHexagon = currentlyHoveredHexagon;
             });
             this.stage.on("dragend", function (e) {
                 e.target.moveTo(_this.unitsLayer);
                 e.target.shadowEnabled(false);
                 document.body.classList.remove("grabbing-cursor");
-                if (currentHexagon !== null) {
-                    var currentCell = _this.turn.nearestCell(new CocaineCartels.Pos(currentHexagon.x(), currentHexagon.y()));
+                if (currentlyHoveredHexagon !== null) {
+                    var currentCell = _this.turn.nearestCell(new CocaineCartels.Pos(currentlyHoveredHexagon.x(), currentlyHoveredHexagon.y()));
                     if (currentCell.dropAllowed) {
-                        if (unit.cell === null) {
-                            if (unit.placeCommand === null) {
+                        if (unitBeingDragged.cell === null) {
+                            if (unitBeingDragged.placeCommand === null) {
                                 // It's a place.
-                                unit.setPlaceCommand(currentCell);
+                                unitBeingDragged.setPlaceCommand(currentCell);
                                 CocaineCartels.Main.setCurrentPlayerNotReadyIfNecessary();
                             }
                             else {
                                 // This might be a re-place of a new unit.
-                                var cellsAllowedForDrop = _this.turn.allowedCellsForPlace(unit);
+                                var cellsAllowedForDrop = _this.turn.allowedCellsForPlace(unitBeingDragged);
                                 if (cellsAllowedForDrop.filter(function (c) { return c === currentCell; }).length > 0) {
                                     // It's a re-place.
-                                    unit.moveCommand = null;
-                                    unit.setPlaceCommand(currentCell);
+                                    unitBeingDragged.moveCommand = null;
+                                    unitBeingDragged.setPlaceCommand(currentCell);
                                 }
                                 else {
                                     // It's a move.
                                     var from;
-                                    if (unit.cell === null) {
-                                        from = unit.placeCommand.on;
+                                    if (unitBeingDragged.cell === null) {
+                                        from = unitBeingDragged.placeCommand.on;
                                     }
                                     else {
-                                        from = unit.cell;
+                                        from = unitBeingDragged.cell;
                                     }
-                                    unit.setMoveCommand(from, currentCell);
+                                    unitBeingDragged.setMoveCommand(from, currentCell);
                                 }
                             }
                         }
                         else {
                             // It's a move.
                             var from;
-                            if (unit.cell === null) {
-                                from = unit.placeCommand.on;
+                            if (unitBeingDragged.cell === null) {
+                                from = unitBeingDragged.placeCommand.on;
                             }
                             else {
-                                from = unit.cell;
+                                from = unitBeingDragged.cell;
                             }
-                            unit.setMoveCommand(from, currentCell);
+                            unitBeingDragged.setMoveCommand(from, currentCell);
                         }
                         CocaineCartels.Main.setCurrentPlayerNotReadyIfNecessary();
                     }
                     currentCell.hovered = false;
                 }
                 CocaineCartels.Main.printNumberOfMovesLeft();
-                currentHexagon = null;
-                previousHexagon = null;
+                currentlyHoveredHexagon = null;
+                previouslyHoveredHexagon = null;
                 _this.turn.cells.forEach(function (cell) {
                     cell.dropAllowed = false;
                     _this.updateCellColor(cell);
@@ -761,6 +752,17 @@ var CocaineCartels;
         return Command;
     })();
     CocaineCartels.Command = Command;
+})(CocaineCartels || (CocaineCartels = {}));
+var CocaineCartels;
+(function (CocaineCartels) {
+    "use strict";
+    (function (DragMode) {
+        DragMode[DragMode["Undefined"] = 0] = "Undefined";
+        DragMode[DragMode["None"] = 1] = "None";
+        DragMode[DragMode["NewUnits"] = 2] = "NewUnits";
+        DragMode[DragMode["UnitsOnBoard"] = 3] = "UnitsOnBoard";
+    })(CocaineCartels.DragMode || (CocaineCartels.DragMode = {}));
+    var DragMode = CocaineCartels.DragMode;
 })(CocaineCartels || (CocaineCartels = {}));
 var CocaineCartels;
 (function (CocaineCartels) {
@@ -1111,17 +1113,24 @@ var CocaineCartels;
                 return label;
             }
         };
-        Main.getTurnModeString = function (turnMode) {
+        Main.getTurnModeStrings = function (turnMode, dragMode) {
             switch (Main.game.currentTurn.mode) {
                 case CocaineCartels.TurnMode.PlanMoves:
-                    return "Plan moves";
+                    switch (dragMode) {
+                        case CocaineCartels.DragMode.NewUnits:
+                            return new TurnModeStrings("Place new units", "Reinforce you positions by dragging your new units to the territories that you already control. All players get " + CocaineCartels.Settings.newUnitsPerTurn + " new units per turn plus a unit for each " + CocaineCartels.Settings.newUnitPerCellsControlled + " cell controlled.");
+                        case CocaineCartels.DragMode.UnitsOnBoard:
+                            return new TurnModeStrings("Move units", "Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to " + CocaineCartels.Settings.movesPerTurn + " units per turn.");
+                        default:
+                            throw "The DragMode " + dragMode + " is not supported.";
+                    }
                 case CocaineCartels.TurnMode.ProposeAlliances:
-                    return "Propose alliances";
+                    return new TurnModeStrings("Propose alliances", "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn.");
                 case CocaineCartels.TurnMode.StartGame:
-                    return "Start game lobby";
+                    return new TurnModeStrings("Waiting for players to join", "Waiting for players to join the game. Once you can see that the number of players is correct, press the Ready button. The game will start when all players have pressed the button.");
                 default:
                 case CocaineCartels.TurnMode.Undefined:
-                    return "Unknown";
+                    return new TurnModeStrings("Unknown", "Unknown");
             }
         };
         Main.printAllAlliances = function () {
@@ -1242,17 +1251,19 @@ var CocaineCartels;
             document.getElementById("playersStatus").innerHTML = playersStatus;
         };
         Main.prototype.printStartPage = function () {
-            $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-            $("#startPlayerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
+            $("#startNumberOfPlayers").html(Main.game.players.length.toString());
+            $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
             this.printStartPlayersReady();
         };
         Main.prototype.printStartPlayersReady = function () {
             var playersColors = Main.game.players.map(function (player) { return Main.getPlayerBadge(player, true); }).join(" ");
             $("#startPlayersColors").html(playersColors);
         };
-        Main.prototype.printTurnMode = function () {
-            var turnMode = Main.getTurnModeString(Main.game.currentTurn.mode);
-            $("#turnMode").html(turnMode);
+        /** Static because it's called by Canvas.redrawBoard(). Not the most beautiful code architecture. */
+        Main.printTurnMode = function (dragMode) {
+            var turnModeStrings = Main.getTurnModeStrings(Main.game.currentTurn.mode, dragMode);
+            $("#turnModeHeader").html(turnModeStrings.header);
+            $("#turnModeDescription").html(turnModeStrings.description);
         };
         Main.prototype.printTurnNumber = function () {
             var turnNumber = Main.game.currentTurn.turnNumber.toString();
@@ -1308,7 +1319,7 @@ var CocaineCartels;
                     $("#gameStopped").removeClass("hidden");
                 }
                 _this.printTurnNumber();
-                _this.printTurnMode();
+                Main.printTurnMode(CocaineCartels.DragMode.NewUnits);
                 $("#administratorCommands").removeClass("hidden");
                 _this.printStartPage();
                 window.setTimeout(function () { return _this.tick(); }, 1000);
@@ -1493,6 +1504,13 @@ var CocaineCartels;
         return Main;
     })();
     CocaineCartels.Main = Main;
+    var TurnModeStrings = (function () {
+        function TurnModeStrings(header, description) {
+            this.header = header;
+            this.description = description;
+        }
+        return TurnModeStrings;
+    })();
 })(CocaineCartels || (CocaineCartels = {}));
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1617,6 +1635,8 @@ var CocaineCartels;
         }
         Settings.gridSize = serverSideSettings.GridSize;
         Settings.movesPerTurn = serverSideSettings.MovesPerTurn;
+        Settings.newUnitPerCellsControlled = serverSideSettings.NewUnitPerCellsControlled;
+        Settings.newUnitsPerTurn = serverSideSettings.NewUnitsPerTurn;
         return Settings;
     })();
     CocaineCartels.Settings = Settings;

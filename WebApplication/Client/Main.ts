@@ -66,20 +66,40 @@
             }
         }
 
-        private static getTurnModeString(turnMode: TurnMode): string {
+        private static getTurnModeStrings(turnMode: TurnMode, dragMode: DragMode): TurnModeStrings {
             switch (Main.game.currentTurn.mode) {
                 case TurnMode.PlanMoves:
-                    return "Plan moves";
+                    switch (dragMode) {
+                        case DragMode.NewUnits:
+                            return new TurnModeStrings(
+                                "Place new units",
+                                `Reinforce you positions by dragging your new units to the territories that you already control. All players get ${Settings.newUnitsPerTurn} new units per turn plus a unit for each ${Settings.newUnitPerCellsControlled} cell controlled.`);
 
+                        case DragMode.UnitsOnBoard:
+                            return new TurnModeStrings(
+                                "Move units",
+                                `Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to ${Settings.movesPerTurn} units per turn.`);
+
+                        default:
+                            throw `The DragMode ${dragMode} is not supported.`;
+                    }
+ 
                 case TurnMode.ProposeAlliances:
-                    return "Propose alliances";
+                    return new TurnModeStrings(
+                        "Propose alliances",
+                        "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn."
+                    );
 
                 case TurnMode.StartGame:
-                    return "Start game lobby";
+                    return new TurnModeStrings(
+                        "Waiting for players to join",
+                        "Waiting for players to join the game. Once you can see that the number of players is correct, press the Ready button. The game will start when all players have pressed the button.");
 
                 default:
                 case TurnMode.Undefined:
-                    return "Unknown";
+                    return new TurnModeStrings(
+                        "Unknown",
+                        "Unknown");
             }
         }
 
@@ -217,8 +237,8 @@
         }
 
         private printStartPage() {
-            $("#startNumberOfPlayers").val(Main.game.players.length.toString());
-            $("#startPlayerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
+            $("#startNumberOfPlayers").html(Main.game.players.length.toString());
+            $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
             this.printStartPlayersReady();
         }
 
@@ -227,9 +247,11 @@
             $("#startPlayersColors").html(playersColors);
         }
 
-        private printTurnMode() {
-            const turnMode = Main.getTurnModeString(Main.game.currentTurn.mode);
-            $("#turnMode").html(turnMode);
+        /** Static because it's called by Canvas.redrawBoard(). Not the most beautiful code architecture. */
+        public static printTurnMode(dragMode: DragMode) {
+            const turnModeStrings = Main.getTurnModeStrings(Main.game.currentTurn.mode, dragMode);
+            $("#turnModeHeader").html(turnModeStrings.header);
+            $("#turnModeDescription").html(turnModeStrings.description);
         }
 
         private printTurnNumber() {
@@ -295,7 +317,7 @@
                 }
 
                 this.printTurnNumber();
-                this.printTurnMode();
+                Main.printTurnMode(DragMode.NewUnits);
                 $("#administratorCommands").removeClass("hidden");
 
                 this.printStartPage();
@@ -506,5 +528,12 @@
                 Main.currentPlayer = gameState.currentPlayer;
             });
         }
+    }
+
+    class TurnModeStrings {
+        constructor(
+            public header: string,
+            public description: string
+        ) { }
     }
 }
