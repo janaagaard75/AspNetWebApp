@@ -258,8 +258,8 @@
             $("#turnNumber").html(turnNumber);
         }
 
-        private refreshGame() {
-            this.updateGameState().then(() => {
+        private refreshGame(): Promise<void> {
+            return this.updateGameState().then(() => {
                 // It's actually not necessary to call this every single time the game state is updated.
                 CanvasSettings.initialize(Main.game.gridSize);
 
@@ -471,7 +471,11 @@
                     }
 
                     if (Main.game.currentTurn.turnNumber !== status.turnNumber) {
-                        this.refreshGame();
+                        this.refreshGame().then(() => {
+                            if (Main.game.currentTurn.mode === TurnMode.ProposeAlliances) {
+                                this.replayLastTurn();
+                            }
+                        });
                         return;
                     }
 
