@@ -78,7 +78,7 @@
                         case DragMode.UnitsOnBoard:
                             return new TurnModeStrings(
                                 "Move units",
-                                `Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to ${Settings.movesPerTurn} units per turn.`);
+                                `Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to ${Settings.movesPerTurn} units per turn. Press the Ready button when done.`);
 
                         default:
                             throw `The DragMode ${dragMode} is not supported.`;
@@ -87,7 +87,7 @@
                 case TurnMode.ProposeAlliances:
                     return new TurnModeStrings(
                         "Propose alliances",
-                        "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn."
+                        "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn. Press the Ready button when done."
                     );
 
                 case TurnMode.StartGame:
@@ -272,24 +272,20 @@
                     this.interactiveCanvas = new Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === TurnMode.PlanMoves);
                     this.replayCanvas = new Canvas(Main.game.previousTurn, "replayCanvas", true, false);
 
+                    $("#resetButton").toggleClass("hidden", Main.game.currentTurn.mode !== TurnMode.PlanMoves);
+
                     $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
-                    if (Main.game.started) {
-                        const hideReplayButton = (Main.game.previousTurn === null);
-                        $("#replayButtonWrapper").toggleClass("hidden", hideReplayButton);
 
-                        $("#readyButton").prop("disabled", false);
+                    const hideReplayButton = (Main.game.previousTurn === null);
+                    $("#replayButtonWrapper").toggleClass("hidden", hideReplayButton);
 
-                        $("#startGameButton").prop("disabled", true);
-                        $("#startGameButton").attr("title", "The game is already started.");
+                    $("#readyButton").prop("disabled", false);
 
-                        $("#readyButton").toggleClass("active", Main.currentPlayer.ready);
-                    } else {
-                        $("#readyButton").prop("disabled", true);
+                    $("#startGameButton").prop("disabled", true);
+                    $("#startGameButton").attr("title", "The game is already started.");
 
-                        $("#startGameButton").prop("disabled", false);
-                        $("#startGameButton").removeAttr("title");
-                    }
+                    $("#readyButton").toggleClass("active", Main.currentPlayer.ready);
 
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
@@ -310,6 +306,11 @@
                     $("#gameStopped").addClass("hidden");
                 } else {
                     $("#gameStartLobby").css("width", widthInPixels);
+
+                    $("#readyButton").prop("disabled", true);
+
+                    $("#startGameButton").prop("disabled", false);
+                    $("#startGameButton").removeAttr("title");
 
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");

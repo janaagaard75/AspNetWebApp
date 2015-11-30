@@ -1125,12 +1125,12 @@ var CocaineCartels;
                         case CocaineCartels.DragMode.NewUnits:
                             return new TurnModeStrings("Place new units", "Reinforce you positions by dragging your new units to the territories that you already control. All players get " + CocaineCartels.Settings.newUnitsPerTurn + " new units per turn plus a unit for each " + CocaineCartels.Settings.newUnitPerCellsControlled + " cell controlled.");
                         case CocaineCartels.DragMode.UnitsOnBoard:
-                            return new TurnModeStrings("Move units", "Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to " + CocaineCartels.Settings.movesPerTurn + " units per turn.");
+                            return new TurnModeStrings("Move units", "Drag units to conquer new territories or reinforce your positions. You get one point per turn for each territory you control. You can move up to " + CocaineCartels.Settings.movesPerTurn + " units per turn. Press the Ready button when done.");
                         default:
                             throw "The DragMode " + dragMode + " is not supported.";
                     }
                 case CocaineCartels.TurnMode.ProposeAlliances:
-                    return new TurnModeStrings("Propose alliances", "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn.");
+                    return new TurnModeStrings("Propose alliances", "Check the players that you would like to propose alliances to. If any of your alliance propositions are returned, an alliance is formed for the next turn. Press the Ready button when done.");
                 case CocaineCartels.TurnMode.StartGame:
                     return new TurnModeStrings("Waiting for players to join", "Waiting for players to join the game. Once you can see that the number of players is correct, press the Ready button. The game will start when all players have pressed the button.");
                 default:
@@ -1285,21 +1285,15 @@ var CocaineCartels;
                     }
                     _this.interactiveCanvas = new CocaineCartels.Canvas(Main.game.currentTurn, "interactiveCanvas", false, Main.game.currentTurn.mode === CocaineCartels.TurnMode.PlanMoves);
                     _this.replayCanvas = new CocaineCartels.Canvas(Main.game.previousTurn, "replayCanvas", true, false);
+                    $("#resetButton").toggleClass("hidden", Main.game.currentTurn.mode !== CocaineCartels.TurnMode.PlanMoves);
                     $("#playerColor").html(Main.getPlayerBadge(Main.currentPlayer, false));
                     $(".commands").css("width", widthInPixels);
-                    if (Main.game.started) {
-                        var hideReplayButton = (Main.game.previousTurn === null);
-                        $("#replayButtonWrapper").toggleClass("hidden", hideReplayButton);
-                        $("#readyButton").prop("disabled", false);
-                        $("#startGameButton").prop("disabled", true);
-                        $("#startGameButton").attr("title", "The game is already started.");
-                        $("#readyButton").toggleClass("active", Main.currentPlayer.ready);
-                    }
-                    else {
-                        $("#readyButton").prop("disabled", true);
-                        $("#startGameButton").prop("disabled", false);
-                        $("#startGameButton").removeAttr("title");
-                    }
+                    var hideReplayButton = (Main.game.previousTurn === null);
+                    $("#replayButtonWrapper").toggleClass("hidden", hideReplayButton);
+                    $("#readyButton").prop("disabled", false);
+                    $("#startGameButton").prop("disabled", true);
+                    $("#startGameButton").attr("title", "The game is already started.");
+                    $("#readyButton").toggleClass("active", Main.currentPlayer.ready);
                     Main.printNumberOfMovesLeft();
                     Main.printPlayersStatus();
                     Main.printPlayersPoints(false);
@@ -1317,6 +1311,9 @@ var CocaineCartels;
                 }
                 else {
                     $("#gameStartLobby").css("width", widthInPixels);
+                    $("#readyButton").prop("disabled", true);
+                    $("#startGameButton").prop("disabled", false);
+                    $("#startGameButton").removeAttr("title");
                     $("#gameStarted").addClass("hidden");
                     $("#gameStopped").removeClass("hidden");
                 }
