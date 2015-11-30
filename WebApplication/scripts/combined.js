@@ -287,6 +287,10 @@ var CocaineCartels;
                 });
                 this.shapesWithEvents.push(unit.circle);
             }
+            else {
+                unit.circle.off("mouseover");
+                unit.circle.off("mouseout");
+            }
             this.unitsLayer.add(unit.circle);
             if (this.animated) {
                 if (unit.newUnit) {
