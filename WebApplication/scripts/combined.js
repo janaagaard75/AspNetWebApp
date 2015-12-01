@@ -66,7 +66,7 @@ var CocaineCartels;
         /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         Canvas.prototype.getAnimatedUnitPosition = function (unit, state) {
             var cell;
-            var unitsOnCell;
+            var unitsOnCell = null;
             switch (state) {
                 case AnimationState.BeforeMove:
                     cell = unit.cellAfterPlaceBeforeMove;
@@ -77,6 +77,9 @@ var CocaineCartels;
                     break;
                 case AnimationState.AfterMove:
                     cell = unit.cellAfterPlaceAndMove;
+                    if (cell === null) {
+                        return null;
+                    }
                     unitsOnCell = unit.cell.board.allUnits.filter(function (u) { return u.cellAfterPlaceAndMove === cell; });
                     break;
                 case AnimationState.AfterBattle:
@@ -298,14 +301,16 @@ var CocaineCartels;
                     this.newUnitTweens.push(newUnitTween);
                 }
                 var positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
-                var moveTween = new Konva.Tween({
-                    duration: CocaineCartels.CanvasSettings.tweenDuration,
-                    easing: Konva.Easings.ElasticEaseInOut,
-                    node: unit.circle,
-                    x: positionAfterMove.x,
-                    y: positionAfterMove.y
-                });
-                this.moveTweens.push(moveTween);
+                if (positionAfterMove !== null) {
+                    var moveTween = new Konva.Tween({
+                        duration: CocaineCartels.CanvasSettings.tweenDuration,
+                        easing: Konva.Easings.ElasticEaseInOut,
+                        node: unit.circle,
+                        x: positionAfterMove.x,
+                        y: positionAfterMove.y
+                    });
+                    this.moveTweens.push(moveTween);
+                }
                 if (unit.killed) {
                     // Can't set scale here, because this screws up the new unit tween.
                     var killedTween = new Konva.Tween({

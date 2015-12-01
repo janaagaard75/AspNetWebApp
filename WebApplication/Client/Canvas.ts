@@ -75,7 +75,7 @@
         /** Return's the unit's posistion including offset calculations. If the unit isn't positioned on a cell, or if the unit is killed then null is returned. */
         private getAnimatedUnitPosition(unit: Unit, state: AnimationState): Pos {
             let cell: Cell;
-            let unitsOnCell: Array<Unit>;
+            let unitsOnCell: Array<Unit> = null;
 
             switch (state) {
                 case AnimationState.BeforeMove:
@@ -88,6 +88,9 @@
 
                 case AnimationState.AfterMove:
                     cell = unit.cellAfterPlaceAndMove;
+                    if (cell === null) {
+                        return null;
+                    }
                     unitsOnCell = unit.cell.board.allUnits.filter(u => u.cellAfterPlaceAndMove === cell);
                     break;
 
@@ -358,15 +361,17 @@
 
                 const positionAfterMove = this.getAnimatedUnitPosition(unit, AnimationState.AfterMove);
 
-                const moveTween = new Konva.Tween({
-                    duration: CanvasSettings.tweenDuration,
-                    easing: Konva.Easings.ElasticEaseInOut,
-                    node: unit.circle,
-                    x: positionAfterMove.x,
-                    y: positionAfterMove.y
-                });
+                if (positionAfterMove !== null) {
+                    const moveTween = new Konva.Tween({
+                        duration: CanvasSettings.tweenDuration,
+                        easing: Konva.Easings.ElasticEaseInOut,
+                        node: unit.circle,
+                        x: positionAfterMove.x,
+                        y: positionAfterMove.y
+                    });
 
-                this.moveTweens.push(moveTween);
+                    this.moveTweens.push(moveTween);
+                }
 
                 if (unit.killed) {
                     // Can't set scale here, because this screws up the new unit tween.
