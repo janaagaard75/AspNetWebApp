@@ -278,6 +278,7 @@ namespace CocaineCartels.BusinessLogic
                 NextTurn.NewUnits.Remove(unitToPlace);
                 unitToPlace.PlaceCommand.On.AddUnit(unitToPlace);
                 unitToPlace.RemovePlaceCommand();
+                unitToPlace.NoLongerNewUnit();
             });
 
             // Move all the units, keeping the move commands.
@@ -300,10 +301,9 @@ namespace CocaineCartels.BusinessLogic
                 unitToRemove.Cell.RemoveUnit(unitToRemove);
             }
 
-            // Remove new unit flags and the move commands.
+            // Remove the move commands.
             foreach (var unit in NextTurn.AllUnits)
             {
-                unit.NoLongerNewUnit();
                 unit.RemoveMoveCommand();
             }
 
