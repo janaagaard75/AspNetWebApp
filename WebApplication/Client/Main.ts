@@ -3,6 +3,7 @@
 
     export class Main {
         constructor() {
+            this.checkBrowser();
             this.refreshGame();
         }
 
@@ -31,6 +32,18 @@
         private allPlayersAreReady(): boolean {
             const playersWhoAreNotReady = Main.game.players.filter(player => !player.ready).length;
             return playersWhoAreNotReady === 0;
+        }
+
+        private checkBrowser() {
+            const userAgent = window.navigator.userAgent;
+            const isInternetExplorer = userAgent.indexOf("MSIE") !== -1;
+            const isSafari = (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1);
+
+            if (isInternetExplorer || isSafari) {
+                return;
+            }
+
+            $("#unsupportedBrowserWarning").addClass("hidden");
         }
 
         public confirmResetGame() {

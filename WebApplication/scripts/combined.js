@@ -1093,6 +1093,7 @@ var CocaineCartels;
     "use strict";
     var Main = (function () {
         function Main() {
+            this.checkBrowser();
             this.refreshGame();
         }
         Main.prototype.allPlayersSeemToBeHereClicked = function () {
@@ -1109,6 +1110,15 @@ var CocaineCartels;
         Main.prototype.allPlayersAreReady = function () {
             var playersWhoAreNotReady = Main.game.players.filter(function (player) { return !player.ready; }).length;
             return playersWhoAreNotReady === 0;
+        };
+        Main.prototype.checkBrowser = function () {
+            var userAgent = window.navigator.userAgent;
+            var isInternetExplorer = userAgent.indexOf("MSIE") !== -1;
+            var isSafari = (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1);
+            if (isInternetExplorer || isSafari) {
+                return;
+            }
+            $("#unsupportedBrowserWarning").addClass("hidden");
         };
         Main.prototype.confirmResetGame = function () {
             if (Main.game !== undefined && Main.game.started) {
