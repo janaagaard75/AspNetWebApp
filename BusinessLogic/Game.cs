@@ -21,8 +21,8 @@ namespace CocaineCartels.BusinessLogic
             new PlayerData("#f22", "Red"),
             new PlayerData("#cc0", "Yellow"),
             new PlayerData("#0b0", "Green"),
-            new PlayerData("#07e", "Magenta"),
-            new PlayerData("#84f", "Blue"),
+            new PlayerData("#07e", "Blue"),
+            new PlayerData("#84f", "Magenta"),
             new PlayerData("#f0f", "Cyan")
         };
 
