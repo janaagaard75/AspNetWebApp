@@ -1340,7 +1340,8 @@ var CocaineCartels;
                     $("#gameStopped").removeClass("hidden");
                 }
                 _this.printTurnNumber();
-                Main.printTurnMode(CocaineCartels.DragMode.NewUnits);
+                var dragMode = Main.game.currentTurn.turnNumber === 1 ? CocaineCartels.DragMode.UnitsOnBoard : CocaineCartels.DragMode.NewUnits;
+                Main.printTurnMode(dragMode);
                 $("#administratorCommands").removeClass("hidden");
                 _this.printStartPage();
                 window.setTimeout(function () { return _this.tick(); }, 1000);

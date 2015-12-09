@@ -319,7 +319,8 @@
                 }
 
                 this.printTurnNumber();
-                Main.printTurnMode(DragMode.NewUnits);
+                const dragMode = Main.game.currentTurn.turnNumber === 1 ? DragMode.UnitsOnBoard : DragMode.NewUnits;
+                Main.printTurnMode(dragMode);
                 $("#administratorCommands").removeClass("hidden");
 
                 this.printStartPage();
